@@ -1,0 +1,22 @@
+:root{
+--font-display:'Kanit','Arial Black',sans-serif;
+--font-body:'Plus Jakarta Sans',system-ui,sans-serif;
+--font-numeric:'Kanit','Arial',sans-serif;
+
+--fs-display-xl:64px;--fs-display-l:44px;--fs-h1:32px;--fs-h2:24px;--fs-h3:19px;--fs-body-l:17px;--fs-body:15px;--fs-body-s:13px;--fs-caption:12px;--fs-overline:11px;
+--lh-tight:1.0;/* @kind font */--lh-snug:1.15;/* @kind font */--lh-normal:1.45;/* @kind font */--lh-relaxed:1.6;/* @kind font */
+--fw-regular:400;/* @kind font */--fw-medium:500;/* @kind font */--fw-semibold:600;/* @kind font */--fw-bold:700;/* @kind font */--fw-black:800;/* @kind font */--fw-ultra:900;/* @kind font */
+--tracking-display:-0.015em;/* @kind font */--tracking-normal:0;/* @kind font */--tracking-overline:0.14em;/* @kind font */
+
+--text-display-xl:italic 900 var(--fs-display-xl)/var(--lh-tight) var(--font-display);/* @kind font */
+--text-display-l:italic 800 var(--fs-display-l)/var(--lh-tight) var(--font-display);/* @kind font */
+--text-h1:italic 800 var(--fs-h1)/var(--lh-snug) var(--font-display);/* @kind font */
+--text-h2:italic 700 var(--fs-h2)/var(--lh-snug) var(--font-display);/* @kind font */
+--text-h3:700 var(--fs-h3)/var(--lh-snug) var(--font-body);/* @kind font */
+--text-body-l:400 var(--fs-body-l)/var(--lh-relaxed) var(--font-body);/* @kind font */
+--text-body:400 var(--fs-body)/var(--lh-normal) var(--font-body);/* @kind font */
+--text-body-s:500 var(--fs-body-s)/var(--lh-normal) var(--font-body);/* @kind font */
+--text-caption:500 var(--fs-caption)/1.35 var(--font-body);/* @kind font */
+--text-overline:700 var(--fs-overline)/1.2 var(--font-body);/* @kind font */
+--text-score:italic 800 28px/1 var(--font-numeric);/* @kind font */
+}

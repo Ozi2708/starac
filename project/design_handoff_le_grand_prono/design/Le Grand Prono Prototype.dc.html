@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/styles.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/tokens/colors.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/tokens/typography.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/tokens/effects.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/tokens/base.css">
+<link rel="stylesheet" href="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/components/components.css">
+<script src="_ds/le-grand-prono-design-system-2fc6cdb0-8c7b-4ce1-8e13-047ac30a9051/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;background:#07021a}
+a{color:var(--magenta-400)}a:hover{color:var(--magenta-200)}
+.ph-scroll::-webkit-scrollbar{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;gap:28px;padding:44px 48px 64px;min-width:1720px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;max-width:1680px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">STAR ACADEMY · LE GRAND PRONO</span>
+<span style="font:italic 800 32px/1.1 var(--font-display);color:var(--text-primary)">Prototype cliquable — app mobile + admin</span>
+<span style="font:var(--text-body-s);color:var(--text-muted);max-width:760px;text-wrap:pretty">Données fictives (DÉMO). Les deux écrans sont reliés : publie un résultat dans l'admin, les points et le classement du téléphone se mettent à jour.</span>
+</div>
+</div>
+<div style="display:flex;gap:56px;align-items:flex-start">
+
+<div style="display:flex;flex-direction:column;gap:18px;flex:none">
+<div style="display:flex;flex-wrap:wrap;gap:8px;max-width:400px">
+<sc-for list="{{ jumps }}" as="j" hint-placeholder-count="6">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="{{ j.variant }}" size="sm" onClick="{{ j.go }}" hint-size="90px,36px">{{ j.label }}</x-import>
+</sc-for>
+</div>
+<div style="position:relative;width:390px;height:844px;border-radius:48px;overflow:hidden;background:var(--surface-page);box-shadow:0 0 0 10px #1c1530,0 0 0 11px rgba(255,255,255,.12),0 40px 80px -20px rgba(0,0,0,.8)">
+<div ref="{{ scrollRef }}" class="ph-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;background:radial-gradient(120% 40% at 50% 0%,rgba(106,60,240,.28),rgba(13,3,34,0) 70%)">
+
+<sc-if value="{{ isAvant }}" hint-placeholder-val="{{ true }}">
+<div style="position:relative;min-height:844px;display:flex;flex-direction:column">
+<div style="position:absolute;left:0;right:0;top:0;height:300px;background:url(assets/key-art.jpg) -60px 10px/500px auto no-repeat,#2a1275"></div>
+<div style="position:absolute;left:0;right:0;top:0;height:302px;background:linear-gradient(180deg,rgba(13,3,34,.45) 0%,rgba(13,3,34,0) 16%,rgba(13,3,34,0) 70%,#0d0322 100%)"></div>
+<div style="position:relative;display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:#fff"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:28px;padding:230px 20px 40px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="magenta" hint-size="100px,22px">Avant-saison</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import></div>
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">SAISON 2026 · LE JEU DE PRONOS</span>
+<span class="gp-glitter-text" style="font:italic 900 46px/1 var(--font-display);letter-spacing:-.015em;padding-right:6px">Le Grand Prono</span>
+<span style="font:var(--text-body-l);color:var(--text-secondary)">Une saison. Des pronos. Un seul gagnant.</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">PREMIER PRIME DANS</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Countdown" to="2026-10-17T21:10:00+02:00" hint-size="260px,72px"></x-import>
+<span style="font:var(--text-caption);color:var(--text-muted)">Sam. 17 oct. · 21h10, heure de Paris</span>
+</div>
+<div style="display:flex;flex-direction:column;border-top:1px solid var(--border-subtle)">
+<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-subtle)"><span style="width:28px;font:italic 900 26px/1 var(--font-numeric);color:var(--flare-400)">1</span><span style="font:var(--text-body);font-weight:600">Pronostique les grands événements de la saison.</span></div>
+<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-subtle)"><span style="width:28px;font:italic 900 26px/1 var(--font-numeric);color:var(--flare-400)">2</span><span style="font:var(--text-body);font-weight:600">Gagne des points chaque semaine.</span></div>
+<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-subtle)"><span style="width:28px;font:italic 900 26px/1 var(--font-numeric);color:var(--flare-400)">3</span><span style="font:var(--text-body);font-weight:600">Affronte tes amis jusqu’à la finale.</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" size="lg" block="{{ true }}" onClick="{{ goHome }}" hint-size="100%,56px">Créer mon compte</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="lg" block="{{ true }}" icon="key-round" onClick="{{ goHome }}" hint-size="100%,56px">Rejoindre une ligue</x-import>
+</div>
+<p style="margin:0;text-align:center;font:var(--text-caption);color:var(--text-muted);text-wrap:pretty">Jeu entre amis, sans argent. Créé par des fans, sans affiliation avec TF1 ni la production.</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:28px;padding:6px 20px 120px">
+<div style="display:flex;align-items:center;gap:12px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Sam K" size="{{ 44 }}" ring="magenta" hint-size="44px,44px"></x-import>
+<div onClick="{{ goMainLeague }}" style="cursor:pointer;flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:var(--text-caption);color:var(--text-muted)">Les Stars du Canap’</span><span style="font:var(--text-h3)">Salut Sam</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="bell" dot="{{ bellDot }}" label="Notifications" onClick="{{ goNotifs }}" hint-size="44px,44px"></x-import>
+</div>
+<div style="position:relative;border-radius:var(--radius-lg);overflow:hidden;background:var(--grad-stage);box-shadow:inset 0 0 0 1px rgba(255,166,74,.35),var(--shadow-raised)">
+<div style="position:absolute;inset:0;background:url(assets/key-art.jpg) 42% -12px/470px auto no-repeat"></div>
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(23,6,67,0) 30%,rgba(23,6,67,.94) 62%)"></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:16px;padding:22px 18px 18px">
+<div style="height:150px"></div>
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" hint-size="80px,22px">Semaine 6</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="120px,22px">Prime 6 · sam. 21h10</x-import></div>
+<div style="font:var(--text-h2)">Prochain prime dans</div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Countdown" seconds="{{ primeIn }}" hint-size="260px,72px"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MON CLASSEMENT</span>
+<div onClick="{{ goRank }}" style="cursor:pointer;display:flex;flex-direction:column;gap:18px;padding:18px;border-radius:var(--radius-lg);background:linear-gradient(var(--surface-raised),var(--surface-raised)) padding-box,var(--grad-edge) border-box;border:1.5px solid transparent;box-shadow:var(--shadow-card)">
+<div style="display:flex;align-items:center;gap:12px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Sam K" size="{{ 48 }}" hint-size="48px,48px"></x-import>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Sam</span><span style="font:var(--text-caption);color:var(--text-muted)">Ligue principale · 8 joueurs</span></div>
+<div style="display:flex;align-items:baseline;gap:4px"><span class="gp-gold-text" style="font:italic 900 48px/1 var(--font-numeric);font-variant-numeric:tabular-nums;padding-right:6px">{{ me.total }}</span><span style="font:600 13px var(--font-body);color:var(--text-muted)">pts</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--border-subtle);padding-top:14px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font:italic 800 22px/1 var(--font-numeric)">{{ me.rankLabel }}</span><span style="font:var(--text-caption);color:var(--text-muted)">Rang ligue</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding-left:14px;border-left:1px solid var(--border-subtle)"><span style="display:flex;align-items:center;gap:2px;font:italic 800 22px/1 var(--font-numeric);color:var(--green-500)"><i class="gp-icon icon-chevron-up" style="font-size:18px"></i>1</span><span style="font:var(--text-caption);color:var(--text-muted)">Cette semaine</span></div>
+<div style="display:flex;flex-direction:column;gap:2px;padding-left:14px;border-left:1px solid var(--border-subtle)"><span style="font:italic 800 22px/1 var(--font-numeric)">{{ me.lastGain }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ me.lastGainLabel }}</span></div>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MES PROCHAINS PRONOSTICS</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ todoCount }}</span></div>
+<sc-if value="{{ hasTodo }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<i class="gp-icon icon-clock" style="font-size:18px;color:var(--flare-400)"></i>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-body-s);font-weight:700">Prochaine clôture</span><span style="font:var(--text-caption);color:var(--text-muted)">Heure de Paris</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Countdown" seconds="{{ closeIn }}" size="sm" show-days="{{ false }}" hint-size="140px,36px"></x-import>
+</div>
+<sc-for list="{{ todo }}" as="t" hint-placeholder-count="2">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PronoCard" question="{{ t.q }}" points="{{ t.pts }}" deadline="{{ t.deadline }}" icon="{{ t.icon }}" onClick="{{ t.open }}" hint-size="100%,112px"></x-import>
+</sc-for>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" size="lg" block="{{ true }}" icon-right="arrow-right" onClick="{{ goPronos }}" hint-size="100%,56px">{{ todoCta }}</x-import>
+</sc-if>
+<sc-if value="{{ allDone }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:14px;padding:18px 16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px rgba(47,217,154,.35)">
+<span style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(47,217,154,.16);color:var(--green-500);flex:none"><i class="gp-icon icon-circle-check" style="font-size:22px"></i></span>
+<div style="display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Tous tes pronos sont validés</span><span style="font:var(--text-caption);color:var(--text-muted)">Modifiables jusqu’à leur clôture. Rendez-vous samedi 21h10.</span></div>
+</div>
+</sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MA LIGUE</span><a href="#" onClick="{{ goRankLink }}" style="font:var(--text-body-s);font-weight:700">Classement complet</a></div>
+<div style="padding:6px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle),var(--shadow-card)">
+<sc-for list="{{ top3 }}" as="p" hint-placeholder-count="3">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.LeaderboardRow" rank="{{ p.rank }}" name="{{ p.name }}" points="{{ p.total }}" move="{{ p.move }}" sub="{{ p.sub }}" me="{{ p.me }}" hint-size="100%,60px"></x-import>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">DERNIERS RÉSULTATS · PRIME 5</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Théo" size="{{ 40 }}" style="{{ outStyle }}" hint-size="40px,40px"></x-import>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-caption);color:var(--text-muted)">Dernier éliminé</span><span style="font:var(--text-body);font-weight:700">Théo</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="closed" hint-size="70px,22px">Éliminé</x-import>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--border-subtle)">
+<div style="display:flex">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Inès" size="{{ 32 }}" hint-size="32px,32px"></x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Noah" size="{{ 32 }}" style="{{ stackStyle }}" hint-size="32px,32px"></x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Jade" size="{{ 32 }}" style="{{ stackStyle }}" hint-size="32px,32px"></x-import>
+</div>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-caption);color:var(--text-muted)">Nommés de la semaine</span><span style="font:var(--text-body);font-weight:700">Inès, Noah, Jade</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--border-subtle)">
+<span style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--grad-gold);color:#3a1a00;flex:none"><i class="gp-icon icon-star" style="font-size:18px"></i></span>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-caption);color:var(--text-muted)">Tes points au prime 5</span><span style="font:var(--text-body);font-weight:700">2 bons pronos sur 3</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PointsChip" value="{{ 45 }}" hint-size="70px,26px"></x-import>
+</div>
+</div>
+</div>
+<p style="margin:0;text-align:center;font:var(--text-caption);color:var(--text-muted);text-wrap:pretty">Jeu entre amis, sans argent. Créé par des fans, sans affiliation avec TF1 ni la production.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPronos }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:22px;padding:6px 20px 120px">
+<div style="display:flex;align-items:center;justify-content:space-between"><span style="font:var(--text-h1)">Pronostics</span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import></div>
+<div class="gp-seg gp-seg--block">
+<sc-for list="{{ pronoTabs }}" as="t" hint-placeholder-count="2"><button class="{{ t.cls }}" onClick="{{ t.go }}">{{ t.label }}</button></sc-for>
+</div>
+<sc-if value="{{ isWeekTab }}" hint-placeholder-val="{{ true }}">
+<div style="position:relative;border-radius:var(--radius-lg);overflow:hidden;background:var(--grad-stage);box-shadow:inset 0 0 0 1px rgba(255,166,74,.35),var(--shadow-raised)">
+<div style="position:absolute;inset:0;background:url(assets/key-art.jpg) 70% 40%/cover;opacity:.3"></div>
+<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,6,67,.95),rgba(23,6,67,.6))"></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:14px;padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:center"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" hint-size="70px,22px">Prime 6</x-import><span style="font:var(--text-caption);color:var(--text-secondary)">Sam. 21 nov. · 21h10</span></div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font:var(--text-body-s);color:var(--text-secondary)">Prochaine clôture dans</span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Countdown" seconds="{{ closeIn }}" size="sm" show-days="{{ false }}" hint-size="140px,36px"></x-import></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font:var(--text-caption);color:var(--text-muted)">En jeu</span><span style="font:italic 800 22px/1 var(--font-numeric);color:var(--gold-400)">{{ weekPts }}</span></div>
+</div>
+<div class="gp-progress gp-progress--flare"><div class="gp-progress__head"><span>Mes pronos validés</span><b style="white-space:nowrap">{{ weekDone }}</b></div><div class="gp-progress__track"><div class="gp-progress__fill" style="width:{{ weekPct }}"></div></div></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ weekCards }}" as="w" hint-placeholder-count="4">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PronoCard" question="{{ w.q }}" points="{{ w.pts }}" status="{{ w.status }}" pick="{{ w.pick }}" deadline="{{ w.deadline }}" icon="{{ w.icon }}" onClick="{{ w.open }}" hint-size="100%,112px"></x-import>
+</sc-for>
+</div>
+<p style="margin:0;font:var(--text-caption);color:var(--text-muted);text-wrap:pretty">Chaque question a sa propre heure de clôture, affichée à l’heure de Paris. Une fois clôturée, plus aucune modification n’est possible.</p>
+</sc-if>
+<sc-if value="{{ isSeasonTab }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ seasonOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:var(--radius-lg);background:linear-gradient(var(--surface-raised),var(--surface-raised)) padding-box,var(--grad-edge) border-box;border:1.5px solid transparent">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">LES GRANDS PRONOS · CLÔTURE DANS</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Countdown" to="2026-10-17T21:00:00+02:00" size="sm" hint-size="200px,36px"></x-import>
+<span style="font:var(--text-body-s);color:var(--text-secondary)">{{ seasonDone }} complétés · modifiables jusqu’au sam. 17 oct. 21h00.</span>
+</div>
+</sc-if>
+<sc-if value="{{ seasonLocked }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<span style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:var(--text-secondary);flex:none"><i class="gp-icon icon-lock" style="font-size:18px"></i></span>
+<div style="display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Verrouillés depuis le 17 oct.</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ seasonDone }} complétés · points attribués au fil des résultats officiels.</span></div>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ seasonCards }}" as="w" hint-placeholder-count="5">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PronoCard" question="{{ w.q }}" points="{{ w.pts }}" status="{{ w.status }}" pick="{{ w.pick }}" deadline="{{ w.deadline }}" icon="{{ w.icon }}" onClick="{{ w.open }}" hint-size="100%,112px"></x-import>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isFunTab }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;padding:4px 2px"><span class="gp-glitter-text" style="font:italic 900 26px/1.1 var(--font-display);padding-right:4px">Les paris improbables</span><span style="font:var(--text-body-s);color:var(--text-secondary);text-wrap:pretty">Pour le fun, mais chaque critère est fixé avant l’ouverture. Pas de débat possible.</span></div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ funCards }}" as="q" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;align-items:center;justify-content:space-between"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ q.tone }}" hint-size="70px,22px">{{ q.status }}</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PointsChip" value="{{ q.pts }}" tone="gold" icon="sparkles" hint-size="70px,26px"></x-import></div>
+<span style="font:var(--text-h3);font-size:17px">{{ q.q }}</span>
+<span style="display:flex;gap:8px;font:var(--text-caption);color:var(--text-muted)"><i class="gp-icon icon-scale" style="font-size:13px;margin-top:1px"></i><span>Validé si : {{ q.crit }}</span></span>
+<div class="gp-seg gp-seg--block"><sc-for list="{{ q.opts }}" as="o" hint-placeholder-count="2"><button class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<span style="display:flex;align-items:center;gap:6px;font:var(--text-caption);color:var(--text-muted)"><i class="gp-icon icon-clock" style="font-size:13px"></i>{{ q.close }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPick }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 20px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="arrow-left" label="Retour" onClick="{{ back }}" hint-size="44px,44px"></x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ pq.badgeTone }}" icon="{{ pq.badgeIcon }}" hint-size="90px,22px">{{ pq.badge }}</x-import>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px;padding:10px 20px 190px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">{{ pq.overline }}</span>
+<h1 style="margin:0;font:var(--text-h1);letter-spacing:-.015em;text-wrap:pretty">{{ pq.q }}</h1>
+<span style="font:var(--text-body-s);color:var(--text-secondary);text-wrap:pretty">{{ pq.desc }}</span>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PointsChip" value="{{ pq.pts }}" suffix="{{ pq.suffix }}" tone="gold" icon="star" hint-size="80px,26px"></x-import>
+<span style="display:inline-flex;align-items:center;gap:6px;font:var(--text-caption);color:var(--text-muted)"><i class="gp-icon icon-clock" style="font-size:13px"></i>{{ pq.closeLabel }}</span>
+</div>
+</div>
+<sc-if value="{{ isMulti }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">{{ pq.trayLabel }}</span><span style="font:italic 800 17px var(--font-numeric)">{{ countShort }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px;justify-items:center">
+<sc-for list="{{ slots }}" as="s" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:64px">
+<sc-if value="{{ s.filled }}" hint-placeholder-val="{{ false }}"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="{{ s.name }}" size="{{ 44 }}" hint-size="44px,44px"></x-import></sc-if>
+<sc-if value="{{ s.empty }}" hint-placeholder-val="{{ true }}"><span style="width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font:italic 700 14px var(--font-numeric)">{{ s.n }}</span></sc-if>
+<span style="font:var(--text-caption);color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:64px">{{ s.label }}</span>
+</div>
+</sc-for>
+</div>
+<div class="gp-progress gp-progress--flare"><div class="gp-progress__track"><div class="gp-progress__fill" style="width:{{ pickPct }}"></div></div></div>
+</div>
+</sc-if>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+<sc-for list="{{ cands }}" as="c" hint-placeholder-count="9">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.CandidateCard" name="{{ c.name }}" meta="{{ c.meta }}" selected="{{ c.on }}" eliminated="{{ c.out }}" onSelect="{{ c.toggle }}" size="{{ candSize }}" hint-size="100%,130px"></x-import>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRank }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:22px;padding:6px 20px 120px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px"><div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-caption);color:var(--text-muted)">Les Stars du Canap’ · 8 joueurs</span><span style="font:var(--text-h1)">Classement</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="sm" icon="users" onClick="{{ goLeagues }}" hint-size="120px,36px">Mes ligues</x-import></div>
+<div class="gp-seg gp-seg--block">
+<sc-for list="{{ rankTabs }}" as="t" hint-placeholder-count="3"><button class="{{ t.cls }}" onClick="{{ t.go }}">{{ t.label }}</button></sc-for>
+</div>
+<sc-if value="{{ isGen }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="position:relative;display:flex;align-items:center;gap:16px;padding:20px 18px;border-radius:var(--radius-lg);background:var(--surface-raised);box-shadow:inset 0 0 0 1px rgba(255,203,92,.45),0 0 32px -12px rgba(255,203,92,.45),var(--shadow-card)">
+<span class="gp-gold-text" style="font:italic 900 44px/1 var(--font-numeric);width:34px;padding-right:4px">1</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="{{ first.name }}" size="{{ 56 }}" ring="gold" hint-size="56px,56px"></x-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">EN TÊTE</span><span style="font:var(--text-h3)">{{ first.label }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ first.sub }}</span></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end"><span class="gp-gold-text" style="font:italic 900 30px/1 var(--font-numeric);font-variant-numeric:tabular-nums;padding-right:4px">{{ first.total }}</span><span style="font:var(--text-caption);color:var(--text-muted)">pts</span></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<sc-for list="{{ podium23 }}" as="p" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;align-items:center;justify-content:space-between"><span style="font:italic 900 26px/1 var(--font-numeric);color:var(--text-secondary)">{{ p.rank }}</span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="{{ p.name }}" size="{{ 40 }}" ring="{{ p.ring }}" hint-size="40px,40px"></x-import></div>
+<div style="display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">{{ p.label }}</span><span style="font:italic 800 18px/1.2 var(--font-numeric)">{{ p.total }} <span style="font:600 11px var(--font-body);color:var(--text-muted)">pts</span></span></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;padding-top:6px">
+<sc-for list="{{ rest }}" as="p" hint-placeholder-count="5">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.LeaderboardRow" rank="{{ p.rank }}" name="{{ p.name }}" points="{{ p.total }}" move="{{ p.move }}" sub="{{ p.sub }}" me="{{ p.me }}" hint-size="100%,60px"></x-import>
+</sc-for>
+</div>
+<p style="margin:0;font:var(--text-caption);color:var(--text-muted)">Flèches : évolution depuis le prime précédent. À égalité de points, les joueurs partagent le même rang.</p>
+</div>
+</sc-if>
+<sc-if value="{{ isWeekR }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius-lg);background:linear-gradient(var(--surface-raised),var(--surface-raised)) padding-box,var(--grad-edge) border-box;border:1.5px solid transparent">
+<span style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(47,217,154,.16);color:var(--green-500);flex:none"><i class="gp-icon icon-trending-up" style="font-size:20px"></i></span>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MEILLEURE PROGRESSION</span><span style="font:var(--text-body);font-weight:700">Rayan gagne 3 places</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.PointsChip" value="{{ 60 }}" hint-size="70px,26px"></x-import>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary);padding:0 4px 6px">POINTS GAGNÉS AU PRIME 5</span>
+<sc-for list="{{ weekly }}" as="p" hint-placeholder-count="8">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.LeaderboardRow" rank="{{ p.wrank }}" name="{{ p.name }}" points="{{ p.week }}" move="{{ p.move }}" sub="{{ p.wsub }}" me="{{ p.me }}" hint-size="100%,60px"></x-import>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isEvo }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px;padding:16px 14px 12px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">ÉVOLUTION DU RANG</span><span style="font:var(--text-caption);color:var(--text-muted)">Primes 1 à 5</span></div>
+<div style="position:relative;width:322px;height:224px">
+<sc-for list="{{ gridY }}" as="g" hint-placeholder-count="8"><span style="{{ g.style }}">{{ g.label }}</span></sc-for>
+<sc-for list="{{ gridX }}" as="g" hint-placeholder-count="5"><span style="{{ g.style }}">{{ g.label }}</span></sc-for>
+<svg width="322" height="220" viewBox="0 0 322 220" style="position:absolute;left:0;top:0;display:block;overflow:visible">
+<sc-for list="{{ gridY }}" as="g" hint-placeholder-count="8">
+<line x1="30" x2="312" y1="{{ g.y }}" y2="{{ g.y }}" stroke="rgba(255,255,255,.07)" stroke-width="1"></line>
+</sc-for>
+<sc-for list="{{ series }}" as="s" hint-placeholder-count="3">
+<path d="{{ s.d }}" fill="none" stroke="{{ s.color }}" stroke-width="{{ s.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="{{ s.cx }}" cy="{{ s.cy }}" r="5" fill="{{ s.color }}" stroke="#0d0322" stroke-width="2"></circle>
+</sc-for>
+</svg>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">COMPARER AVEC (3 MAX)</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+<button onClick="{{ c.toggle }}" class="{{ c.cls }}" style="height:36px;padding:0 14px;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font:var(--text-body-s);font-weight:700;border-radius:999px">
+<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="{{ c.dot }}"></circle></svg>{{ c.name }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isCand }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:20px;padding:6px 20px 120px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-caption);color:var(--text-muted)">Saison 2026 · 12 candidats</span><span style="font:var(--text-h1)">Candidats</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import></div>
+<div class="gp-seg gp-seg--block"><sc-for list="{{ candTabs }}" as="t" hint-placeholder-count="3"><button class="{{ t.cls }}" onClick="{{ t.go }}">{{ t.label }}</button></sc-for></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<sc-for list="{{ candList }}" as="c" hint-placeholder-count="6">
+<button onClick="{{ c.open }}" style="position:relative;aspect-ratio:3/4;border-radius:var(--radius-lg);overflow:hidden;border:0;padding:0;cursor:pointer;background:var(--violet-800);text-align:left;box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="{{ c.bg }}"></div>
+<span style="position:absolute;left:0;right:0;top:22%;text-align:center;font:italic 900 72px/1 var(--font-display);color:rgba(255,255,255,.22)">{{ c.initial }}</span>
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,3,34,0) 45%,rgba(13,3,34,.92) 100%)"></div>
+<div style="position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span style="font:italic 800 21px/1 var(--font-display);color:#fff">{{ c.name }}</span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ c.tone }}" hint-size="100px,22px">{{ c.status }}</x-import></div>
+</button>
+</sc-for>
+</div>
+<p style="margin:0;font:var(--text-caption);color:var(--text-muted);text-align:center">Photos officielles à ajouter depuis l’admin. Aucun candidat réel n’est inventé.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCandDetail }}" hint-placeholder-val="{{ false }}">
+<div style="position:relative;height:400px">
+<div style="{{ cd.bg }}"></div>
+<span style="position:absolute;left:0;right:0;top:70px;text-align:center;font:italic 900 180px/1 var(--font-display);color:rgba(255,255,255,.18)">{{ cd.initial }}</span>
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,3,34,.35) 0%,rgba(13,3,34,0) 25%,rgba(13,3,34,.2) 50%,#0d0322 100%)"></div>
+<div style="position:relative;display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="position:relative"><div style="display:flex;align-items:center;justify-content:space-between;padding:4px 20px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="arrow-left" label="Retour" onClick="{{ back }}" hint-size="44px,44px"></x-import></div></div>
+<div style="position:absolute;left:20px;right:20px;bottom:18px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ cd.tone }}" hint-size="100px,22px">{{ cd.status }}</x-import><sc-if value="{{ cd.tourOn }}" hint-placeholder-val="{{ false }}"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" icon="ticket" hint-size="90px,22px">Tournée</x-import></sc-if></div>
+<span style="font:italic 900 44px/1 var(--font-display);letter-spacing:-.015em">{{ cd.name }}</span>
+<span style="font:var(--text-body-s);color:var(--text-secondary)">{{ cd.meta }}</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:26px;padding:8px 20px 60px">
+<p style="margin:0;font:var(--text-body-l);color:var(--text-secondary);text-wrap:pretty">{{ cd.bio }}</p>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+<div class="gp-stat"><span class="gp-stat__val">{{ cd.noms }}</span><span class="gp-stat__lbl">Nominations</span></div>
+<div class="gp-stat"><span class="gp-stat__val">{{ cd.weeks }}</span><span class="gp-stat__lbl">Semaines</span></div>
+<div class="gp-stat"><span class="gp-stat__val" style="font-size:17px;line-height:28px">{{ cd.tourLabel }}</span><span class="gp-stat__lbl">Tournée</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">HISTORIQUE DES NOMINATIONS</span>
+<div style="display:flex;justify-content:space-between;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ cd.hist }}" as="w" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="{{ w.dot }}"></span><span style="font:var(--text-caption);color:var(--text-muted)">{{ w.label }}</span></div></sc-for>
+</div>
+<span style="display:flex;align-items:center;gap:8px;font:var(--text-caption);color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:50%;background:rgba(210,67,230,.3);box-shadow:inset 0 0 0 1.5px var(--magenta-400)"></span>Semaine nommé·e · une semaine = une nomination</span>
+</div>
+<sc-if value="{{ cd.hasResults }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">RÉSULTATS OFFICIELS</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ cd.results }}" as="r" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-subtle);font:var(--text-body-s)"><span style="font-weight:700">{{ r.t }}</span><span style="color:var(--text-secondary)">{{ r.d }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">CE QU’EN PENSE LA COMMUNAUTÉ</span>
+<div style="display:flex;flex-direction:column;gap:16px;padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ cd.comm }}" as="m" hint-placeholder-count="3">
+<div class="gp-progress gp-progress--cyan"><div class="gp-progress__head"><span>{{ m.label }}</span><b style="white-space:nowrap">{{ m.val }}</b></div><div class="gp-progress__track"><div class="gp-progress__fill" style="width:{{ m.pct }}"></div></div></div>
+</sc-for>
+<div style="display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--border-subtle);font:var(--text-caption);color:var(--text-muted)"><i class="gp-icon icon-lock" style="font-size:14px"></i>Prochain éliminé : visible après la clôture (sam. 20h00).</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMe }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:26px;padding:6px 20px 120px">
+<div style="display:flex;align-items:center;gap:16px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Sam K" size="{{ 64 }}" ring="magenta" hint-size="64px,64px"></x-import>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-h2)">Sam</span><span style="font:var(--text-caption);color:var(--text-muted)">Les Stars du Canap’ · depuis oct. 2026</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="gp-stat"><span class="gp-stat__val gp-gold-text" style="align-self:flex-start;padding-right:4px">{{ me.total }}</span><span class="gp-stat__lbl">Points au total</span></div>
+<div class="gp-stat"><span class="gp-stat__val">{{ me.rankLabel }}</span><span class="gp-stat__lbl">Rang · ligue principale</span></div>
+<div class="gp-stat"><span class="gp-stat__val">{{ myGood }}</span><span class="gp-stat__lbl">Bonnes réponses</span></div>
+<div class="gp-stat"><span class="gp-stat__val">{{ myRate }}</span><span class="gp-stat__lbl">Taux de réussite</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MES BADGES</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ badgeCount }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 8px">
+<sc-for list="{{ badges }}" as="b" hint-placeholder-count="7">
+<button onClick="{{ b.show }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;border:0;background:none;cursor:pointer;padding:0;color:inherit"><span style="{{ b.ic }}"><i class="{{ b.icon }}" style="font-size:22px"></i></span><span style="font:var(--text-caption);font-weight:700;color:var(--text-secondary);text-align:center;line-height:1.2">{{ b.name }}</span></button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">HISTORIQUE DES POINTS</span>
+<div style="padding:16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)"><div style="display:flex;align-items:flex-end;gap:10px;height:140px">
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="5"><div style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px"><span style="font:italic 700 12px var(--font-numeric);color:var(--text-secondary)">{{ b.v }}</span><div style="{{ b.bar }}"></div><span style="font:var(--text-caption);color:var(--text-muted)">{{ b.label }}</span></div></sc-for>
+</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">MES PRONOSTICS</span>
+<div class="gp-seg gp-seg--block"><sc-for list="{{ myTabs }}" as="t" hint-placeholder-count="2"><button class="{{ t.cls }}" onClick="{{ t.go }}">{{ t.label }}</button></sc-for></div>
+<sc-for list="{{ myGroups }}" as="g" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:8px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-muted)">{{ g.title }}</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border-subtle)">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:var(--text-body-s);font-weight:700">{{ r.q }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ r.a }}</span></div>
+<span style="font:italic 800 14px var(--font-numeric);color:var(--gold-400)">{{ r.pts }}</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ r.tone }}" hint-size="80px,22px">{{ r.st }}</x-import>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">PARAMÈTRES</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px"><i class="gp-icon icon-bell" style="font-size:18px;color:var(--text-secondary)"></i><div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Notifications</span><span style="font:var(--text-caption);color:var(--text-muted)">Ouvertures, clôtures, résultats, badges</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Switch" checked="{{ notifOn }}" onChange="{{ toggleNotif }}" hint-size="48px,28px"></x-import></div>
+<div onClick="{{ goLeagues }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--border-subtle)"><i class="gp-icon icon-users" style="font-size:18px;color:var(--text-secondary)"></i><span style="flex:1;font:var(--text-body);font-weight:700">Mes ligues</span><i class="gp-icon icon-chevron-right" style="font-size:18px;color:var(--text-muted)"></i></div>
+<div onClick="{{ privacy }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--border-subtle)"><i class="gp-icon icon-shield" style="font-size:18px;color:var(--text-secondary)"></i><div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Mes données</span><span style="font:var(--text-caption);color:var(--text-muted)">Exporter ou supprimer mon compte</span></div><i class="gp-icon icon-chevron-right" style="font-size:18px;color:var(--text-muted)"></i></div>
+</div>
+</div>
+<p style="margin:0;text-align:center;font:var(--text-caption);color:var(--text-muted);text-wrap:pretty">Jeu entre amis, sans argent. Créé par des fans, sans affiliation avec TF1 ni la production.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLeagues }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;flex-direction:column;gap:20px;padding:6px 20px 120px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-caption);color:var(--text-muted)">Tes pronos comptent dans toutes tes ligues</span><span style="font:var(--text-h1)">Mes ligues</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ leagues }}" as="l" hint-placeholder-count="2">
+<div onClick="{{ l.open }}" class="gp-card gp-card--glass gp-card--interactive" style="padding:14px;display:flex;align-items:center;gap:14px">
+<span style="{{ l.img }}">{{ l.initial }}</span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-body);font-weight:700">{{ l.name }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ l.sub }}</span></div>
+<i class="gp-icon icon-chevron-right" style="font-size:18px;color:var(--text-muted)"></i>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" size="lg" block="{{ true }}" icon="plus" onClick="{{ openCreate }}" hint-size="100%,56px">Créer une ligue</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="lg" block="{{ true }}" icon="key-round" onClick="{{ openJoin }}" hint-size="100%,56px">Rejoindre avec un code</x-import>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLeague }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 20px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="arrow-left" label="Retour" onClick="{{ back }}" hint-size="44px,44px"></x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="share-2" label="Partager" onClick="{{ shareLink }}" hint-size="44px,44px"></x-import></div>
+<div style="display:flex;flex-direction:column;gap:22px;padding:10px 20px 120px">
+<div style="display:flex;align-items:center;gap:16px"><span style="{{ league.img }}">{{ league.initial }}</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font:var(--text-h1);font-size:28px;text-wrap:pretty">{{ league.name }}</span><span style="font:var(--text-body-s);color:var(--text-muted)">{{ league.members }}</span></div></div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:var(--radius-lg);background:linear-gradient(var(--surface-raised),var(--surface-raised)) padding-box,var(--grad-edge) border-box;border:1.5px solid transparent">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">CODE D’INVITATION</span>
+<span style="font:italic 800 28px/1 var(--font-numeric);letter-spacing:.06em">{{ league.code }}</span>
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="sm" icon="copy" onClick="{{ copyCode }}" hint-size="120px,36px">Copier</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="sm" icon="link" onClick="{{ shareLink }}" hint-size="150px,36px">Partager le lien</x-import></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<span style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(47,217,154,.16);color:var(--green-500);flex:none"><i class="gp-icon icon-trending-up" style="font-size:18px"></i></span>
+<div style="display:flex;flex-direction:column"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">JOUEUR DE LA SEMAINE</span><span style="font:var(--text-body);font-weight:700">{{ league.best }}</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">CLASSEMENT</span>
+<sc-for list="{{ league.rows }}" as="p" hint-placeholder-count="6">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.LeaderboardRow" rank="{{ p.rank }}" name="{{ p.name }}" points="{{ p.total }}" move="{{ p.move }}" sub="{{ p.sub }}" me="{{ p.me }}" hint-size="100%,60px"></x-import>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">DERNIÈRES RÉCOMPENSES</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ leagueRewards }}" as="r" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border-subtle)"><span style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--grad-gold);color:#3a1a00;flex:none"><i class="{{ r.icon }}" style="font-size:15px"></i></span><span style="flex:1;font:var(--text-body-s)"><b>{{ r.who }}</b> · {{ r.what }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ r.when }}</span></div></sc-for>
+</div>
+</div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="lg" block="{{ true }}" icon="image" onClick="{{ shareImg }}" hint-size="100%,56px">Partager le classement en image</x-import>
+<sc-if value="{{ league.admin }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:var(--text-caption);color:var(--text-muted);text-align:center;text-wrap:pretty">Tu es admin de cette ligue : tu gères membres et invitations, jamais les résultats ni les scores.</p></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isNotifs }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:var(--text-primary)"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 20px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.IconButton" icon="arrow-left" label="Retour" onClick="{{ back }}" hint-size="44px,44px"></x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" size="sm" onClick="{{ markRead }}" hint-size="150px,36px">Tout marquer lu</x-import></div>
+<div style="display:flex;flex-direction:column;gap:18px;padding:10px 20px 60px">
+<span style="font:var(--text-h1)">Notifications</span>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ notifs }}" as="n" hint-placeholder-count="5">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border-subtle)">
+<span style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:var(--text-primary);flex:none"><i class="{{ n.icon }}" style="font-size:16px"></i></span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-body-s);font-weight:700">{{ n.title }}</span><span style="font:var(--text-body-s);color:var(--text-secondary)">{{ n.msg }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ n.time }}</span></div>
+<sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="width:8px;height:8px;border-radius:50%;background:var(--flare-500);margin-top:6px;flex:none"></span></sc-if>
+</div>
+</sc-for>
+</div>
+<p style="margin:0;font:var(--text-caption);color:var(--text-muted)">Désactive-les à tout moment depuis ton profil.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFinale }}" hint-placeholder-val="{{ false }}">
+<div style="position:relative;display:flex;flex-direction:column">
+<div style="position:absolute;left:0;right:0;top:0;height:300px;background:url(assets/key-art.jpg) -60px 10px/500px auto no-repeat,#2a1275"></div>
+<div style="position:absolute;left:0;right:0;top:0;height:302px;background:linear-gradient(180deg,rgba(13,3,34,.45) 0%,rgba(13,3,34,0) 16%,rgba(13,3,34,0) 60%,#0d0322 100%)"></div>
+<div style="position:relative;display:flex;justify-content:space-between;align-items:center;height:50px;padding:0 30px;font:600 15px var(--font-body);color:#fff"><span>21:10</span><span style="display:flex;gap:6px"><i class="gp-icon icon-signal" style="font-size:16px"></i><i class="gp-icon icon-wifi" style="font-size:16px"></i><i class="gp-icon icon-battery-full" style="font-size:18px"></i></span></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:30px;padding:220px 20px 50px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" icon="crown" hint-size="110px,22px">Grande finale</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="100px,22px">Aperçu démo</x-import></div>
+<span style="font:var(--text-body);color:var(--text-secondary)">Le vainqueur de la Star Academy 2026 est</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Inès" size="{{ 104 }}" ring="gold" hint-size="104px,104px"></x-import>
+<span class="gp-gold-text" style="font:italic 900 60px/1 var(--font-display);padding-right:8px">Inès</span>
+<span style="font:var(--text-caption);color:var(--text-muted)">Sam. 19 déc. · résultat officiel</span>
+</div>
+<div style="height:1px;background:var(--border-subtle)"></div>
+<div style="display:flex;flex-direction:column;gap:12px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">TON RÉCAP DE SAISON</span>
+<div style="display:flex;flex-direction:column;gap:18px;padding:20px;border-radius:var(--radius-lg);background:linear-gradient(var(--surface-raised),var(--surface-raised)) padding-box,var(--grad-edge) border-box;border:1.5px solid transparent;box-shadow:var(--shadow-raised)">
+<div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">STAR ACADEMY 2026</span><span class="gp-glitter-text" style="font:italic 900 18px/1 var(--font-display);padding-right:4px">Le Grand Prono</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Sam K" size="{{ 40 }}" ring="magenta" hint-size="40px,40px"></x-import></div>
+<div style="display:flex;align-items:center;gap:14px"><span class="gp-gold-text" style="font:italic 900 76px/1 var(--font-numeric);padding-right:8px">#2</span><div style="display:flex;flex-direction:column"><span style="font:var(--text-h3)">Sam</span><span style="font:var(--text-caption);color:var(--text-muted)">2e sur 8 · Les Stars du Canap’</span></div></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="gp-stat"><span class="gp-stat__val">1 184</span><span class="gp-stat__lbl">Points</span></div>
+<div class="gp-stat"><span class="gp-stat__val">64 %</span><span class="gp-stat__lbl">Réussite</span></div>
+<div class="gp-stat"><span class="gp-stat__val" style="color:var(--gold-400)">+100</span><span class="gp-stat__lbl">Meilleur prono · le grand gagnant</span></div>
+<div class="gp-stat"><span class="gp-stat__val" style="color:var(--gold-400)">+95</span><span class="gp-stat__lbl">Meilleur prime · prime 9</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-muted)">MON RANG, PRIME APRÈS PRIME</span><svg width="100%" height="56" viewBox="0 0 300 56" preserveAspectRatio="none" style="display:block;overflow:visible"><path d="M0 38 L33 30 L67 30 L100 30 L133 22 L167 22 L200 14 L233 22 L267 14 L300 14" fill="none" stroke="#ffa64a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" icon="eye" hint-size="110px,22px">Le Visionnaire</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" icon="sparkles" hint-size="110px,22px">Madame Irma</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="gold" icon="calendar-check" hint-size="90px,22px">Le Fidèle</x-import></div>
+<span style="font:var(--text-caption);color:var(--text-muted);text-align:center">legrandprono.app · jeu entre amis, sans argent</span>
+</div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" size="lg" block="{{ true }}" icon="share-2" onClick="{{ shareRecap }}" hint-size="100%,56px">Partager mon récap</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="lg" block="{{ true }}" onClick="{{ goRank }}" hint-size="100%,56px">Voir le classement final</x-import>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">CHAMPIONS DES LIGUES</span>
+<sc-for list="{{ champions }}" as="c" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)"><span style="{{ c.img }}">{{ c.initial }}</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:var(--text-caption);color:var(--text-muted)">{{ c.league }}</span><span style="font:var(--text-body);font-weight:700">{{ c.name }}</span></div><span style="font:italic 800 16px var(--font-numeric);color:var(--gold-400)">{{ c.pts }}</span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ isPick }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:0;right:0;bottom:0;padding:32px 20px 34px;background:var(--grad-protect);display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{ pickOpen }}" hint-placeholder-val="{{ true }}">
+<span style="text-align:center;font:var(--text-body-s);color:var(--text-secondary)">{{ countLabel }}</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" size="lg" block="{{ true }}" disabled="{{ cantSubmit }}" onClick="{{ askConfirm }}" hint-size="100%,56px">{{ submitLabel }}</x-import>
+</sc-if>
+<sc-if value="{{ pickLocked }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-md);background:rgba(32,11,92,.92);box-shadow:inset 0 0 0 1px var(--border-strong)">
+<i class="gp-icon icon-lock" style="font-size:18px;color:var(--text-secondary)"></i>
+<div style="display:flex;flex-direction:column"><span style="font:var(--text-body-s);font-weight:700">Prono verrouillé</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ lockedMsg }}</span></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ showNav }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:0;right:0;bottom:0;padding-bottom:14px;background:rgba(13,3,34,.82)">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.BottomNav" items="{{ nav }}" value="{{ navValue }}" onChange="{{ navChange }}" hint-size="100%,72px"></x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ confirm }}" hint-placeholder-val="{{ false }}">
+<div class="gp-dialog__scrim">
+<div class="gp-dialog">
+<h2 class="gp-dialog__title">Valider ton prono ?</h2>
+<div class="gp-dialog__body">Tu choisis <b style="color:var(--text-primary)">{{ confirmNames }}</b>. {{ confirmHint }}</div>
+<div class="gp-dialog__actions">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" block="{{ true }}" onClick="{{ doSubmit }}" hint-size="100%,48px">Je valide</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" block="{{ true }}" onClick="{{ cancelConfirm }}" hint-size="100%,48px">Modifier</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ dlgOpen }}" hint-placeholder-val="{{ false }}">
+<div class="gp-dialog__scrim">
+<div class="gp-dialog">
+<h2 class="gp-dialog__title">{{ dlgTitle }}</h2>
+<label class="gp-field"><span class="gp-field__label">{{ dlgLabel }}</span><span class="gp-field__control"><input value="{{ dlgValue }}" onChange="{{ dlgInput }}" placeholder="{{ dlgPlaceholder }}"></span></label>
+<div class="gp-dialog__actions">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" block="{{ true }}" onClick="{{ dlgSubmit }}" hint-size="100%,48px">{{ dlgCta }}</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" block="{{ true }}" onClick="{{ dlgCancel }}" hint-size="100%,48px">Annuler</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:16px;right:16px;top:54px;z-index:60;display:flex;justify-content:center">
+<div class="{{ toast.cls }}">
+<span class="gp-toast__ic"><i class="{{ toast.icon }}" style="font-size:16px"></i></span>
+<div style="display:flex;flex-direction:column;gap:2px"><span class="gp-toast__title">{{ toast.title }}</span><span class="gp-toast__msg">{{ toast.msg }}</span></div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:18px;flex:none">
+<div style="height:36px;display:flex;align-items:center;font:var(--text-body-s);color:var(--text-muted)">Admin desktop · accès réservé aux comptes autorisés</div>
+<div style="position:relative;width:1240px;height:844px;border-radius:14px;overflow:hidden;background:var(--surface-page);box-shadow:0 0 0 1px rgba(255,255,255,.12),0 40px 80px -20px rgba(0,0,0,.8);display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:14px;height:40px;padding:0 16px;background:#150638;border-bottom:1px solid var(--border-subtle)">
+<span style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.18)"></span><span style="width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.18)"></span><span style="width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.18)"></span></span>
+<span style="flex:1;max-width:420px;margin:0 auto;height:24px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font:var(--text-caption);color:var(--text-muted)">legrandprono.app/admin/resultats</span>
+</div>
+<div style="display:flex;align-items:center;gap:16px;height:60px;padding:0 24px;border-bottom:1px solid var(--border-subtle)">
+<div style="display:flex;align-items:baseline;gap:10px"><span class="gp-glitter-text" style="font:italic 900 20px/1 var(--font-display);padding-right:4px">Le Grand Prono</span><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">ADMINISTRATION</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="magenta" hint-size="110px,22px">Saison 2026</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="52px,22px">Démo</x-import>
+<span style="flex:1"></span>
+<span style="font:var(--text-body-s);color:var(--text-secondary);white-space:nowrap">Alex (admin)</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="Alex A" size="{{ 32 }}" hint-size="32px,32px"></x-import>
+</div>
+<div style="flex:1;min-height:0;display:flex">
+<div style="width:190px;flex:none;border-right:1px solid var(--border-subtle);padding:18px 10px;display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ adminNav }}" as="n" hint-placeholder-count="7">
+<div onClick="{{ n.go }}" style="{{ n.style }}"><i class="{{ n.icon }}" style="font-size:17px"></i>{{ n.label }}</div>
+</sc-for>
+</div>
+<sc-if value="{{ avResults }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;min-width:0;display:flex">
+<div class="ph-scroll" style="width:260px;flex:none;border-right:1px solid var(--border-subtle);padding:24px 16px;display:flex;flex-direction:column;gap:14px;overflow:auto;scrollbar-width:none">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">PRIME 6 · SAM. 21 NOV.</span><span style="font:var(--text-h2)">Résultats à saisir</span></div>
+<sc-for list="{{ aQueue }}" as="q" hint-placeholder-count="4">
+<div style="{{ q.style }}">
+<div style="display:flex;justify-content:space-between;align-items:center"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ q.tone }}" hint-size="80px,22px">{{ q.status }}</x-import><span style="font:var(--text-caption);color:var(--text-muted)">{{ q.count }}</span></div>
+<span style="font:var(--text-body);font-weight:700">{{ q.q }}</span>
+<span style="font:var(--text-caption);color:var(--text-muted)">{{ q.meta }}</span>
+</div>
+</sc-for>
+</div>
+<div class="ph-scroll" style="position:relative;flex:1;min-width:0;padding:24px 28px;display:flex;flex-direction:column;gap:22px;overflow:auto;scrollbar-width:none">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Qui sera éliminé ?</span><span style="font:var(--text-body-s);color:var(--text-muted)">Réponse unique · 30 pts · clôturée sam. 21 nov. 20h00 · {{ aAnswered }}</span></div>
+<div style="display:flex;align-items:center;gap:6px">
+<sc-for list="{{ aSteps }}" as="s" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:6px"><span style="{{ s.dot }}">{{ s.n }}</span><span style="{{ s.lbl }}">{{ s.label }}</span><sc-if value="{{ s.sep }}" hint-placeholder-val="{{ true }}"><span style="width:18px;height:1px;background:var(--border-strong)"></span></sc-if></div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{ aIsPublished }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:var(--radius-md);background:rgba(47,217,154,.1);box-shadow:inset 0 0 0 1px rgba(47,217,154,.4)">
+<i class="gp-icon icon-circle-check" style="font-size:20px;color:var(--green-500)"></i>
+<div style="flex:1;display:flex;flex-direction:column"><span style="font:var(--text-body);font-weight:700">Résultat publié : {{ published }}</span><span style="font:var(--text-caption);color:var(--text-secondary)">Points attribués, classements de toutes les ligues actualisés.</span></div>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="sm" icon="pencil" onClick="{{ aCorrect }}" hint-size="150px,36px">Corriger le résultat</x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsEdit }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">1 · RÉSULTAT OFFICIEL</span><span style="font:var(--text-body-s);color:var(--text-muted)">{{ aEditHint }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,160px);gap:12px">
+<sc-for list="{{ aOpts }}" as="c" hint-placeholder-count="3">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.CandidateCard" name="{{ c.name }}" meta="Nommé·e" selected="{{ c.on }}" onSelect="{{ c.toggle }}" size="{{ 64 }}" hint-size="160px,140px"></x-import>
+</sc-for>
+</div>
+<div style="display:flex;gap:10px;padding-top:6px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" disabled="{{ aNoPick }}" icon-right="arrow-right" onClick="{{ aPreview }}" hint-size="220px,48px">Prévisualiser les points</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" icon="ban" hint-size="180px,48px">Annuler la question</x-import>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aShowTable }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">{{ aTableTitle }}</span>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<div class="gp-stat"><span class="gp-stat__val">{{ aSum.correct }}</span><span class="gp-stat__lbl">Bonnes réponses</span></div>
+<div class="gp-stat"><span class="gp-stat__val" style="color:var(--gold-400)">{{ aSum.pts }}</span><span class="gp-stat__lbl">Points distribués</span></div>
+<div class="gp-stat"><span class="gp-stat__val">{{ aSum.none }}</span><span class="gp-stat__lbl">Sans réponse (0 pt)</span></div>
+</div>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:grid;grid-template-columns:minmax(130px,1.3fr) minmax(90px,1fr) 100px 64px 104px 84px;gap:12px;align-items:center;padding:10px 16px;font:var(--text-overline);letter-spacing:.1em;color:var(--text-muted)"><span>JOUEUR</span><span>RÉPONSE</span><span>RÉSULTAT</span><span>POINTS</span><span>TOTAL</span><span>RANG</span></div>
+<sc-for list="{{ aRows }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:minmax(130px,1.3fr) minmax(90px,1fr) 100px 64px 104px 84px;gap:12px;align-items:center;min-height:48px;padding:0 16px;border-top:1px solid var(--border-subtle);font:var(--text-body-s)">
+<span style="display:flex;align-items:center;gap:10px;font-weight:700"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="{{ r.name }}" size="{{ 28 }}" hint-size="28px,28px"></x-import>{{ r.label }}</span>
+<span style="color:var(--text-secondary)">{{ r.answerLabel }}</span>
+<span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ r.tone }}" hint-size="80px,22px">{{ r.res }}</x-import></span>
+<span style="font:italic 800 15px var(--font-numeric);color:var(--gold-400)">{{ r.ptsLabel }}</span>
+<span style="font:italic 700 14px var(--font-numeric);color:var(--text-secondary)">{{ r.totalLabel }}</span>
+<span style="font:italic 700 14px var(--font-numeric);color:var(--text-secondary)">{{ r.rankLabel }}</span>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ aIsPreview }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:10px">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" icon="send" onClick="{{ aAskPublish }}" hint-size="200px,48px">Publier les résultats</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" icon="arrow-left" onClick="{{ aBack }}" hint-size="190px,48px">Modifier le résultat</x-import>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasLog }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">JOURNAL DES MODIFICATIONS</span>
+<sc-for list="{{ log }}" as="l" hint-placeholder-count="1">
+<div style="display:flex;align-items:center;gap:12px;font:var(--text-body-s);color:var(--text-secondary)"><i class="gp-icon icon-history" style="font-size:15px;color:var(--text-muted)"></i><span style="flex:1">{{ l.text }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ l.meta }}</span></div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ aConfirm }}" hint-placeholder-val="{{ false }}">
+<div class="gp-dialog__scrim">
+<div class="gp-dialog">
+<h2 class="gp-dialog__title">Publier les résultats ?</h2>
+<div class="gp-dialog__body">Éliminé·e : <b style="color:var(--text-primary)">{{ aPick }}</b>. {{ aSum.pts }} pts seront attribués à {{ aSum.correct }} joueurs et tous les classements seront recalculés.</div>
+<div class="gp-dialog__actions">
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" block="{{ true }}" onClick="{{ aPublish }}" hint-size="100%,48px">Publier</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" block="{{ true }}" onClick="{{ aCancelPublish }}" hint-size="100%,48px">Annuler</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avDash }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Tableau de bord</span><span style="font:var(--text-body-s);color:var(--text-muted)">Saison 2026 · semaine 6 · prime samedi 21 nov. à 21h10 (heure de Paris)</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+<sc-for list="{{ dashStats }}" as="d" hint-placeholder-count="6"><div class="gp-stat"><span class="gp-stat__val">{{ d.v }}</span><span class="gp-stat__lbl">{{ d.l }}</span></div></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">PROCHAINES CLÔTURES</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ dashClosings }}" as="c" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 90px;gap:12px;align-items:center;min-height:48px;padding:0 16px;border-bottom:1px solid var(--border-subtle);font:var(--text-body-s)"><span style="font-weight:700">{{ c.q }}</span><span style="color:var(--text-secondary)">{{ c.when }}</span><span style="color:var(--text-muted);text-align:right">{{ c.n }}</span></div></sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">ACTIONS RAPIDES</span>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" block="{{ true }}" icon="flag" onClick="{{ goResultsA }}" hint-size="100%,48px">Saisir les résultats du prime 6</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" block="{{ true }}" icon="users" onClick="{{ goCandsA }}" hint-size="100%,48px">Enregistrer une nomination</x-import>
+<x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" block="{{ true }}" icon="plus" onClick="{{ goQuestionsA }}" hint-size="100%,48px">Créer une question</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avCands }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Candidats</span><span style="font:var(--text-body-s);color:var(--text-muted)">Les changements sont visibles immédiatement dans l’app. Le statut tournée est indépendant du statut en compétition.</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" icon="plus" onClick="{{ addCand }}" hint-size="190px,48px">Ajouter un candidat</x-import></div>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 140px 100px 80px 290px;gap:12px;align-items:center;padding:10px 16px;font:var(--text-overline);letter-spacing:.1em;color:var(--text-muted)"><span>CANDIDAT</span><span>STATUT</span><span>NOMINATIONS</span><span>TOURNÉE</span><span>ACTIONS</span></div>
+<sc-for list="{{ aCands }}" as="c" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 140px 100px 80px 290px;gap:12px;align-items:center;min-height:52px;padding:0 16px;border-top:1px solid var(--border-subtle);font:var(--text-body-s)">
+<span style="display:flex;align-items:center;gap:10px;font-weight:700"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Avatar" name="{{ c.name }}" size="{{ 30 }}" hint-size="30px,30px"></x-import>{{ c.name }}</span>
+<span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ c.tone }}" hint-size="100px,22px">{{ c.status }}</x-import></span>
+<span style="font:italic 800 16px var(--font-numeric)">{{ c.noms }}</span>
+<span><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Switch" checked="{{ c.tour }}" onChange="{{ c.tourToggle }}" hint-size="48px,28px"></x-import></span>
+<span style="display:flex;gap:6px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" size="sm" disabled="{{ c.nomDisabled }}" onClick="{{ c.nom }}" hint-size="150px,36px">{{ c.nomLabel }}</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" size="sm" onClick="{{ c.out }}" hint-size="100px,36px">{{ c.outLabel }}</x-import></span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avQuestions }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Questions</span><span style="font:var(--text-body-s);color:var(--text-muted)">Chaque règle est fixée avant l’ouverture. Une question annulée n’attribue aucun point.</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:24px;align-items:start">
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ allQs }}" as="q" hint-placeholder-count="8"><div style="display:flex;align-items:center;gap:14px;min-height:56px;padding:8px 16px;border-bottom:1px solid var(--border-subtle)"><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:var(--text-body-s);font-weight:700">{{ q.q }}</span><span style="font:var(--text-caption);color:var(--text-muted)">{{ q.meta }}</span></div><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="{{ q.tone }}" hint-size="110px,22px">{{ q.label }}</x-import></div></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;padding:20px;border-radius:var(--radius-lg);background:var(--surface-raised);box-shadow:inset 0 0 0 1px var(--border-subtle),var(--shadow-card)">
+<span style="font:var(--text-overline);letter-spacing:.14em;color:var(--gold-200)">NOUVELLE QUESTION</span>
+<div style="display:flex;flex-direction:column;gap:6px"><span class="gp-field__label">Type</span><div class="gp-seg" style="flex-wrap:wrap;border-radius:20px"><sc-for list="{{ qTypes }}" as="t" hint-placeholder-count="5"><button class="{{ t.cls }}" onClick="{{ t.go }}" style="flex:none;height:34px;padding:0 12px">{{ t.label }}</button></sc-for></div></div>
+<label class="gp-field"><span class="gp-field__label">Intitulé</span><span class="gp-field__control"><input value="{{ qTitle }}" onChange="{{ qTitleInput }}" placeholder="Ex. Qui sera éliminé au prime 7 ?"></span></label>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px"><label class="gp-field"><span class="gp-field__label">Prime</span><span class="gp-field__control"><input defaultValue="Prime 7"></span></label><label class="gp-field"><span class="gp-field__label">Points</span><span class="gp-field__control"><input type="number" defaultValue="20"></span></label></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px"><label class="gp-field"><span class="gp-field__label">Sélections</span><span class="gp-field__control"><input type="number" defaultValue="1"></span></label><label class="gp-field"><span class="gp-field__label">Clôture</span><span class="gp-field__control"><input type="datetime-local" defaultValue="2026-11-28T20:00"></span><span class="gp-field__hint">Heure de Paris</span></label></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span class="gp-field__label">Réponses possibles</span><div style="display:flex;gap:6px;flex-wrap:wrap"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" tone="magenta" hint-size="170px,22px">Candidats en compétition</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Badge" hint-size="90px,22px">Nommés</x-import></div></div>
+<label class="gp-field"><span class="gp-field__label">Règle de validation</span><textarea defaultValue="Une bonne réponse par candidat officiellement éliminé. En cas d’égalité, toutes les réponses reconnues sont acceptées." style="min-height:76px;padding:12px 16px;border-radius:var(--radius-md);border:0;resize:vertical;background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle);color:var(--text-primary);font:var(--text-body-s)"></textarea></label>
+<div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" disabled="{{ qNoTitle }}" icon="send" onClick="{{ qPublish }}" hint-size="170px,48px">Publier la question</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="secondary" disabled="{{ qNoTitle }}" onClick="{{ qDraft }}" hint-size="130px,48px">Brouillon</x-import></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avSeason }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Saison 2026</span><span style="font:var(--text-body-s);color:var(--text-muted)">Les saisons passées restent consultables. Leurs données ne sont jamais mélangées.</span></div><div style="display:flex;gap:8px"><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" variant="ghost" icon="archive" hint-size="170px,48px">Archiver la saison</x-import><x-import component-from-global-scope="LeGrandPronoDesignSystem_2fc6cd.Button" icon="check" onClick="{{ seasonSave }}" hint-size="140px,48px">Enregistrer</x-import></div></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">DATES · HEURE DE PARIS</span>
+<label class="gp-field"><span class="gp-field__label">Premier prime</span><span class="gp-field__control"><input type="datetime-local" defaultValue="2026-10-17T21:10"></span><span class="gp-field__hint">L’accueil passe automatiquement du mode avant-saison au mode saison.</span></label>
+<label class="gp-field"><span class="gp-field__label">Clôture des grands pronos</span><span class="gp-field__control"><input type="datetime-local" defaultValue="2026-10-17T21:00"></span></label>
+<label class="gp-field"><span class="gp-field__label">Grande finale</span><span class="gp-field__control"><input type="datetime-local" defaultValue="2026-12-19T21:10"></span></label>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;padding:20px;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">RÈGLES</span>
+<label class="gp-field"><span class="gp-field__label">Nombre de finalistes</span><span class="gp-field__control"><input type="number" defaultValue="2"></span></label>
+<label class="gp-field"><span class="gp-field__label">Participants à la tournée</span><span class="gp-field__control"><input type="number" defaultValue="8"></span></label>
+<label class="gp-field"><span class="gp-field__label">Seuil « moins nommé » (semaines éligibles)</span><span class="gp-field__control"><input type="number" defaultValue="4"></span></label>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-overline);letter-spacing:.14em;color:var(--text-secondary)">BARÈME DES GRANDS PRONOS</span>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<sc-for list="{{ seasonPts }}" as="r" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 120px;gap:12px;align-items:center;min-height:52px;padding:0 16px;border-bottom:1px solid var(--border-subtle);font:var(--text-body-s)"><span style="font-weight:700">{{ r.q }}</span><input type="number" defaultValue="{{ r.pts }}" style="height:36px;padding:0 12px;border-radius:10px;border:0;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px var(--border-subtle);color:var(--text-primary);font:italic 800 15px var(--font-numeric)"><span style="color:var(--text-muted)">{{ r.unit }}</span></div></sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avLeagues }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Ligues</span><span style="font:var(--text-body-s);color:var(--text-muted)">Les admins de ligue gèrent membres et invitations, sans accès aux résultats ni aux scores.</span></div>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 100px 140px 110px 150px;gap:12px;padding:10px 16px;font:var(--text-overline);letter-spacing:.1em;color:var(--text-muted)"><span>LIGUE</span><span>MEMBRES</span><span>ADMIN DE LIGUE</span><span>CRÉÉE LE</span><span>CODE</span></div>
+<sc-for list="{{ aLeagues }}" as="l" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) 100px 140px 110px 150px;gap:12px;align-items:center;min-height:52px;padding:0 16px;border-top:1px solid var(--border-subtle);font:var(--text-body-s)"><span style="font-weight:700">{{ l.name }}</span><span style="font:italic 800 15px var(--font-numeric)">{{ l.members }}</span><span style="color:var(--text-secondary)">{{ l.owner }}</span><span style="color:var(--text-secondary)">{{ l.created }}</span><span style="color:var(--text-muted);font-family:ui-monospace,Menlo,monospace">{{ l.code }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ avJournal }}" hint-placeholder-val="{{ false }}">
+<div class="ph-scroll" style="flex:1;min-width:0;padding:28px 32px;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font:var(--text-h1)">Journal</span><span style="font:var(--text-body-s);color:var(--text-muted)">Chaque modification importante : auteur, date, ancienne et nouvelle valeur.</span></div>
+<div style="display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)">
+<div style="display:grid;grid-template-columns:120px 80px minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:10px 16px;font:var(--text-overline);letter-spacing:.1em;color:var(--text-muted)"><span>DATE</span><span>AUTEUR</span><span>ACTION</span><span>ANCIENNE VALEUR</span><span>NOUVELLE VALEUR</span></div>
+<sc-for list="{{ fullLog }}" as="l" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:120px 80px minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;min-height:48px;padding:6px 16px;border-top:1px solid var(--border-subtle);font:var(--text-body-s)"><span style="color:var(--text-muted)">{{ l.when }}</span><span style="color:var(--text-secondary)">{{ l.who }}</span><span style="font-weight:700">{{ l.what }}</span><span style="color:var(--text-muted)">{{ l.old }}</span><span style="color:var(--text-primary)">{{ l.nu }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+<sc-if value="{{ hasAToast }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:24px;bottom:24px;z-index:60"><div class="gp-toast gp-toast--success"><span class="gp-toast__ic"><i class="gp-icon icon-check" style="font-size:16px"></i></span><div style="display:flex;flex-direction:column;gap:2px"><span class="gp-toast__title">{{ aToast }}</span><span class="gp-toast__msg">Enregistré dans le journal.</span></div></div></div></sc-if>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;grandsOuverts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;label&quot;:&quot;Grands pronos encore ouverts (démo de sélection)&quot;}}">
+const CANDS = ['Inès','Noah','Jade','Malo','Léna','Théo','Chloé','Enzo','Lou','Yanis','Maëlle','Sacha'];
+const OUT = ['Théo','Sacha'];
+const NOM = ['Inès','Noah','Jade'];
+const WEEK = [
+  { id:'elim', q:'Qui sera éliminé ?', desc:'Parmi les trois nommés de la semaine.', pts:30, max:1, pool:'nom', close:'sam. 20h00', icon:'flame' },
+  { id:'nomi', q:'Qui sera nommé la semaine prochaine ?', desc:'Choisis 3 candidats. 15 pts par nommé trouvé.', pts:15, per:'nommé', max:3, pool:'in', close:'jeu. 19h00', icon:'users', tray:'MES 3 NOMMÉS' },
+  { id:'eval', q:'Qui terminera premier des évaluations ?', desc:'En cas d’égalité officielle, toutes les bonnes réponses comptent.', pts:20, max:1, pool:'in', close:'ven. 18h00', icon:'medal' },
+  { id:'immu', q:'Qui obtiendra l’immunité ?', desc:'Le candidat immunisé ne peut pas être nommé la semaine suivante.', pts:20, max:1, pool:'in', close:'ven. 18h00', icon:'shield' }
+];
+const SEASON = [
+  { id:'win', q:'Le grand gagnant', desc:'Le candidat qui remporte la saison. Points attribués à la finale.', pts:100, max:1, icon:'crown' },
+  { id:'fin', q:'Les deux finalistes', desc:'30 pts par finaliste trouvé. L’ordre ne compte pas.', pts:30, per:'finaliste', max:2, icon:'star', tray:'MES FINALISTES' },
+  { id:'tour', q:'Les 8 de la tournée', desc:'20 pts par candidat trouvé, +50 si tu trouves les 8.', pts:20, per:'candidat', max:8, icon:'ticket', tray:'MA SÉLECTION POUR LA TOURNÉE' },
+  { id:'first', q:'Le premier éliminé', desc:'Le premier candidat éliminé après la clôture des grands pronos.', pts:50, max:1, icon:'flame' },
+  { id:'most', q:'Le plus nommé', desc:'Nombre de semaines nommé. En cas d’égalité, tous comptent.', pts:60, max:1, icon:'repeat' },
+  { id:'least', q:'Le moins nommé', desc:'Parmi les candidats éligibles au moins 4 semaines.', pts:40, max:1, icon:'shield-check' },
+  { id:'ffin', q:'Le premier qualifié pour la finale', desc:'Le premier candidat officiellement qualifié.', pts:40, max:1, icon:'flag' },
+  { id:'last', q:'Le dernier éliminé avant la finale', desc:'Le dernier candidat éliminé avant la grande finale.', pts:40, max:1, icon:'door-open' },
+  { id:'couple', q:'Le couple de la saison', desc:'Validé uniquement si le couple est rendu public par les intéressés.', pts:30, max:2, icon:'heart', tray:'MON COUPLE' }
+];
+const PLAYERS = [
+  { name:'Camille', base:412, week:58, move:2, good:14, elim:'Noah', hist:[3,2,2,3,1] },
+  { name:'Hugo', base:398, week:25, move:0, good:13, elim:'Jade', hist:[1,1,2,2,2] },
+  { name:'Sam', base:371, week:45, move:1, good:12, me:true, hist:[5,4,4,4,3] },
+  { name:'Manon', base:356, week:10, move:-3, good:11, elim:'Noah', hist:[2,3,1,1,4] },
+  { name:'Rayan', base:340, week:60, move:3, good:11, elim:'Inès', hist:[8,7,6,8,5] },
+  { name:'Léo', base:318, week:20, move:-1, good:10, elim:'Noah', hist:[4,5,5,5,6] },
+  { name:'Zoé', base:297, week:25, move:-1, good:9, elim:'Jade', hist:[6,6,7,6,7] },
+  { name:'Karim', base:281, week:15, move:-1, good:8, elim:null, hist:[7,8,8,7,8] }
+];
+const COLORS = ['#e679f2','#b7a0ff','#ffe8b3'];
+const css = str => Object.fromEntries(str.split(';').filter(Boolean).map(d => { const i = d.indexOf(':'); return [d.slice(0, i).trim().replace(/-([a-z])/g, (_, c) => c.toUpperCase()), d.slice(i + 1).trim()]; }));
+const rankOf = (list, key) => list.map(p => ({ ...p, [key + 'Rank']: 1 + list.filter(o => o[key] > p[key]).length }));
+
+const HUES = [['#d243e6','#4a24c8'],['#ff8a1f','#b42ccc'],['#63d9ff','#6a3cf0'],['#ffcb5c','#e8650c'],['#8b67ff','#24106a']];
+const INFO = {
+  'Inès': { age:21, city:'Lyon', bio:'Chanteuse soul formée au conservatoire, elle écrit ses propres textes depuis ses 15 ans.', hist:[0,0,1,0,0,1], comm:[38,81,22] },
+  'Noah': { age:23, city:'Lille', bio:'Guitariste et auteur-compositeur, il a longtemps joué dans les bars de sa ville.', hist:[1,0,0,1,0,1], comm:[24,74,31] },
+  'Jade': { age:19, city:'Marseille', bio:'Danseuse avant d’être chanteuse, elle mise tout sur la scène.', hist:[0,1,0,0,0,1], comm:[9,52,40] },
+  'Malo': { age:22, city:'Rennes', bio:'Pianiste autodidacte, fan de variété française.', hist:[0,0,0,0,0,0], comm:[6,61,3] },
+  'Léna': { age:20, city:'Bordeaux', bio:'Voix pop puissante, repérée sur les réseaux.', hist:[1,0,1,0,0,0], comm:[11,68,5] },
+  'Théo': { age:24, city:'Nantes', bio:'Rappeur et beatmaker, il voulait se confronter au chant.', hist:[0,1,1,0,1,null], comm:[1,12,0], out:'prime 5' },
+  'Chloé': { age:18, city:'Toulouse', bio:'La benjamine de la promo, choriste depuis l’enfance.', hist:[0,0,0,1,0,0], comm:[4,49,4] },
+  'Enzo': { age:21, city:'Nice', bio:'Comédien de formation, il chante depuis la comédie musicale.', hist:[0,0,0,0,1,0], comm:[3,55,6] },
+  'Lou': { age:22, city:'Strasbourg', bio:'Folk et guitare-voix, un univers intimiste.', hist:[0,0,0,1,0,0], comm:[2,44,7] },
+  'Yanis': { age:20, city:'Montpellier', bio:'Danseur hip-hop reconverti dans le chant R’n’B.', hist:[0,0,1,0,0,0], comm:[1,39,9] },
+  'Maëlle': { age:23, city:'Grenoble', bio:'Voix lyrique, elle rêve de comédie musicale.', hist:[0,0,0,0,1,0], comm:[1,42,5] },
+  'Sacha': { age:25, city:'Paris', bio:'Le plus âgé de la promo, ancien serveur passionné de soul.', hist:[1,1,null,null,null,null], comm:[0,5,0], out:'prime 2' }
+};
+const BADGES = [
+  { name:'Le Visionnaire', icon:'eye', desc:'Trouver le vainqueur de la saison.' },
+  { name:'Le Tour Manager', icon:'ticket', desc:'Trouver les 8 de la tournée.' },
+  { name:'Madame Irma', icon:'sparkles', desc:'3 pronos corrects d’affilée.', earned:'8 nov.' },
+  { name:'Le Spécialiste', icon:'target', desc:'80 % de bonnes réponses sur un prime d’au moins 5 questions.', earned:'14 nov.' },
+  { name:'Le Comeback', icon:'trending-up', desc:'Gagner 3 places dans sa ligue en une semaine.' },
+  { name:'Le Fidèle', icon:'calendar-check', desc:'Participer aux pronos 5 semaines différentes.', earned:'21 nov.' },
+  { name:'Le Champion', icon:'crown', desc:'Finir premier d’une ligue en fin de saison.' }
+];
+const FUN = [
+  { id:'duo', q:'Y aura-t-il un duo surprise avec un ancien candidat ?', crit:'un ancien candidat chante en direct avec un élève pendant le prime.', pts:15, opts:['Oui','Non'], close:'sam. 21h00' },
+  { id:'paroles', q:'Un candidat oubliera-t-il ses paroles ?', crit:'un candidat s’arrête ou reprend sa chanson, constaté à l’antenne.', pts:10, opts:['Oui','Non'], close:'sam. 21h00' },
+  { id:'invites', q:'Combien d’artistes invités sur le prime ?', crit:'nombre d’artistes invités crédités au générique de fin.', pts:20, opts:['1 – 2','3 – 4','5 et +'], close:'sam. 21h00' },
+  { id:'double', q:'Deux candidats seront-ils immunisés ?', crit:'deux immunités officielles annoncées pour la semaine.', pts:10, opts:['Oui','Non'], close:'ven. 18h00' }
+];
+const NOTIFS = [
+  { icon:'sparkles', title:'Pronos du prime 6 ouverts', msg:'4 questions et 4 paris improbables t’attendent.', time:'dim. 10h00' },
+  { icon:'clock', title:'Clôture dans 2 h', msg:'« Premier des évaluations » ferme à 18h00.', time:'ven. 16h00' },
+  { icon:'medal', title:'Nouveau badge : Le Fidèle', msg:'5 semaines de pronos. Respect.', time:'sam. 23h40' },
+  { icon:'flag', title:'Résultats du prime 5 publiés', msg:'+45 pts pour toi.', time:'dim. 00h12' },
+  { icon:'trending-up', title:'Tu remontes', msg:'Tu passes 3e des Stars du Canap’.', time:'dim. 00h13' }
+];
+const BUREAU = [
+  { name:'Nadia', total:455, move:1 }, { name:'Julie', total:430, move:-1 }, { name:'Thomas', total:419, move:0 }, { name:'Kevin', total:398, move:2 },
+  { name:'Lucie', total:380, move:0 }, { name:'Sam', total:371, move:1, me:true }, { name:'Paul', total:350, move:-2 }, { name:'Emma', total:322, move:0 }
+];
+const SEED_LOG = [
+  { when:'21 nov. 00h08', who:'Alex', what:'Résultat publié · Qui sera éliminé ? (P5)', old:'—', nu:'Théo' },
+  { when:'18 nov. 19h30', who:'Alex', what:'Nominations semaine 6', old:'En compétition', nu:'Inès, Noah, Jade · Nommé·e' },
+  { when:'14 nov. 10h02', who:'Alex', what:'Points · Premier des évaluations', old:'15 pts', nu:'20 pts' },
+  { when:'17 oct. 21h00', who:'Système', what:'Grands pronos verrouillés', old:'Ouvert', nu:'Clôturé' }
+];
+const STL = { in:['En compétition','neutral'], nom:['Nommé·e','magenta'], immu:['Immunisé·e','open'], out:['Éliminé·e','closed'] };
+const hueOf = n => HUES[[...n].reduce((a, c) => a + c.charCodeAt(0), 0) % HUES.length];
+const imgStyle = (n, size, r, fs) => { const h = hueOf(n); return { width:size, height:size, borderRadius:r, flex:'none', display:'flex', alignItems:'center', justifyContent:'center', background:'linear-gradient(140deg,' + h[0] + ',' + h[1] + ')', font:'italic 900 ' + fs + 'px Kanit', color:'#fff' }; };
+
+class Component extends DCLogic {
+  scrollRef = React.createRef();
+  state = {
+    screen: 'avant', tab: 'week', pickKind: null, pickId: null, draft: [], confirm: false, toast: null,
+    rankTab: 'gen', compare: ['Camille','Hugo'],
+    wAns: { eval: ['Inès'] },
+    sAns: this.props && this.props.grandsOuverts
+      ? { win:['Inès'], fin:['Inès','Noah'] }
+      : { win:['Inès'], fin:['Inès','Noah'], tour:['Inès','Noah','Jade','Malo','Léna','Chloé','Enzo','Lou'], first:['Sacha'], most:['Jade'], least:['Malo'], ffin:['Noah'], last:['Lou'], couple:['Léna','Enzo'] },
+    aPick: null, aStep: 'edit', aConfirm: false, published: null, log: [],
+    prev: 'home', candSel: null, candFilter: 'all', leagueSel: 'canap', myTab: 'week', notifOn: true, readNotifs: false, fAns: {}, dlg: null, dlgValue: '',
+    leagues: [{ id:'canap', name:'Les Stars du Canap’', members:8, code:'CANAP-7K2Q', admin:true }, { id:'bureau', name:'Open space 4e étage', members:14, code:'BUREAU-P9XD' }],
+    aView: 'results', cStatus: {}, cTour: [], qTitle: '', qType: 'single', adminQs: [], aToast: null
+  };
+  go(s, extra) {
+    this.setState(st => ({ prev: st.screen === s ? st.prev : st.screen, screen: s, confirm: false, ...(extra || {}) }));
+    if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0;
+  }
+  toast(title, msg, kind) {
+    clearTimeout(this._t);
+    this.setState({ toast: { title, msg, kind: kind || 'success' } });
+    this._t = setTimeout(() => this.setState({ toast: null }), 3200);
+  }
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._at); }
+  open() { return !!this.props.grandsOuverts; }
+  isLocked(kind, id) { return kind === 's' ? !this.open() : (id === 'elim' && this.state.published != null); }
+  openPick(kind, id) {
+    const saved = (kind === 'w' ? this.state.wAns : this.state.sAns)[id] || [];
+    this.go('pick', { pickKind: kind, pickId: id, draft: [...saved] });
+  }
+  totals() {
+    const s = this.state, mine = (s.wAns.elim || [])[0] || null;
+    let list = PLAYERS.map(p => {
+      const answer = p.me ? mine : p.elim;
+      const gain = s.published && answer === s.published ? 30 : 0;
+      return { ...p, answer, gain, total: p.base + gain };
+    });
+    list = rankOf(list, 'total').map(p => ({ ...p, rank: p.totalRank }));
+    return list.sort((a, b) => b.total - a.total || (a.me ? -1 : 0));
+  }
+  statusOf(n) { return this.state.cStatus[n] || (OUT.includes(n) ? 'out' : NOM.includes(n) ? 'nom' : n === 'Malo' ? 'immu' : 'in'); }
+  adminLog(what, old, nu, kind) {
+    const d = new Date();
+    const when = d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }).replace(':', 'h');
+    this.setState(st => ({ log: [{ when, who:'Alex', what, old, nu, kind, text: what + ' : ' + (old && old !== '—' ? old + ' → ' : '') + nu, meta:'Alex · ' + when }, ...st.log] }));
+  }
+  aToastShow(msg) { clearTimeout(this._at); this.setState({ aToast: msg }); this._at = setTimeout(() => this.setState({ aToast: null }), 2600); }
+  setCand(n, to) { const from = this.statusOf(n); this.setState(st => ({ cStatus: { ...st.cStatus, [n]: to } })); this.adminLog('Statut · ' + n, STL[from][0], STL[to][0]); this.aToastShow(n + ' : ' + STL[to][0]); }
+  createQ(status) {
+    const t = this.state.qTitle.trim(); if (!t) return;
+    const typeLabel = { single:'Réponse unique', multi:'Réponses multiples', yesno:'Oui / Non', number:'Nombre exact', order:'Sélection ordonnée' }[this.state.qType];
+    this.setState(st => ({ adminQs: [{ q:t, status, typeLabel }, ...st.adminQs], qTitle:'' }));
+    this.adminLog('Question créée · ' + t, '—', status);
+    this.aToastShow(status === 'Ouvert' ? 'Question publiée' : 'Brouillon enregistré');
+  }
+  extraVals(s, list, me) {
+    const sc = s.screen, open = this.open();
+    const tabs = (arr, cur, key) => arr.map(([v, l]) => ({ label:l, cls:'gp-seg__opt' + (cur === v ? ' gp-seg__opt--on' : ''), go:() => this.setState({ [key]: v }) }));
+    const tileBg = (n, out) => { const h = hueOf(n); return { position:'absolute', inset:0, background:'linear-gradient(160deg,' + h[0] + ',' + h[1] + ')', filter: out ? 'grayscale(1)' : 'none', opacity: out ? .45 : 1 }; };
+    const nomsOf = n => INFO[n].hist.filter(x => x === 1).length;
+    const candList = CANDS.filter(n => { const st = this.statusOf(n); return s.candFilter === 'all' || (s.candFilter === 'out' ? st === 'out' : st !== 'out'); })
+      .map(n => { const st = this.statusOf(n); return { name:n, initial:n[0], status:STL[st][0], tone:STL[st][1], bg:tileBg(n, st === 'out'), open:() => this.go('candDetail', { candSel:n }) }; });
+    let cd = { hist:[], comm:[], results:[] };
+    if (s.candSel) {
+      const n = s.candSel, st = this.statusOf(n), inf = INFO[n];
+      const last = inf.hist.lastIndexOf(1);
+      cd = { name:n, initial:n[0], bg:tileBg(n, st === 'out'), status:STL[st][0], tone:STL[st][1], meta:inf.age + ' ans · ' + inf.city + (inf.out ? ' · éliminé·e au ' + inf.out : ''), bio:inf.bio,
+        noms:String(nomsOf(n)), weeks:String(inf.hist.filter(x => x !== null).length), tourOn:s.cTour.includes(n), tourLabel:s.cTour.includes(n) ? 'Qualifié·e' : 'À venir',
+        hist: inf.hist.map((x, i) => ({ label:'S' + (i + 1), dot:{ width:28, height:28, borderRadius:'50%', background: x === 1 ? 'rgba(210,67,230,.3)' : 'rgba(255,255,255,.06)', boxShadow: x === 1 ? 'inset 0 0 0 1.5px #e679f2' : 'inset 0 0 0 1px rgba(255,255,255,.1)', opacity: x === null ? .25 : 1 } })),
+        comm: [['Vainqueur · grands pronos', inf.comm[0]], ['Tournée · grands pronos', inf.comm[1]], ['Éliminé·e au prime 5 · pronos hebdo', inf.comm[2]]].map(([l, v]) => ({ label:l, val:v + ' %', pct:v + '%' })),
+        results: inf.hist.map((x, i) => x === 1 ? { t:'Semaine ' + (i + 1), d: inf.out && i === last ? 'Nommé·e, éliminé·e' : i === 5 ? 'Nommé·e · verdict samedi' : 'Nommé·e, sauvé·e' } : null).filter(Boolean).reverse() };
+      cd.hasResults = cd.results.length > 0;
+    }
+    const earnedN = BADGES.filter(b => b.earned).length;
+    const badges = BADGES.map(b => ({ name:b.name, icon:'gp-icon icon-' + b.icon,
+      ic: b.earned ? { width:52, height:52, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--grad-gold)', color:'#3a1a00', boxShadow:'var(--glow-gold)' }
+                   : { width:52, height:52, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,.05)', color:'var(--text-muted)', boxShadow:'inset 0 0 0 1px var(--border-subtle)' },
+      show:() => this.toast(b.name, b.earned ? b.desc + ' Obtenu le ' + b.earned + '.' : b.desc + ' Pas encore obtenu.', b.earned ? 'points' : 'info') }));
+    const ph = [62, 88, 71, 105, 45].concat(me.gain ? [me.gain] : []);
+    const bars = ph.map((v, i) => ({ v:'+' + v, label:'P' + (i + 1), bar:{ width:'100%', maxWidth:36, height:Math.round(v / 110 * 90) + 4, borderRadius:6, background: i === ph.length - 1 ? 'var(--grad-gold)' : 'rgba(255,255,255,.14)' } }));
+    const T = { ok:'open', ko:'closed', part:'magenta', wait:'neutral', cancel:'closed' };
+    const weekGroups = [
+      { title:'PRIME 6 · EN COURS', rows: WEEK.map(w => { const a = s.wAns[w.id] || []; const pub = w.id === 'elim' && s.published; const ok = pub && a[0] === s.published;
+        return { q:w.q, a: a.length ? a.join(', ') : 'Pas de réponse', st: pub ? (ok ? 'Correct' : a.length ? 'Incorrect' : 'Aucune') : a.length ? 'En attente' : 'À faire', tone: pub ? (ok ? T.ok : T.ko) : a.length ? T.wait : 'magenta', pts: ok ? '+30' : '' }; }) },
+      { title:'PRIME 5', rows: [
+        { q:'Qui sera éliminé ?', a:'Théo', st:'Correct', tone:T.ok, pts:'+30' },
+        { q:'Nommés la semaine suivante', a:'Inès, Léna, Lou · 1 sur 3', st:'Partiel', tone:T.part, pts:'+15' },
+        { q:'Premier des évaluations', a:'Jade', st:'Incorrect', tone:T.ko, pts:'' } ] },
+      { title:'PRIME 4', rows: [
+        { q:'Qui obtiendra l’immunité ?', a:'Malo', st:'Correct', tone:T.ok, pts:'+20' },
+        { q:'Qui sera sauvé par les élèves ?', a:'Lou · mécanique absente ce prime', st:'Annulé', tone:T.cancel, pts:'' } ] }
+    ];
+    const seasonGroups = [{ title: open ? 'GRANDS PRONOS · OUVERTS' : 'GRANDS PRONOS · VERROUILLÉS', rows: SEASON.map(q => { const a = s.sAns[q.id] || []; const first = q.id === 'first' && !open;
+      return { q:q.q, a: a.length ? a.join(', ') : 'Pas de réponse', st: first ? (a[0] === 'Sacha' ? 'Correct' : 'Incorrect') : 'En attente', tone: first ? (a[0] === 'Sacha' ? T.ok : T.ko) : T.wait, pts: first && a[0] === 'Sacha' ? '+50' : '' }; }) }];
+    const leagues = s.leagues.map(l => ({ ...l, initial:l.name[0], img:imgStyle(l.name, 56, 14, 24),
+      sub: l.members + ' joueur' + (l.members > 1 ? 's' : '') + ' · tu es #' + (l.id === 'canap' ? me.rank : l.id === 'bureau' ? 6 : 1), open:() => this.go('league', { leagueSel:l.id }) }));
+    const L = s.leagues.find(l => l.id === s.leagueSel) || s.leagues[0];
+    let rows;
+    if (L.id === 'canap') rows = list.map(p => ({ rank:p.rank, name:p.name, total:p.total, move:p.move, me:!!p.me, sub:p.good + ' bons pronos' }));
+    else if (L.id === 'bureau') rows = rankOf(BUREAU.map(p => p.me ? { ...p, total:me.total } : p), 'total').sort((a, b) => b.total - a.total).map(p => ({ rank:p.totalRank, name:p.name, total:p.total, move:p.move, me:!!p.me, sub:'' }));
+    else rows = [{ rank:1, name:'Sam', total:me.total, move:0, me:true, sub:'Invite tes amis avec le code' }];
+    const league = { name:L.name, initial:L.name[0], img:imgStyle(L.name, 72, 20, 32), members:L.members + (L.members > 1 ? ' joueurs' : ' joueur') + (L.admin ? ' · tu es admin' : ''), code:L.code, admin:!!L.admin, rows,
+      best: L.id === 'canap' ? 'Rayan · +60 pts au prime 5' : L.id === 'bureau' ? 'Nadia · +75 pts au prime 5' : 'Premier verdict au prochain prime' };
+    const notifs = (s.published ? [{ icon:'star', title:'Résultats du prime 6 publiés', msg: me.gain ? '+30 pts. Bien vu !' : 'Pas de points sur l’élimination cette fois.', time:'à l’instant' }] : []).concat(NOTIFS)
+      .map((n, i) => ({ ...n, icon:'gp-icon icon-' + n.icon, unread: !s.readNotifs && i < 2 }));
+    const funCards = FUN.map(q => { const a = s.fAns[q.id]; return { q:q.q, crit:q.crit, pts:q.pts, close:'Ferme ' + q.close, status: a ? 'Joué' : 'Ouvert', tone: a ? 'magenta' : 'open',
+      opts: q.opts.map(o => ({ label:o, cls:'gp-seg__opt' + (a === o ? ' gp-seg__opt--on' : ''), pick:() => { this.setState(st => ({ fAns:{ ...st.fAns, [q.id]:o } })); this.toast('Pari enregistré', q.q + ' · ' + o, 'success'); } })) }; });
+    const av = s.aView;
+    const anav = (k, label, icon) => ({ label, icon:'gp-icon icon-' + icon, go:() => this.setState({ aView:k }),
+      style: css('display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;border-radius:10px;cursor:pointer;white-space:nowrap;font:var(--text-body-s);font-weight:600;' + (av === k ? 'background:rgba(255,255,255,.08);color:var(--text-primary);box-shadow:inset 0 0 0 1px var(--border-subtle)' : 'color:var(--text-muted)')) });
+    const QT = { 'Brouillon':'neutral', 'Ouvert':'open', 'Clôturé':'magenta', 'Résultat publié':'gold', 'Annulé':'closed' };
+    const allQs = [
+      ...s.adminQs.map(a => ({ q:a.q, meta:'Prime 7 · ' + a.typeLabel, label:a.status })),
+      ...WEEK.map(w => ({ q:w.q, meta:'Prime 6 · ' + (w.per ? w.pts + ' pts / ' + w.per : w.pts + ' pts') + ' · clôture ' + w.close, label: w.id === 'elim' ? (s.published ? 'Résultat publié' : 'Clôturé') : w.id === 'nomi' ? 'Ouvert' : 'Clôturé' })),
+      ...FUN.map(q => ({ q:q.q, meta:'Pari improbable · ' + q.pts + ' pts · ' + q.opts.join(' / '), label:'Ouvert' })),
+      { q:'Qui sera sauvé par les élèves ? (P4)', meta:'Mécanique absente ce prime · aucun point', label:'Annulé' }
+    ].map(q => ({ ...q, tone:QT[q.label] }));
+    const openCount = allQs.filter(q => q.label === 'Ouvert').length, closedCount = allQs.filter(q => q.label === 'Clôturé').length;
+    const nAns = PLAYERS.filter(p => (p.me ? (s.wAns.elim || [])[0] : p.elim)).length;
+    return {
+      jumps: [['avant','Avant-saison'],['home','Accueil'],['pronos','Pronos'],['season','Grands pronos'],['cand','Candidats'],['rank','Classement'],['leagues','Ligues'],['me','Profil'],['notifs','Notifications'],['finale','Fin de saison']].map(([v, l]) => {
+        const on = v === 'season' ? (sc === 'pronos' && s.tab === 'season') : v === 'pronos' ? (sc === 'pronos' && s.tab !== 'season') : sc === v;
+        return { label:l, variant: on ? 'glitter' : 'secondary', go:() => v === 'season' ? this.go('pronos', { tab:'season' }) : this.go(v, v === 'pronos' ? { tab:'week' } : {}) }; }),
+      showNav: ['home','pronos','rank','cand','me','leagues'].includes(sc),
+      navValue: sc === 'leagues' ? 'rank' : sc,
+      navChange: v => this.go(v),
+      back: () => this.go(s.prev && s.prev !== sc ? s.prev : 'home'),
+      isCand: sc === 'cand', isCandDetail: sc === 'candDetail', isMe: sc === 'me', isLeagues: sc === 'leagues', isLeague: sc === 'league', isNotifs: sc === 'notifs', isFinale: sc === 'finale',
+      pronoTabs: tabs([['week','Semaine'],['season','Grands pronos'],['fun','Improbables']], s.tab, 'tab'),
+      isFunTab: s.tab === 'fun', funCards,
+      candTabs: tabs([['all','Tous'],['in','En lice'],['out','Éliminés']], s.candFilter, 'candFilter'),
+      candList, cd,
+      myGood:'12 / 19', myRate:'63 %', badges, badgeCount: earnedN + ' / ' + BADGES.length, bars,
+      myTabs: tabs([['week','Par prime'],['season','Grands pronos']], s.myTab, 'myTab'),
+      myGroups: s.myTab === 'week' ? weekGroups : seasonGroups,
+      notifOn: s.notifOn, toggleNotif: v => { this.setState({ notifOn:v }); this.toast(v ? 'Notifications activées' : 'Notifications désactivées', v ? 'Tu seras prévenu avant chaque clôture.' : 'Tu peux les réactiver à tout moment.', 'info'); },
+      privacy: () => this.toast('Tes données t’appartiennent', 'Export ou suppression du compte en un clic, dans la version finale.', 'info'),
+      goLeagues: () => this.go('leagues'), goMainLeague: () => this.go('league', { leagueSel:'canap' }), goNotifs: () => this.go('notifs'),
+      bellDot: !s.readNotifs, leagues, league,
+      leagueRewards: [{ icon:'gp-icon icon-calendar-check', who:'Sam', what:'badge Le Fidèle', when:'21 nov.' }, { icon:'gp-icon icon-trending-up', who:'Rayan', what:'badge Le Comeback', when:'22 nov.' }, { icon:'gp-icon icon-target', who:'Camille', what:'badge Le Spécialiste', when:'15 nov.' }],
+      openCreate: () => this.setState({ dlg:'create', dlgValue:'' }), openJoin: () => this.setState({ dlg:'join', dlgValue:'' }),
+      dlgOpen: !!s.dlg, dlgTitle: s.dlg === 'create' ? 'Créer une ligue' : 'Rejoindre une ligue', dlgLabel: s.dlg === 'create' ? 'Nom de la ligue' : 'Code d’invitation',
+      dlgPlaceholder: s.dlg === 'create' ? 'Ex. La team du dimanche' : 'Ex. CANAP-7K2Q', dlgCta: s.dlg === 'create' ? 'Créer ma ligue' : 'Rejoindre la ligue',
+      dlgValue: s.dlgValue, dlgInput: e => this.setState({ dlgValue:e.target.value }), dlgCancel: () => this.setState({ dlg:null, dlgValue:'' }),
+      dlgSubmit: () => {
+        const v = s.dlgValue.trim();
+        if (!v) { this.toast('Champ vide', s.dlg === 'create' ? 'Donne un nom à ta ligue.' : 'Saisis le code reçu.', 'error'); return; }
+        const id = 'l' + Date.now();
+        if (s.dlg === 'create') {
+          const code = (v.normalize('NFD').replace(/[^A-Za-z]/g, '').slice(0, 5).toUpperCase() || 'LIGUE') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+          this.setState(st => ({ leagues:[...st.leagues, { id, name:v, members:1, code, admin:true }], dlg:null, dlgValue:'' }));
+          this.go('league', { leagueSel:id }); this.toast('Ligue créée', 'Partage le code ' + code + ' à tes amis.', 'success');
+        } else {
+          const code = v.toUpperCase();
+          if (!/^[A-Z]{3,6}-[A-Z0-9]{4}$/.test(code)) { this.toast('Code introuvable', 'Vérifie le code avec l’admin de la ligue.', 'error'); return; }
+          this.setState(st => ({ leagues:[...st.leagues, { id, name:'Ligue ' + code.split('-')[0].charAt(0) + code.split('-')[0].slice(1).toLowerCase(), members:6, code }], dlg:null, dlgValue:'' }));
+          this.go('league', { leagueSel:id }); this.toast('Bienvenue dans la ligue', 'Tes pronos comptent déjà ici, rien à refaire.', 'success');
+        }
+      },
+      copyCode: () => this.toast('Code copié', L.code, 'success'),
+      shareLink: () => this.toast('Lien d’invitation prêt', 'legrandprono.app/rejoindre/' + L.code, 'info'),
+      shareImg: () => this.toast('Image du classement générée', 'Prête à partager dans tes messageries.', 'success'),
+      markRead: () => this.setState({ readNotifs:true }), notifs,
+      shareRecap: () => this.toast('Ton récap est prêt', 'Image au format story, prête à partager.', 'success'),
+      champions: [['Les Stars du Canap’','Camille','1 212 pts'],['Open space 4e étage','Nadia','1 305 pts'],['La team du dimanche','Hugo','1 190 pts']].map(([lg, n, p]) => ({ league:lg, name:n, pts:p, initial:lg[0], img:imgStyle(lg, 40, 10, 18) })),
+      adminNav: [anav('dash','Tableau de bord','layout-dashboard'), anav('season','Saison','calendar'), anav('cands','Candidats','users'), anav('questions','Questions','list-checks'), anav('results','Résultats','flag'), anav('leagues','Ligues','trophy'), anav('journal','Journal','history')],
+      avDash: av === 'dash', avSeason: av === 'season', avCands: av === 'cands', avQuestions: av === 'questions', avResults: av === 'results', avLeagues: av === 'leagues', avJournal: av === 'journal',
+      dashStats: [{ v:'24', l:'Joueurs inscrits' }, { v:String(s.leagues.length + 1), l:'Ligues' }, { v:'412', l:'Pronostics enregistrés' }, { v:String(openCount), l:'Questions ouvertes' }, { v:String(closedCount), l:'En attente de résultats' }, { v:'sam. 21h10', l:'Prime 6' }],
+      dashClosings: [{ q:'Nommés la semaine prochaine', when:'jeu. 19h00', n:'5 / 8' }, { q:'Premier des évaluations', when:'ven. 18h00', n:'8 / 8' }, { q:'Qui obtiendra l’immunité ?', when:'ven. 18h00', n:'7 / 8' }, { q:'Qui sera éliminé ?', when:'sam. 20h00', n:nAns + ' / 8' }],
+      goResultsA: () => this.setState({ aView:'results' }), goCandsA: () => this.setState({ aView:'cands' }), goQuestionsA: () => this.setState({ aView:'questions' }),
+      addCand: () => this.aToastShow('Formulaire candidat : photo, prénom, nom, âge, ville, présentation'),
+      aCands: CANDS.map(n => { const st = this.statusOf(n); return { name:n, status:STL[st][0], tone:STL[st][1], noms:String(nomsOf(n) + (st === 'nom' && INFO[n].hist[5] !== 1 ? 1 : 0) - (st !== 'nom' && INFO[n].hist[5] === 1 ? 1 : 0)),
+        tour: s.cTour.includes(n), tourToggle: v => { this.setState(st2 => ({ cTour: v ? [...st2.cTour, n] : st2.cTour.filter(x => x !== n) })); this.adminLog('Tournée · ' + n, v ? 'Non qualifié·e' : 'Qualifié·e', v ? 'Qualifié·e' : 'Non qualifié·e'); this.aToastShow(n + (v ? ' qualifié·e pour la tournée' : ' retiré·e de la tournée')); },
+        nomLabel: st === 'nom' ? 'Retirer nomination' : 'Nommer', outLabel: st === 'out' ? 'Réintégrer' : 'Éliminer', nomDisabled: st === 'out',
+        nom: () => this.setCand(n, st === 'nom' ? 'in' : 'nom'), out: () => this.setCand(n, st === 'out' ? 'in' : 'out') }; }),
+      allQs,
+      qTypes: tabs([['single','Réponse unique'],['multi','Réponses multiples'],['yesno','Oui / Non'],['number','Nombre exact'],['order','Sélection ordonnée']], s.qType, 'qType'),
+      qTitle: s.qTitle, qTitleInput: e => this.setState({ qTitle:e.target.value }), qNoTitle: !s.qTitle.trim(),
+      qPublish: () => this.createQ('Ouvert'), qDraft: () => this.createQ('Brouillon'),
+      seasonPts: SEASON.map(q => ({ q:q.q, pts:String(q.pts), unit: q.per ? 'pts / ' + q.per : 'pts' })).concat([{ q:'Bonus tournée parfaite', pts:'50', unit:'pts' }]),
+      seasonSave: () => { this.adminLog('Paramètres de saison', '—', 'Dates, règles et barème enregistrés'); this.aToastShow('Paramètres de saison enregistrés'); },
+      aLeagues: [{ name:'Les Stars du Canap’', members:'8', owner:'Sam', created:'2 oct.', code:'CANAP-••••' }, { name:'Open space 4e étage', members:'14', owner:'Julie', created:'5 oct.', code:'BUREAU-••••' }, { name:'La team du dimanche', members:'6', owner:'Hugo', created:'11 oct.', code:'DIMAN-••••' }]
+        .concat(s.leagues.slice(2).map(l => ({ name:l.name, members:String(l.members), owner: l.admin ? 'Sam' : '—', created:'aujourd’hui', code:l.code.split('-')[0] + '-••••' }))),
+      fullLog: [...s.log, ...SEED_LOG],
+      hasAToast: !!s.aToast, aToast: s.aToast || ''
+    };
+  }
+  renderVals() {
+    const s = this.state, open = this.open();
+    const sc = s.screen;
+    const list = this.totals();
+    const me = list.find(p => p.me);
+    const row = p => ({ ...p, label: p.name + (p.me ? ' (toi)' : ''), sub: p.good + ' bons pronos', me: !!p.me });
+
+    const weekCards = WEEK.map(w => {
+      const a = s.wAns[w.id];
+      const pub = w.id === 'elim' && s.published;
+      let status = a && a.length ? 'done' : 'open';
+      let pts = w.pts;
+      if (pub) { status = a && a[0] === s.published ? 'won' : 'closed'; pts = status === 'won' ? w.pts : w.pts; }
+      return { q: w.q, pts, status, icon: w.icon, pick: a && a.length ? a.join(', ') : null,
+        deadline: pub ? null : 'Ferme ' + w.close, open: () => this.openPick('w', w.id) };
+    });
+    const todoList = WEEK.filter(w => !(s.wAns[w.id] || []).length && !(w.id === 'elim' && s.published));
+    const todoPts = todoList.reduce((t, w) => t + w.pts * w.max, 0);
+    const doneCount = WEEK.length - todoList.length;
+
+    const seasonCards = SEASON.map(q => {
+      const a = s.sAns[q.id];
+      let status = a && a.length ? (open ? 'done' : 'closed') : (open ? 'open' : 'closed');
+      let pts = q.per ? q.pts + '/' + q.per : q.pts;
+      if (!open && q.id === 'first') status = 'won';
+      return { q: q.q, pts: q.per ? q.pts : q.pts, status, icon: q.icon,
+        pick: a && a.length ? (a.length > 3 ? a.slice(0, 3).join(', ') + ' +' + (a.length - 3) : a.join(', ')) : (open ? null : 'Aucune réponse'),
+        deadline: open ? 'Ferme 17 oct.' : null, open: () => this.openPick('s', q.id) };
+    });
+    const sDone = SEASON.filter(q => (s.sAns[q.id] || []).length).length;
+
+    // pick
+    let pickVals = {};
+    if (sc === 'pick') {
+      const q = (s.pickKind === 'w' ? WEEK : SEASON).find(x => x.id === s.pickId);
+      const locked = this.isLocked(s.pickKind, s.pickId);
+      const saved = (s.pickKind === 'w' ? s.wAns : s.sAns)[s.pickId] || [];
+      const pool = q.pool === 'nom' ? NOM : CANDS;
+      const d = s.draft;
+      const toggle = n => {
+        if (locked) return;
+        this.setState(st => {
+          const cur = st.draft;
+          if (cur.includes(n)) return { draft: cur.filter(x => x !== n) };
+          if (q.max === 1) return { draft: [n] };
+          if (cur.length >= q.max) { this.toast('Sélection complète', 'Retire un candidat pour en choisir un autre.', 'info'); return null; }
+          return { draft: [...cur, n] };
+        });
+      };
+      const pctN = Math.round(d.length / q.max * 100);
+      const closeTxt = s.pickKind === 'w' ? 'Clôture ' + q.close + ' (heure de Paris)' : 'Clôture sam. 17 oct. 21h00 (heure de Paris)';
+      pickVals = {
+        pq: {
+          q: q.q, desc: q.desc, pts: String(q.pts), suffix: q.per ? 'pts / ' + q.per : 'pts',
+          overline: s.pickKind === 'w' ? 'PRIME 6 · PRONO DE LA SEMAINE' : 'GRAND PRONO DE LA SAISON',
+          closeLabel: locked ? 'Clôturé' : closeTxt, trayLabel: q.tray || 'MA SÉLECTION',
+          badge: locked ? 'Verrouillé' : saved.length ? 'Joué' : 'Ouvert', badgeTone: locked ? 'closed' : saved.length ? 'magenta' : 'open', badgeIcon: locked ? 'lock' : null
+        },
+        isMulti: q.max > 1,
+        slots: Array.from({ length: q.max }, (_, i) => ({ n: i + 1, filled: !!d[i], empty: !d[i], name: d[i] || '', label: d[i] || '—' })),
+        countShort: d.length + ' / ' + q.max,
+        countLabel: q.max > 1 ? d.length + ' / ' + q.max + ' candidats sélectionnés' : (d.length ? 'Ton choix : ' + d[0] : 'Touche un candidat pour le choisir'),
+        pickPct: pctN + '%',
+        cands: pool.map(n => {
+          const out = OUT.includes(n) && !locked;
+          const on = d.includes(n);
+          return { name: n, on, out, toggle: () => toggle(n),
+            meta: on ? 'Mon choix' : OUT.includes(n) ? 'Éliminé·e' : NOM.includes(n) ? 'Nommé·e' : 'En compétition' };
+        }),
+        candSize: pool.length > 6 ? 56 : 72,
+        pickLocked: locked, pickOpen: !locked,
+        lockedMsg: s.pickKind === 's' ? 'Clôturé le 17 oct. à 21h00. Ta réponse est conservée.' : 'Résultat publié : ' + s.published + '.',
+        cantSubmit: d.length !== q.max || (saved.length === d.length && saved.every(x => d.includes(x))),
+        submitLabel: saved.length ? 'Enregistrer mes modifications' : 'Valider mon prono',
+        askConfirm: () => this.setState({ confirm: true }),
+        confirmNames: d.join(', '),
+        confirmHint: 'Tu pourras changer d’avis jusqu’à la clôture (' + (s.pickKind === 'w' ? q.close : 'sam. 17 oct. 21h00') + ').',
+        doSubmit: () => {
+          const key = s.pickKind === 'w' ? 'wAns' : 'sAns';
+          this.setState(st => ({ [key]: { ...st[key], [s.pickId]: [...st.draft] } }));
+          this.go('pronos', { tab: s.pickKind === 'w' ? 'week' : 'season' });
+          this.toast('Prono enregistré', q.q + ' · ' + d.join(', '), 'success');
+        },
+        cancelConfirm: () => this.setState({ confirm: false })
+      };
+    }
+
+    // ranking chart
+    const X0 = 40, X1 = 306, Y0 = 12, Y1 = 188;
+    const xAt = i => X0 + i * (X1 - X0) / 4, yAt = r => Y0 + (r - 1) * (Y1 - Y0) / 7;
+    const shown = ['Sam', ...s.compare];
+    const series = shown.map((n, i) => {
+      const p = PLAYERS.find(x => x.name === n);
+      const pts = p.hist.map((r, j) => [xAt(j), yAt(r)]);
+      return { d: pts.map((pt, j) => (j ? 'L' : 'M') + pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join(' '),
+        color: n === 'Sam' ? '#ffa64a' : COLORS[i - 1], w: n === 'Sam' ? 3.5 : 2, cx: pts[4][0], cy: pts[4][1] };
+    }).reverse();
+    const chips = PLAYERS.filter(p => !p.me).map(p => {
+      const idx = s.compare.indexOf(p.name);
+      const on = idx >= 0;
+      return { name: p.name, cls: on ? 'gp-seg__opt--on' : '', dot: on ? COLORS[idx] : 'rgba(255,255,255,.3)',
+        toggle: () => this.setState(st => {
+          if (st.compare.includes(p.name)) return { compare: st.compare.filter(x => x !== p.name) };
+          if (st.compare.length >= 3) return { compare: [...st.compare.slice(1), p.name] };
+          return { compare: [...st.compare, p.name] };
+        }) };
+    }).map(c => ({ ...c, cls: c.cls ? 'gp-seg__opt gp-seg__opt--on' : 'gp-seg__opt' }));
+
+    const weekly = rankOf(PLAYERS, 'week').sort((a, b) => b.week - a.week)
+      .map(p => ({ ...p, wrank: p.weekRank, me: !!p.me, wsub: p.name === 'Rayan' ? 'Meilleure progression' : p.good + ' bons pronos' }));
+
+    // admin
+    const aRows = list.map(p => {
+      const ok = s.aPick && p.answer === s.aPick;
+      const before = rankOf(PLAYERS.map(x => ({ ...x, t: x.base })), 't').find(x => x.name === p.name).tRank;
+      const simTotals = PLAYERS.map(x => { const ans = x.me ? (s.wAns.elim || [])[0] : x.elim; return { ...x, t: x.base + (s.aPick && ans === s.aPick ? 30 : 0) }; });
+      const after = rankOf(simTotals, 't').find(x => x.name === p.name);
+      return { name: p.name, label: p.name + (p.me ? ' (toi)' : ''), answerLabel: p.answer || 'Pas de réponse',
+        res: !p.answer ? 'Aucune' : ok ? 'Correct' : 'Incorrect', tone: !p.answer ? 'closed' : ok ? 'open' : 'neutral',
+        ptsLabel: ok ? '+30' : '0', totalLabel: p.base + ' → ' + after.t, rankLabel: '#' + before + ' → #' + after.tRank, sortT: after.t };
+    }).sort((a, b) => b.sortT - a.sortT);
+    const correct = aRows.filter(r => r.res === 'Correct').length;
+    const aStep = s.aStep;
+    const stepIdx = { edit: 0, preview: 1, published: 2 }[aStep];
+    const aSteps = ['Saisir', 'Prévisualiser', 'Publier'].map((l, i) => ({
+      n: i < stepIdx || aStep === 'published' ? '✓' : String(i + 1), label: l, sep: i < 2,
+      dot: css('width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:italic 800 12px var(--font-numeric);' + (i <= stepIdx ? 'background:var(--grad-cta);color:#fff' : 'background:rgba(255,255,255,.08);color:var(--text-muted)')),
+      lbl: css('font:var(--text-caption);font-weight:700;color:' + (i <= stepIdx ? 'var(--text-primary)' : 'var(--text-muted)'))
+    }));
+    const navItem = (label, icon, on) => ({ label, icon: 'gp-icon icon-' + icon,
+      style: css('display:flex;align-items:center;gap:10px;height:40px;white-space:nowrap;padding:0 12px;border-radius:10px;font:var(--text-body-s);font-weight:600;' + (on ? 'background:rgba(255,255,255,.08);color:var(--text-primary);box-shadow:inset 0 0 0 1px var(--border-subtle)' : 'color:var(--text-muted)')) });
+    const qStyle = on => css('display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;' + (on ? 'background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px var(--flare-400)' : 'background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border-subtle)'));
+    const nAnswered = PLAYERS.filter(p => (p.me ? (s.wAns.elim || [])[0] : p.elim)).length;
+
+    const toast = s.toast ? { ...s.toast, cls: 'gp-toast gp-toast--' + s.toast.kind,
+      icon: 'gp-icon icon-' + ({ success: 'check', points: 'star', info: 'info', error: 'x' })[s.toast.kind] } : null;
+
+    const tabs = (arr, cur, key) => arr.map(([v, l]) => ({ label: l, cls: 'gp-seg__opt' + (cur === v ? ' gp-seg__opt--on' : ''), go: () => this.setState({ [key]: v }) }));
+
+    return {
+      scrollRef: this.scrollRef,
+      jumps: [['avant','Avant-saison'],['home','Accueil'],['pronos','Pronos'],['season','Grands pronos'],['rank','Classement']].map(([v, l]) => ({
+        label: l, variant: (sc === v && !(v === 'pronos' && s.tab === 'season')) || (v === 'season' && sc === 'pronos' && s.tab === 'season') ? 'glitter' : 'secondary',
+        go: () => v === 'season' ? this.go('pronos', { tab: 'season' }) : this.go(v, v === 'pronos' ? { tab: 'week' } : {}) })),
+      isAvant: sc === 'avant', isHome: sc === 'home', isPronos: sc === 'pronos', isPick: sc === 'pick', isRank: sc === 'rank',
+      showNav: ['home', 'pronos', 'rank'].includes(sc),
+      nav: [
+        { value: 'home', label: 'Accueil', icon: 'house' },
+        { value: 'cand', label: 'Candidats', icon: 'users' },
+        { value: 'pronos', label: 'Pronos', icon: 'star', center: true },
+        { value: 'rank', label: 'Classement', icon: 'trophy' },
+        { value: 'me', label: 'Profil', icon: 'user' }
+      ],
+      navValue: sc,
+      navChange: v => ['home', 'pronos', 'rank'].includes(v) ? this.go(v) : this.toast('Bientôt dans le prototype', 'Cet écran fait partie de la prochaine étape.', 'info'),
+      goHome: () => this.go('home'), goPronos: () => this.go('pronos', { tab: 'week' }), goRank: () => this.go('rank', { rankTab: 'gen' }),
+      goRankLink: e => { e.preventDefault(); this.go('rank', { rankTab: 'gen' }); },
+      primeIn: 2 * 86400 + 3 * 3600 + 25 * 60, closeIn: 20 * 3600 + 48 * 60,
+      outStyle: { filter: 'grayscale(1)', opacity: 0.5 },
+      stackStyle: { marginLeft: -10, boxShadow: '0 0 0 2px var(--surface-page)' },
+      me: { total: me.total, rankLabel: '#' + me.rank, lastGain: me.gain ? '+' + me.gain : '+45', lastGainLabel: me.gain ? 'Pts prime 6' : 'Pts prime 5' },
+      todo: todoList.slice(0, 2).map(w => ({ q: w.q, pts: w.pts, icon: w.icon, deadline: 'Ferme ' + w.close, open: () => this.openPick('w', w.id) })),
+      todoCount: todoList.length ? todoList.length + ' à faire' : '',
+      todoCta: 'Faire mes pronostics · ' + todoPts + ' pts en jeu',
+      hasTodo: todoList.length > 0, allDone: todoList.length === 0,
+      top3: list.slice(0, 3).map(row),
+      pronoTabs: tabs([['week', 'Cette semaine'], ['season', 'Grands pronos']], s.tab, 'tab'),
+      isWeekTab: s.tab === 'week', isSeasonTab: s.tab === 'season',
+      weekCards, weekDone: doneCount + ' / ' + WEEK.length, weekPct: Math.round(doneCount / WEEK.length * 100) + '%', weekPts: todoPts + ' pts',
+      seasonCards, seasonOpen: open, seasonLocked: !open, seasonDone: sDone + ' / ' + SEASON.length,
+      isMulti: false, slots: [], cands: [], pq: {}, pickLocked: false, pickOpen: true,
+      ...pickVals,
+      confirm: s.confirm,
+      rankTabs: tabs([['gen', 'Général'], ['week', 'Semaine'], ['evo', 'Évolution']], s.rankTab, 'rankTab'),
+      isGen: s.rankTab === 'gen', isWeekR: s.rankTab === 'week', isEvo: s.rankTab === 'evo',
+      first: row(list[0]),
+      podium23: list.slice(1, 3).map(p => ({ ...row(p), ring: p.me ? 'magenta' : null })),
+      rest: list.slice(3).map(row),
+      weekly,
+      gridY: [1,2,3,4,5,6,7,8].map(r => ({ y: yAt(r), label: '#' + r, style: { position:'absolute', left:0, top:yAt(r) - 8, font:'italic 700 11px/16px Kanit', color:'#9486bf' } })),
+      gridX: [0,1,2,3,4].map(i => ({ label: 'P' + (i + 1), style: { position:'absolute', left:xAt(i) - 15, width:30, top:204, textAlign:'center', font:'600 11px/16px "Plus Jakarta Sans"', color:'#9486bf' } })),
+      series, chips,
+      hasToast: !!toast, toast: toast || {},
+      adminNav: [navItem('Tableau de bord', 'layout-dashboard'), navItem('Saisons', 'calendar'), navItem('Candidats', 'users'), navItem('Questions', 'list-checks'), navItem('Résultats', 'flag', true), navItem('Ligues', 'trophy'), navItem('Journal', 'history')],
+      aQueue: [
+        { q: 'Qui sera éliminé ?', status: s.published ? 'Publié' : 'Clôturé', tone: s.published ? 'open' : 'magenta', count: nAnswered + ' réponses', meta: 'Réponse unique · 30 pts', style: qStyle(true) },
+        { q: 'Premier des évaluations', status: 'Clôturé', tone: 'magenta', count: '8 réponses', meta: 'Réponse unique · 20 pts', style: qStyle(false) },
+        { q: 'Qui obtiendra l’immunité ?', status: 'Clôturé', tone: 'magenta', count: '7 réponses', meta: 'Réponse unique · 20 pts', style: qStyle(false) },
+        { q: 'Nommés la semaine prochaine', status: 'Ouvert', tone: 'closed', count: '5 réponses', meta: '3 sélections · 15 pts / nommé · clôture jeu. 19h', style: qStyle(false) }
+      ],
+      aAnswered: nAnswered + ' / 8 joueurs ont répondu',
+      aSteps,
+      aIsEdit: aStep === 'edit', aIsPreview: aStep === 'preview', aIsPublished: aStep === 'published',
+      aShowTable: aStep !== 'edit',
+      aTableTitle: aStep === 'published' ? 'POINTS ATTRIBUÉS' : '2 · PRÉVISUALISATION — RIEN N’EST ENCORE PUBLIÉ',
+      aEditHint: s.published ? 'Correction : le recalcul remplace l’attribution précédente, sans doublon.' : 'Sélectionne le candidat officiellement éliminé. En cas de double élimination, sélectionne-les tous.',
+      aOpts: NOM.map(n => ({ name: n, on: s.aPick === n, toggle: () => this.setState({ aPick: n }) })),
+      aPick: s.aPick, aNoPick: !s.aPick,
+      aPreview: () => this.setState({ aStep: 'preview' }),
+      aBack: () => this.setState({ aStep: 'edit' }),
+      aCorrect: () => this.setState({ aStep: 'edit' }),
+      aAskPublish: () => this.setState({ aConfirm: true }),
+      aCancelPublish: () => this.setState({ aConfirm: false }),
+      aPublish: () => {
+        const prev = s.published, pick = s.aPick;
+        const mine = (s.wAns.elim || [])[0];
+        const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+        this.setState({ published: pick, aStep: 'published', aConfirm: false });
+        this.adminLog(prev ? 'Résultat corrigé · Qui sera éliminé ? (P6) · scores recalculés' : 'Résultat publié · Qui sera éliminé ? (P6)', prev || '—', pick, 'result');
+        if (mine === pick) this.toast('+30 pts ! Bien vu', pick + ' quitte le château. Ton classement est à jour.', 'points');
+        else this.toast('Résultats du prime 6 publiés', mine ? 'Pas de points cette fois : ' + pick + ' est éliminé·e.' : 'Tu n’avais pas répondu à cette question.', 'info');
+      },
+      aSum: { correct: correct + ' / 8', pts: String(correct * 30), none: String(aRows.filter(r => r.res === 'Aucune').length) },
+      aRows, aConfirm: s.aConfirm, published: s.published,
+      hasLog: s.log.some(l => l.kind === 'result'), log: s.log.filter(l => l.kind === 'result'),
+      ...this.extraVals(s, list, me)
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+/* Palette sampled from the Star Academy key art: deep stage violet, magenta haze, orange flare, glitter lilac, cyan rim-light. */
+:root{
+--violet-950:#0d0322;--violet-900:#170643;--violet-800:#24106a;--violet-700:#34179a;--violet-600:#4a24c8;--violet-500:#6a3cf0;--violet-400:#8b67ff;--violet-300:#b7a0ff;--violet-200:#d8cbff;--violet-100:#efe8ff;
+--magenta-700:#8e1aa6;--magenta-600:#b42ccc;--magenta-500:#d243e6;--magenta-400:#e679f2;--magenta-200:#f5c6fa;
+--flare-600:#e8650c;--flare-500:#ff8a1f;--flare-400:#ffa64a;--flare-200:#ffd7ab;
+--gold-500:#f5b638;--gold-400:#ffcb5c;--gold-200:#ffe8b3;
+--cyan-500:#2fc6f5;--cyan-400:#63d9ff;--cyan-200:#c2f0ff;
+--glitter:#f6efff;--white:#ffffff;
+--green-500:#2fd99a;--green-200:#b8f5dd;--red-500:#ff4a78;--red-200:#ffc2d2;
+
+--surface-page:#0d0322;
+--surface-raised:#1a0850;
+--surface-solid:#200b5c;
+--surface-card:rgba(255,255,255,.06);
+--surface-card-hover:rgba(255,255,255,.10);
+--surface-card-active:rgba(255,255,255,.14);
+--surface-overlay:rgba(9,2,26,.72);
+--surface-inverse:var(--glitter);
+
+--text-primary:#f6efff;
+--text-secondary:#c9bde8;
+--text-muted:#9486bf;
+--text-inverse:#170643;
+--text-accent:var(--gold-400);
+--text-link:var(--magenta-400);
+
+--border-subtle:rgba(255,255,255,.10);
+--border-strong:rgba(255,255,255,.22);
+--border-glow:rgba(230,121,242,.65);
+--border-focus:var(--cyan-400);
+
+--accent-primary:var(--flare-500);
+--accent-secondary:var(--magenta-500);
+--accent-gold:var(--gold-400);
+--accent-info:var(--cyan-400);
+--state-success:var(--green-500);
+--state-danger:var(--red-500);
+--state-warning:var(--gold-400);
+
+--grad-cta:linear-gradient(100deg,#ff9a2e 0%,#ff6a3d 38%,#d243e6 100%);/* @kind color */
+--grad-cta-hover:linear-gradient(100deg,#ffab4a 0%,#ff7a52 38%,#e064f0 100%);/* @kind color */
+--grad-gold:linear-gradient(135deg,#ffe8b3 0%,#ffcb5c 45%,#f5961f 100%);/* @kind color */
+--grad-glitter:linear-gradient(180deg,#ffffff 0%,#efe3ff 45%,#c3adff 100%);/* @kind color */
+--grad-stage:radial-gradient(90% 70% at 22% 38%,rgba(255,138,31,.38) 0%,rgba(210,67,230,.22) 32%,rgba(74,36,200,0) 62%),linear-gradient(160deg,#34179a 0%,#170643 58%,#0d0322 100%);/* @kind color */
+--grad-edge:linear-gradient(135deg,rgba(255,166,74,.85),rgba(210,67,230,.6) 50%,rgba(99,217,255,.5));/* @kind color */
+--grad-protect:linear-gradient(180deg,rgba(13,3,34,0) 0%,rgba(13,3,34,.85) 70%,#0d0322 100%);/* @kind color */
+}
