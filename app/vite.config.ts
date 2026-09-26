@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['key-art.jpg', 'icon.svg'],
+      includeAssets: ['key-art.jpg', 'favicon.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'Le Grand Prono · Star Academy 2026',
         short_name: 'Grand Prono',
@@ -22,7 +22,6 @@ export default defineConfig({
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
