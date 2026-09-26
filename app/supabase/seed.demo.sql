@@ -8,7 +8,7 @@
 -- =====================================================================
 do $demo$
 declare
-  v_admin uuid; v_season uuid; v_prime uuid; v_q uuid; v_first timestamptz;
+  v_admin uuid; v_p6 timestamptz; v_season uuid; v_prime uuid; v_q uuid; v_first timestamptz;
   v_now timestamptz := now();
   p record; q record; k int; i int; n int; opts uuid[]; pick uuid[];
   cands text[] := array['Inès','Noah','Jade','Malo','Léna','Théo','Chloé','Enzo','Lou','Yanis','Maëlle','Sacha'];
@@ -61,7 +61,10 @@ begin
   perform set_config('request.jwt.claims', jsonb_build_object('sub', v_admin, 'role', 'authenticated')::text, true);
 
   -- ---------- Saison et primes : prime 6 dans ~2 jours ----------
-  v_first := date_trunc('minute', v_now + interval '2 days 3 hours') - interval '35 days';
+  -- Prime 6 = prochain samedi 21h10 (heure de Paris), au moins 3 h dans le futur
+  v_p6 := (date_trunc('week', v_now at time zone 'Europe/Paris') + interval '5 days 21 hours 10 minutes') at time zone 'Europe/Paris';
+  if v_p6 < v_now + interval '3 hours' then v_p6 := v_p6 + interval '7 days'; end if;
+  v_first := v_p6 - interval '35 days';
   update seasons set is_current = false where is_current;
   insert into seasons(name, year, is_current, first_prime_at, grand_predictions_close_at, final_at)
   values ('Star Academy 2026 · DÉMO', 2026, true, v_first, v_first - interval '10 minutes', v_first + interval '63 days')
@@ -137,7 +140,7 @@ begin
       where season_id = v_season;
       insert into questions(season_id, prime_id, category, type, title, icon, validation_criteria, options_source, points, closes_at, status, sort_order)
       values (v_season, prime_ids[k], 'weekly', 'single', q.title, q.icon, q.crit, q.src::options_source, q.pts,
-              v_first + (k - 1) * interval '7 days' - interval '70 minutes', 'draft', case q.kind when 'elim' then 1 when 'eval' then 2 else 3 end)
+              least(v_first + (k - 1) * interval '7 days' - interval '70 minutes', v_now - interval '1 minute'), 'draft', case q.kind when 'elim' then 1 when 'eval' then 2 else 3 end)
       returning id into v_q;
       perform sync_question_options(v_q);
       update questions set status = 'closed' where id = v_q;
@@ -171,34 +174,34 @@ begin
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'weekly', 'type', 'single', 'title', 'Qui sera éliminé ?',
     'description', 'Parmi les trois nommés de la semaine.', 'icon', 'flame', 'options_source', 'candidates_nominated', 'points', 30, 'sort_order', 1,
     'validation_criteria', 'Le candidat nommé qui quitte officiellement le château à l’issue du prime. Double élimination : tous comptent.',
-    'closes_at', date_trunc('minute', v_now + interval '2 days 1 hour 55 minutes'), 'status', 'open'));
+    'closes_at', v_p6 - interval '70 minutes', 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'weekly', 'type', 'multiple', 'title', 'Qui sera nommé la semaine prochaine ?',
     'description', 'Choisis 3 candidats. 15 pts par nommé trouvé.', 'icon', 'users', 'options_source', 'candidates_competing', 'points', 15,
     'min_selections', 3, 'max_selections', 3, 'sort_order', 2,
     'validation_criteria', 'Les candidats officiellement nommés lors de l’annonce de la semaine suivante. 15 pts par nommé trouvé.',
-    'closes_at', date_trunc('minute', v_now + interval '1 day 22 hours'), 'status', 'open'));
+    'closes_at', least(greatest(v_p6 - interval '2 days 2 hours 10 minutes', date_trunc('hour', v_now) + interval '4 hours'), v_p6 - interval '80 minutes'), 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'weekly', 'type', 'single', 'title', 'Qui terminera premier des évaluations ?',
     'description', 'En cas d’égalité officielle, toutes les bonnes réponses comptent.', 'icon', 'medal', 'options_source', 'candidates_competing', 'points', 20, 'sort_order', 3,
     'validation_criteria', 'Le candidat classé premier des évaluations officielles de la semaine. Égalités acceptées.',
-    'closes_at', date_trunc('minute', v_now + interval '20 hours 48 minutes'), 'status', 'open'));
+    'closes_at', least(greatest(v_p6 - interval '1 day 3 hours 10 minutes', date_trunc('hour', v_now) + interval '3 hours'), v_p6 - interval '80 minutes'), 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'weekly', 'type', 'single', 'title', 'Qui obtiendra l’immunité ?',
     'description', 'Le candidat immunisé ne peut pas être nommé la semaine suivante.', 'icon', 'shield', 'options_source', 'candidates_competing', 'points', 20, 'sort_order', 4,
     'validation_criteria', 'Le candidat officiellement immunisé pour la semaine suivante.',
-    'closes_at', date_trunc('minute', v_now + interval '20 hours 48 minutes'), 'status', 'open'));
+    'closes_at', least(greatest(v_p6 - interval '1 day 3 hours 10 minutes', date_trunc('hour', v_now) + interval '3 hours'), v_p6 - interval '80 minutes'), 'status', 'open'));
   -- Les paris improbables
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'fun', 'type', 'yes_no', 'title', 'Y aura-t-il un duo surprise avec un ancien candidat ?',
     'options_source', 'yes_no', 'points', 15, 'sort_order', 10, 'validation_criteria', 'un ancien candidat chante en direct avec un élève pendant le prime.',
-    'closes_at', date_trunc('minute', v_now + interval '2 days 1 hour 50 minutes'), 'status', 'open'));
+    'closes_at', v_p6 - interval '10 minutes', 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'fun', 'type', 'yes_no', 'title', 'Un candidat oubliera-t-il ses paroles ?',
     'options_source', 'yes_no', 'points', 10, 'sort_order', 11, 'validation_criteria', 'un candidat s’arrête ou reprend sa chanson, constaté à l’antenne.',
-    'closes_at', date_trunc('minute', v_now + interval '2 days 1 hour 50 minutes'), 'status', 'open'));
+    'closes_at', v_p6 - interval '10 minutes', 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'fun', 'type', 'single', 'title', 'Combien d’artistes invités sur le prime ?',
     'options_source', 'custom', 'options', jsonb_build_array('1 – 2', '3 – 4', '5 et +'), 'points', 20, 'sort_order', 12,
     'validation_criteria', 'nombre d’artistes invités crédités au générique de fin.',
-    'closes_at', date_trunc('minute', v_now + interval '2 days 1 hour 50 minutes'), 'status', 'open'));
+    'closes_at', v_p6 - interval '10 minutes', 'status', 'open'));
   perform admin_save_question(jsonb_build_object('prime_id', prime_ids[6], 'category', 'fun', 'type', 'yes_no', 'title', 'Deux candidats seront-ils immunisés ?',
     'options_source', 'yes_no', 'points', 10, 'sort_order', 13, 'validation_criteria', 'deux immunités officielles annoncées pour la semaine.',
-    'closes_at', date_trunc('minute', v_now + interval '20 hours 48 minutes'), 'status', 'open'));
+    'closes_at', least(greatest(v_p6 - interval '1 day 3 hours 10 minutes', date_trunc('hour', v_now) + interval '3 hours'), v_p6 - interval '80 minutes'), 'status', 'open'));
 
   -- Quelques réponses déjà enregistrées pour la semaine 6 (Sam a joué « évaluations »)
   for p in select key, value from jsonb_each_text(ids) where key not in ('Alex') loop

@@ -40,7 +40,7 @@ export function CandidateDetail() {
   if (c.on_tour) results.unshift({ t: 'Tournée', d: 'Qualifié·e' });
   if (c.status === 'finalist' || c.status === 'winner') results.unshift({ t: 'Finale', d: c.status === 'winner' ? 'Vainqueur de la saison' : 'Finaliste' });
 
-  const comm = (stats.data ?? []).filter((s) => s.candidate_id === c.id && s.answers > 0);
+  const comm = (stats.data ?? []).filter((s) => s.candidate_id === c.id && s.answers > 0 && s.pct > 0).sort((a, b) => Number(b.category === 'grand') - Number(a.category === 'grand') || b.pct - a.pct);
   const labelOf = (s: { key: string | null; title: string; category: string; prime_id: string | null }) => {
     const pn = primes.data?.find((p) => p.id === s.prime_id)?.number;
     if (s.key === 'winner') return 'Vainqueur · grands pronos';

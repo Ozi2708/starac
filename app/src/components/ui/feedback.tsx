@@ -46,7 +46,7 @@ export function ToastProvider({ children, position = 'top' }: { children: ReactN
 export const useToast = () => useContext(ToastCtx).show;
 
 // ---------- Dialog ----------
-export function Dialog({ open, title, children, actions, onClose }: { open: boolean; title?: ReactNode; children?: ReactNode; actions?: ReactNode; onClose?: () => void }) {
+export function Dialog({ open, title, children, actions, onClose, width }: { open: boolean; title?: ReactNode; children?: ReactNode; actions?: ReactNode; onClose?: () => void; width?: number }) {
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose?.();
@@ -56,7 +56,7 @@ export function Dialog({ open, title, children, actions, onClose }: { open: bool
   if (!open) return null;
   return (
     <div className="gp-dialog__scrim" onClick={(e) => e.target === e.currentTarget && onClose?.()}>
-      <div className="gp-dialog" role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : undefined}>
+      <div className="gp-dialog" role="dialog" aria-modal="true" aria-label={typeof title === 'string' ? title : undefined} style={width ? { maxWidth: width } : undefined}>
         {title && <h2 className="gp-dialog__title">{title}</h2>}
         {children && <div className="gp-dialog__body">{children}</div>}
         {actions && <div className="gp-dialog__actions">{actions}</div>}

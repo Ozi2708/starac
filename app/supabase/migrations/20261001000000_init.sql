@@ -813,11 +813,24 @@ language sql stable security definer set search_path = public as $$
       or exists (select 1 from user_predictions up join questions q on q.id = up.question_id where up.user_id = p_user and q.season_id = p_season);
 $$;
 
+-- Prime de référence pour les flèches d'évolution : le dernier snapshot si des points ont été
+-- attribués depuis sa clôture, sinon l'avant-dernier (on montre alors l'évolution de la semaine écoulée).
+create or replace function ref_snapshot_prime(p_season uuid) returns uuid
+language sql stable security definer set search_path = public as $$
+  with snaps as (
+    select p.id, p.closed_at, row_number() over (order by p.number desc) as n
+    from primes p where p.season_id = p_season and p.closed_at is not null
+      and exists (select 1 from rank_snapshots r where r.prime_id = p.id))
+  select case
+    when exists (select 1 from score_transactions st where st.season_id = p_season and st.created_at > (select closed_at from snaps where n = 1))
+      then (select id from snaps where n = 1)
+    else (select id from snaps where n = 2) end;
+$$;
+
 create or replace view v_general_leaderboard with (security_invoker = true) as
 select s.*, rank() over (partition by s.season_id order by s.total desc)::int as rank,
-       (select rs.rank from rank_snapshots rs join primes p on p.id = rs.prime_id
-         where rs.user_id = s.user_id and rs.season_id = s.season_id and rs.league_id is null
-         order by p.number desc limit 1) as prev_rank
+       (select rs.rank from rank_snapshots rs
+         where rs.user_id = s.user_id and rs.prime_id = ref_snapshot_prime(s.season_id) and rs.league_id is null) as prev_rank
 from v_season_scores s
 -- participants de la saison : membres d'une ligue de la saison ou auteurs d'au moins un prono
 -- (fonction definer : le filtre doit être le même pour tous, sinon les rangs varieraient selon le lecteur)
@@ -835,8 +848,8 @@ create or replace view v_league_leaderboard with (security_invoker = true) as
 select lm.league_id, l.season_id, lm.user_id, p.pseudo, p.avatar_url, lm.role,
        coalesce(ss.total,0) as total, coalesce(ss.correct_answers,0) as correct_answers,
        rank() over (partition by lm.league_id order by coalesce(ss.total,0) desc)::int as rank,
-       (select rs.rank from rank_snapshots rs join primes pp on pp.id = rs.prime_id
-         where rs.user_id = lm.user_id and rs.league_id = lm.league_id order by pp.number desc limit 1) as prev_rank
+       (select rs.rank from rank_snapshots rs
+         where rs.user_id = lm.user_id and rs.league_id = lm.league_id and rs.prime_id = ref_snapshot_prime(l.season_id)) as prev_rank
 from league_members lm join leagues l on l.id = lm.league_id
 join profiles p on p.id = lm.user_id
 left join v_season_scores ss on ss.user_id = lm.user_id and ss.season_id = l.season_id;
@@ -1155,7 +1168,7 @@ grant execute on function
   preview_result(uuid, uuid[], numeric), publish_result(uuid, uuid[], numeric), cancel_question(uuid, text),
   open_question(uuid), admin_save_question(jsonb), admin_set_candidate_status(uuid, candidate_status, uuid),
   admin_set_tour(uuid, boolean), admin_create_grand_questions(uuid), snapshot_ranks(uuid), award_badges(uuid), close_prime(uuid),
-  is_league_member(uuid), is_league_manager(uuid), is_season_participant(uuid, uuid), score_prediction(questions, uuid[], numeric, official_results)
+  is_league_member(uuid), is_league_manager(uuid), is_season_participant(uuid, uuid), ref_snapshot_prime(uuid), score_prediction(questions, uuid[], numeric, official_results)
 to authenticated;   -- les fonctions admin contrôlent is_admin() en interne
 grant execute on function is_admin(), current_season_id(), question_is_locked(questions) to anon;
 revoke execute on function recompute_question(uuid), close_due_questions(), notify_deadlines(interval),
