@@ -1,6 +1,11 @@
 # Régie automatique · Le Grand Prono
 
-Une tâche planifiée Claude Code (Routine « Le Grand Prono · régie quotidienne ») tourne **chaque jour à 20h40, heure de Paris**.
+Trois tâches planifiées Claude Code (Routines, sessions neuves à chaque passage, heure de Paris) :
+- **Mercredi 20h00 · nommés** : nominations, éligibilité de la semaine, « Qui sera éliminé ? », « Qui sera nommé la semaine prochaine ? ».
+- **Jeudi 20h00 · battle du top 3 + pari de la semaine** : ouvre « Qui gagnera la battle du top 3 ? » et prépare **en brouillon** un pari improbable original, que Val valide dans `/admin/questions` (« Ouvrir »).
+- **Dimanche 1h00 · résultats du prime** : élèves (après le prime 1), résultats, éliminations, points, clôture de la semaine, prime suivant.
+
+Chaque tâche a besoin du connecteur Supabase (à ajouter sur claude.ai → Routines si absent).
 Elle lit l'état du jeu dans Supabase (projet `starac`, id `yfhpmsraxlrbxeuzlxen`), cherche les infos officielles de la
 Star Academy 2026 (TF1 et presse qui cite TF1), puis met l'app à jour au nom du compte admin technique « Régie ».
 
