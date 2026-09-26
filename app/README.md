@@ -31,7 +31,13 @@ Crée une saison « Star Academy 2026 · DÉMO » en semaine 6 (prime 6 le samed
 
 Ne jamais charger ce fichier sur le projet de production.
 
-### Passer en production
+### Projet de production « starac »
+Déjà initialisé (migrations `init`, `storage` et `hardening` appliquées via le connecteur Supabase, pg_cron actif).
+`.env.production` contient l'URL et la clé publique (anon) : `npm run build` les utilise automatiquement.
+Les migrations y ont été enregistrées sous d'autres numéros de version : avant un futur `supabase db push`, aligne
+l'historique avec `npx supabase migration repair --status applied 20261001000000 20261001000100 20261001000200`.
+
+### Passer en production (nouveau projet)
 1. Crée un projet Supabase, puis `npx supabase link --project-ref <ref>` et `npx supabase db push`.
 2. Auth → URL Configuration : ajoute l'URL du site dans *Site URL* et *Redirect URLs* (liens magiques).
 3. Clôture automatique et rappels : active l'extension `pg_cron` avant la migration (planification incluse), ou déploie
