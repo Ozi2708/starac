@@ -57,13 +57,13 @@ export function Landing({ season, signedIn }: { season: Season | null; signedIn?
           {!signedIn ? (
             <>
               <Button size="lg" block onClick={() => navigate('/connexion?mode=inscription')}>Créer mon compte</Button>
-              <Button size="lg" block variant="secondary" icon="key-round" onClick={() => navigate('/connexion?next=/ligues')}>Rejoindre une ligue</Button>
+              <Button size="lg" block variant="secondary" icon="key-round" onClick={() => navigate(`/connexion?next=${encodeURIComponent('/classement?ajouter=1')}`)}>Rejoindre une ligue</Button>
               <Button variant="ghost" onClick={() => navigate('/connexion')}>J’ai déjà un compte</Button>
             </>
           ) : hasLeague ? (
             <>
               {season?.phase === 'open' && <Button size="lg" block iconRight="arrow-right" onClick={() => navigate('/pronos?tab=saison')}>Faire mes grands pronos</Button>}
-              <Button size="lg" block variant={season?.phase === 'open' ? 'secondary' : 'primary'} icon="users" onClick={() => navigate('/ligues')}>Mes ligues</Button>
+              <Button size="lg" block variant={season?.phase === 'open' ? 'secondary' : 'primary'} icon="users" onClick={() => navigate('/classement')}>Mes ligues</Button>
               <Button size="lg" block variant="secondary" icon="key-round" onClick={() => setDlg('join')}>Rejoindre une autre ligue</Button>
             </>
           ) : (
@@ -76,7 +76,7 @@ export function Landing({ season, signedIn }: { season: Season | null; signedIn?
         </div>
         <LegalNote />
       </div>
-      <LeagueDialogs open={dlg} onClose={() => setDlg(null)} onDone={(id) => navigate(`/ligues/${id}`)} />
+      <LeagueDialogs open={dlg} onClose={() => setDlg(null)} onDone={(id) => navigate(`/classement?ligue=${id}`)} />
     </div>
   );
 }

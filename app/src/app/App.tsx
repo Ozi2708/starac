@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import { supabaseConfigured } from '@/lib/supabase';
 import { ToastProvider } from '@/components/ui/feedback';
@@ -14,8 +14,6 @@ import { PickScreen } from '@/features/predictions/PickScreen';
 import { CandidatesGrid } from '@/features/candidates/CandidatesGrid';
 import { CandidateDetail } from '@/features/candidates/CandidateDetail';
 import { Leaderboard } from '@/features/leaderboard/Leaderboard';
-import { LeaguesList } from '@/features/leagues/LeaguesList';
-import { LeaguePage } from '@/features/leagues/LeaguePage';
 import { Profile } from '@/features/profile/Profile';
 import { Notifications } from '@/features/notifications/Notifications';
 import { Finale } from '@/features/finale/Finale';
@@ -51,6 +49,12 @@ function RequireAdmin({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Anciennes adresses de ligue : tout se passe désormais dans Classement. */
+function LeagueRedirect() {
+  const { id = '' } = useParams();
+  return <Navigate to={`/classement?ligue=${encodeURIComponent(id)}`} replace />;
+}
+
 export function App() {
   if (!supabaseConfigured) return <NotConfigured />;
   return (
@@ -80,16 +84,16 @@ export function App() {
                 <Route path="/pronos" element={<PronosHub />} />
                 <Route path="/candidats" element={<CandidatesGrid />} />
                 <Route path="/classement" element={<Leaderboard />} />
-                <Route path="/ligues" element={<LeaguesList />} />
+                <Route path="/ligues" element={<Navigate to="/classement" replace />} />
                 <Route path="/profil" element={<Profile />} />
               </Route>
               <Route element={<RequirePlayer><MobileLayout nav={false} /></RequirePlayer>}>
                 <Route path="/pronos/:id" element={<PickScreen />} />
                 <Route path="/candidats/:id" element={<CandidateDetail />} />
-                <Route path="/ligues/:id" element={<LeaguePage />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/finale" element={<Finale />} />
               </Route>
+              <Route path="/ligues/:id" element={<LeagueRedirect />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </ToastProvider>

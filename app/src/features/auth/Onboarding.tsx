@@ -120,7 +120,7 @@ export function Onboarding() {
         )}
         <LegalNote />
       </Screen>
-      <LeagueDialogs open={dlg} onClose={() => setDlg(null)} onDone={(id) => navigate(`/ligues/${id}`, { replace: true })} />
+      <LeagueDialogs open={dlg} onClose={() => setDlg(null)} onDone={(id) => navigate(`/classement?ligue=${id}`, { replace: true })} />
     </MobileShell>
   );
 }

@@ -188,6 +188,19 @@ export function useLeagueMemberCounts(leagueIds: string[]) {
   });
 }
 
+/** Mon rang et mes points dans chacune de mes ligues (une seule requête). */
+export function useMyLeagueRanks(leagueIds: string[]) {
+  const { userId } = useAuth();
+  return useQuery({
+    queryKey: ['my-league-ranks', userId, leagueIds.join(',')],
+    enabled: !!userId && leagueIds.length > 0,
+    queryFn: async () => {
+      const r = await rows<LeagueLeaderRow>(supabase.from('v_league_leaderboard').select('*').in('league_id', leagueIds).eq('user_id', userId!));
+      return Object.fromEntries(r.map((x) => [x.league_id, x])) as Record<string, LeagueLeaderRow>;
+    },
+  });
+}
+
 // ---------- Profil, badges, notifications ----------
 export function useBadges() {
   return useQuery({ queryKey: ['badges'], staleTime: Infinity, queryFn: () => rows<Badge>(supabase.from('badges').select('*').order('sort_order')) });

@@ -4,12 +4,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/lib/auth';
 import {
   currentPrime, isDemoSeason, lastClosedPrime, useCandidates, useGame, useLeagueLeaderboard, useLeagueMemberCounts,
-  useNotifications, usePrimaryLeague, usePrimes,
+  useMyLeagueRanks, useMyLeagues, useNotifications, usePrimaryLeague, usePrimes,
 } from '@/lib/queries';
 import { answered, maxPoints, moveOf, pointsSuffix, pronoStatus } from '@/lib/game';
 import { fmtClose, fmtDayTime, fmtGain, fmtNum, plural } from '@/lib/format';
 import type { Season } from '@/lib/types';
-import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton } from '@/components/ui/core';
+import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton, Thumb } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
 import { Countdown, LeaderboardRow, PronoCard } from '@/components/ui/game';
 import { ErrorState } from '@/components/ui/feedback';
@@ -26,7 +26,10 @@ export function Dashboard({ season }: { season: Season }) {
   const cands = useCandidates(season.id);
   const { primary, isLoading: leaguesLoading } = usePrimaryLeague();
   const lb = useLeagueLeaderboard(primary?.league_id);
-  const counts = useLeagueMemberCounts(primary ? [primary.league_id] : []);
+  const leagues = useMyLeagues();
+  const leagueIds = (leagues.data ?? []).map((l) => l.league_id);
+  const counts = useLeagueMemberCounts(leagueIds);
+  const ranks = useMyLeagueRanks(leagueIds);
   const notifs = useNotifications();
 
   const prime = currentPrime(primes.data);
@@ -66,7 +69,7 @@ export function Dashboard({ season }: { season: Season }) {
       {/* En-tête */}
       <div className="flex items-center gap-3">
         <Avatar name={profile?.pseudo} src={profile?.avatar_url} size={44} ring="magenta" />
-        <button type="button" className="flex min-w-0 flex-1 flex-col border-0 bg-transparent p-0 text-left" onClick={() => navigate(primary ? `/ligues/${primary.league_id}` : '/ligues')}>
+        <button type="button" className="flex min-w-0 flex-1 flex-col border-0 bg-transparent p-0 text-left" onClick={() => navigate(primary ? `/classement?ligue=${primary.league_id}` : '/classement?ajouter=1')}>
           <span className="t-caption truncate text-muted">{primary?.leagues.name ?? 'Aucune ligue · rejoins tes amis'}</span>
           <span className="t-h3 truncate">Salut {profile?.pseudo}</span>
         </button>
@@ -192,9 +195,30 @@ export function Dashboard({ season }: { season: Season }) {
         )}
       </Section>
 
-      {/* Ma ligue */}
-      {primary && (
-        <Section title="MA LIGUE" aside={<a href="/classement" onClick={(e) => { e.preventDefault(); navigate(`/ligues/${primary.league_id}`); }} className="t-body-s font-bold">Classement complet</a>}>
+      {/* Mes ligues : top 3 de la ligue principale, ou mon rang dans chacune si j'en ai plusieurs */}
+      {primary && (leagues.data?.length ?? 0) > 1 ? (
+        <Section title="MES LIGUES" aside={<a href="/classement" onClick={(e) => { e.preventDefault(); navigate('/classement'); }} className="t-body-s font-bold">Classements</a>}>
+          <div className="card-plain row-sep flex flex-col">
+            {[...(leagues.data ?? [])].sort((x, y) => Number(y.is_primary) - Number(x.is_primary)).map((l) => {
+              const r = ranks.data?.[l.league_id];
+              return (
+                <button key={l.league_id} type="button" onClick={() => navigate(`/classement?ligue=${l.league_id}`)} className="flex items-center gap-3 border-0 bg-transparent px-4 py-3 text-left">
+                  <Thumb name={l.leagues.name} src={l.leagues.image_url} size={38} radius={12} />
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="t-body truncate font-bold">{l.leagues.name}</span>
+                    <span className="t-caption text-muted">{plural(counts.data?.[l.league_id] ?? 0, 'joueur')}{l.is_primary ? ' · principale' : ''}</span>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span style={{ font: 'italic 900 22px/1 var(--font-numeric)' }}>{r ? `#${r.rank}` : '—'}</span>
+                  </div>
+                  <Icon name="chevron-right" size={16} className="text-muted" />
+                </button>
+              );
+            })}
+          </div>
+        </Section>
+      ) : primary && (
+        <Section title="MA LIGUE" aside={<a href="/classement" onClick={(e) => { e.preventDefault(); navigate(`/classement?ligue=${primary.league_id}`); }} className="t-body-s font-bold">Classement complet</a>}>
           <div className="rounded-lg bg-card p-1.5" style={{ boxShadow: 'inset 0 0 0 1px var(--border-subtle), var(--shadow-card)' }}>
             {lb.isLoading ? <Skeleton h={180} /> : (lb.data ?? []).slice(0, 3).map((r) => (
               <LeaderboardRow key={r.user_id} rank={r.rank} name={r.pseudo} avatar={r.avatar_url} points={fmtNum(r.total)} move={moveOf(r)} me={r.user_id === userId} sub={plural(r.correct_answers, 'bon prono', 'bons pronos')} />

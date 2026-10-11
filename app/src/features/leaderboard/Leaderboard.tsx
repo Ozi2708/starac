@@ -1,64 +1,117 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import {
-  lastClosedPrime, useGeneralLeaderboard, useLeagueLeaderboard, useMyLeagues, usePrimaryLeague, usePrimeScores, usePrimes, useSeason, useSnapshots,
+  lastClosedPrime, useGeneralLeaderboard, useLeagueLeaderboard, useLeagueMemberCounts, useMyLeagueRanks, useMyLeagues, usePrimaryLeague, usePrimeScores,
+  usePrimes, useSeason, useSnapshots,
 } from '@/lib/queries';
 import { competitionRanks, moveOf } from '@/lib/game';
 import { fmtNum, plural } from '@/lib/format';
 import type { LeaderRow, Prime, RankSnapshot } from '@/lib/types';
-import { Avatar, Button, IconCircle, Overline, PointsChip, SegmentedControl, Skeleton } from '@/components/ui/core';
+import { Avatar, Button, IconButton, IconCircle, Overline, PointsChip, SegmentedControl, Skeleton, Thumb } from '@/components/ui/core';
+import { Icon } from '@/components/ui/Icon';
 import { LeaderboardRow } from '@/components/ui/game';
-import { EmptyState, ErrorState } from '@/components/ui/feedback';
+import { Dialog, EmptyState, ErrorState } from '@/components/ui/feedback';
+import { LeagueDialogs, type LeagueDialog } from '@/features/leagues/LeagueDialogs';
+import { LeagueSheet } from '@/features/leagues/LeagueSheet';
+import { useInvite } from '@/features/leagues/invite';
 import { Screen } from '@/app/MobileLayout';
 
 type View = 'general' | 'semaine' | 'evolution';
+const SCOPE_KEY = 'gp:classement-ligue';
+const readScope = () => { try { return localStorage.getItem(SCOPE_KEY); } catch { return null; } };
+const saveScope = (v: string) => { try { localStorage.setItem(SCOPE_KEY, v); } catch { /* stockage indisponible */ } };
 
+/**
+ * Classement = le lieu unique des ligues : carrousel de mes ligues (mon rang dans chacune),
+ * puis le classement de la ligue choisie, ses actions (inviter, gérer) et les vues Général / Semaine / Évolution.
+ */
 export function Leaderboard() {
-  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const view = (params.get('vue') as View) || 'general';
   const { primary } = usePrimaryLeague();
   const leagues = useMyLeagues();
-  const scope = params.get('ligue') ?? primary?.league_id ?? 'all';
+  const list = leagues.data ?? [];
+  const wanted = params.get('ligue') ?? readScope();
+  const scope = wanted === 'all' ? 'all' : list.find((l) => l.league_id === wanted)?.league_id ?? primary?.league_id ?? 'all';
+  const current = list.find((l) => l.league_id === scope) ?? null;
+
   const season = useSeason();
   const primes = usePrimes(season.data?.id);
-  const general = useGeneralLeaderboard(scope === 'all' ? season.data?.id : undefined);
+  const general = useGeneralLeaderboard(season.data?.id);
   const league = useLeagueLeaderboard(scope !== 'all' ? scope : null);
   const snaps = useSnapshots(season.data?.id, scope === 'all' ? null : scope);
   const primeScores = usePrimeScores(season.data?.id);
+  const ids = list.map((l) => l.league_id);
+  const ranks = useMyLeagueRanks(ids);
+  const counts = useLeagueMemberCounts(ids);
+  const { userId } = useAuth();
+  const { shareLeague } = useInvite();
   const src = scope === 'all' ? general : league;
   const rows = src.data ?? [];
-  const leagueName = scope === 'all' ? `Saison ${season.data?.year ?? ''} · tous les joueurs` : leagues.data?.find((l) => l.league_id === scope)?.leagues.name;
 
-  const set = (k: string, v: string) => {
+  const [adding, setAdding] = useState(params.get('ajouter') === '1');
+  const [dlg, setDlg] = useState<LeagueDialog>(null);
+  const [sheet, setSheet] = useState(false);
+
+  const update = (patch: Record<string, string | null>) => {
     const p = new URLSearchParams(params);
-    p.set(k, v);
+    for (const [k, v] of Object.entries(patch)) (v == null ? p.delete(k) : p.set(k, v));
     setParams(p, { replace: true });
   };
+  const select = (id: string) => { saveScope(id); update({ ligue: id }); };
+
+  const me = (general.data ?? []).find((r) => r.user_id === userId);
+  const cards: SwitchItem[] = [
+    ...[...list].sort((x, y) => Number(y.is_primary) - Number(x.is_primary)).map((l) => ({
+      id: l.league_id, name: l.leagues.name, image: l.leagues.image_url, primary: l.is_primary,
+      rank: ranks.data?.[l.league_id]?.rank, total: ranks.data?.[l.league_id]?.total, count: counts.data?.[l.league_id],
+    })),
+    { id: 'all', name: 'Tous les joueurs', image: null, primary: false, rank: me?.rank, total: me?.total, count: general.data?.length, global: true },
+  ];
 
   return (
-    <Screen gap={22}>
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="t-caption truncate text-muted">{leagueName}{rows.length ? ` · ${plural(rows.length, 'joueur')}` : ''}</span>
-          <h1 className="t-h1 m-0">Classement</h1>
-        </div>
-        <Button variant="secondary" size="sm" icon="users" onClick={() => navigate('/ligues')}>Mes ligues</Button>
+    <Screen gap={20}>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="t-h1 m-0">Classement</h1>
+        <Button variant="secondary" size="sm" icon="plus" onClick={() => setAdding(true)}>Ligue</Button>
       </div>
-      {(leagues.data?.length ?? 0) > 0 && (
-        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5">
-          {[{ id: 'all', name: 'Tous les joueurs' }, ...(leagues.data ?? []).map((l) => ({ id: l.league_id, name: l.leagues.name }))].map((l) => (
-            <button key={l.id} type="button" onClick={() => set('ligue', l.id)}
-              className={'gp-seg__opt flex-none rounded-full' + (scope === l.id ? ' gp-seg__opt--on' : '')}
-              style={scope === l.id ? { height: 34 } : { height: 34, background: 'rgba(255,255,255,.06)', boxShadow: 'inset 0 0 0 1px var(--border-subtle)' }}>
-              {l.name}
-            </button>
-          ))}
-        </div>
+
+      {leagues.isLoading ? <Skeleton h={128} /> : (
+        <LeagueSwitcher items={cards} value={scope} onSelect={select} onAdd={() => setAdding(true)} />
       )}
-      <SegmentedControl<View> value={view} onChange={(v) => set('vue', v)} options={[{ value: 'general', label: 'Général' }, { value: 'semaine', label: 'Semaine' }, { value: 'evolution', label: 'Évolution' }]} />
-      {src.isLoading ? (
+
+      {!leagues.isLoading && !list.length && (
+        <button type="button" onClick={() => setAdding(true)} className="card-edge flex items-center gap-3.5 p-4 text-left">
+          <IconCircle icon="users" tone="gold" />
+          <div className="flex flex-1 flex-col">
+            <span className="t-body font-bold">Joue entre amis</span>
+            <span className="t-caption text-muted">Crée ta ligue ou rejoins celle de tes amis avec leur code.</span>
+          </div>
+          <Icon name="chevron-right" size={18} className="text-muted" />
+        </button>
+      )}
+
+      {/* Ligue sélectionnée : identité + actions */}
+      <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="t-h3 truncate">{current ? current.leagues.name : 'Tous les joueurs'}</span>
+          <span className="t-caption truncate text-muted">
+            {current
+              ? `${plural(rows.length || counts.data?.[current.league_id] || 0, 'joueur')} · code ${current.leagues.invite_code}`
+              : `Saison ${season.data?.year ?? ''} · ${plural(rows.length, 'joueur')}`}
+          </span>
+        </div>
+        {current && (
+          <>
+            <Button size="sm" icon="share-2" onClick={() => shareLeague(current.leagues)}>Inviter</Button>
+            <IconButton icon="ellipsis" label="Gérer la ligue" size={40} onClick={() => setSheet(true)} />
+          </>
+        )}
+      </div>
+
+      <SegmentedControl<View> value={view} onChange={(v) => update({ vue: v })} options={[{ value: 'general', label: 'Général' }, { value: 'semaine', label: 'Semaine' }, { value: 'evolution', label: 'Évolution' }]} />
+      {src.isLoading || leagues.isLoading ? (
         <div className="flex flex-col gap-2.5"><Skeleton h={96} /><Skeleton h={120} /><Skeleton h={60} /><Skeleton h={60} /></div>
       ) : src.isError ? (
         <ErrorState onRetry={() => src.refetch()} />
@@ -71,7 +124,63 @@ export function Leaderboard() {
       ) : (
         <Evolution rows={rows} primes={primes.data ?? []} snaps={snaps.data ?? []} />
       )}
+
+      <Dialog open={adding} title="Ajouter une ligue" onClose={() => { setAdding(false); update({ ajouter: null }); }}
+        actions={<>
+          <Button block icon="plus" onClick={() => { setAdding(false); update({ ajouter: null }); setDlg('create'); }}>Créer une ligue</Button>
+          <Button block variant="secondary" icon="key-round" onClick={() => { setAdding(false); update({ ajouter: null }); setDlg('join'); }}>Rejoindre avec un code</Button>
+          <Button block variant="ghost" onClick={() => { setAdding(false); update({ ajouter: null }); }}>Annuler</Button>
+        </>}>
+        Tes pronos comptent dans toutes tes ligues, rien à refaire.
+      </Dialog>
+      <LeagueDialogs open={dlg} onClose={() => setDlg(null)} onDone={(id) => select(id)} />
+      {current && (
+        <LeagueSheet open={sheet} onClose={() => setSheet(false)} membership={current} rows={league.data ?? []} season={season.data ?? null}
+          onLeft={() => select(primary && primary.league_id !== current.league_id ? primary.league_id : 'all')} />
+      )}
     </Screen>
+  );
+}
+
+interface SwitchItem { id: string; name: string; image: string | null; primary: boolean; rank?: number; total?: number; count?: number; global?: boolean }
+
+/** Carrousel horizontal : une carte par ligue avec mon rang, puis « Tous les joueurs » et « Ajouter ». */
+function LeagueSwitcher({ items, value, onSelect, onAdd }: { items: SwitchItem[]; value: string; onSelect: (id: string) => void; onAdd: () => void }) {
+  const refs = useRef<Record<string, HTMLButtonElement | null>>({});
+  useEffect(() => {
+    const el = refs.current[value];
+    const box = el?.parentElement;
+    if (el && box) box.scrollTo({ left: Math.max(0, el.offsetLeft - box.clientWidth / 2 + el.clientWidth / 2), behavior: 'smooth' });
+  }, [value]);
+  return (
+    <div className="no-scrollbar -mx-5 flex snap-x scroll-px-5 gap-2.5 overflow-x-auto px-5 pb-1" role="tablist" aria-label="Mes ligues">
+      {items.map((it) => {
+        const on = it.id === value;
+        return (
+          <button key={it.id} ref={(el) => { refs.current[it.id] = el; }} type="button" role="tab" aria-selected={on} onClick={() => onSelect(it.id)}
+            className={'flex w-[146px] flex-none snap-start flex-col gap-2.5 p-3.5 text-left transition-transform active:scale-[.97] ' + (on ? 'card-edge' : 'card-plain')}
+            style={on ? undefined : { border: '1.5px solid transparent', opacity: 0.86 }}>
+            <div className="flex items-center justify-between">
+              {it.global ? (
+                <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-white/[.08] text-secondary"><Icon name="globe" size={18} /></span>
+              ) : <Thumb name={it.name} src={it.image} size={36} radius={11} />}
+              {it.primary && <span className="t-caption inline-flex items-center gap-1 text-gold-200"><Icon name="star" size={12} />Principale</span>}
+            </div>
+            <span className="t-body-s line-clamp-2 min-h-[2.6em] font-bold leading-tight text-primary">{it.name}</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className={on ? 'gp-gold-text pr-1' : 'text-primary pr-1'} style={{ font: 'italic 900 26px/1 var(--font-numeric)' }}>{it.rank ? `#${it.rank}` : '—'}</span>
+              <span className="t-caption text-muted">{it.count ? `sur ${it.count}` : ''}</span>
+            </div>
+            <span className="t-caption text-muted">{it.total != null ? `${fmtNum(it.total)} pts` : 'Pas encore classé'}</span>
+          </button>
+        );
+      })}
+      <button type="button" onClick={onAdd} className="flex w-[110px] flex-none snap-start flex-col items-center justify-center gap-2 rounded-lg p-3.5 text-center text-secondary"
+        style={{ border: '1.5px dashed rgba(255,255,255,.18)' }}>
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[.08]"><Icon name="plus" size={18} /></span>
+        <span className="t-caption font-bold">Créer ou rejoindre</span>
+      </button>
+    </div>
   );
 }
 

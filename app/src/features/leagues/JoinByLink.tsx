@@ -41,7 +41,7 @@ export function JoinByLink() {
     <MobileShell nav={false}>
       <Screen top={80}>
         {error ? (
-          <EmptyState icon="key-round" title={error.title} message={error.message} action={<Button size="sm" variant="secondary" onClick={() => navigate('/ligues')}>Mes ligues</Button>} />
+          <EmptyState icon="key-round" title={error.title} message={error.message} action={<Button size="sm" variant="secondary" onClick={() => navigate('/classement')}>Mes ligues</Button>} />
         ) : (
           <EmptyState icon="users" title="On t’ajoute à la ligue…" />
         )}

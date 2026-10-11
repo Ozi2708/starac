@@ -176,7 +176,7 @@ export function Profile() {
             <div className="flex flex-1 flex-col"><span className="t-body font-bold">Notifications</span><span className="t-caption text-muted">Ouvertures, clôtures, résultats, badges</span></div>
             <Switch checked={!!profile?.notif_enabled} onChange={toggleNotif} ariaLabel="Notifications" />
           </div>
-          <Row icon="users" label="Mes ligues" onClick={() => navigate('/ligues')} />
+          <Row icon="users" label="Mes ligues" onClick={() => navigate('/classement')} />
           <Row icon="download" label="Exporter mes données" sub="Pronos, points, ligues, badges (JSON)" onClick={exportData} />
           <Row icon="trash" label="Supprimer mon compte" sub="Définitif : pronos et points effacés" onClick={() => setConfirmDelete(true)} />
           {isAdmin && <Row icon="layout-dashboard" label="Administration" onClick={() => navigate('/admin')} />}
