@@ -9,7 +9,7 @@ import {
 import { answered, maxPoints, moveOf, pointsSuffix, pronoStatus } from '@/lib/game';
 import { fmtClose, fmtDayTime, fmtGain, fmtNum, plural } from '@/lib/format';
 import type { Season } from '@/lib/types';
-import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, Section, Skeleton } from '@/components/ui/core';
+import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
 import { Countdown, LeaderboardRow, PronoCard } from '@/components/ui/game';
 import { ErrorState } from '@/components/ui/feedback';
@@ -43,6 +43,10 @@ export function Dashboard({ season }: { season: Season }) {
   const nextClose = todo.length ? todo.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), todo[0].closes_at) : null;
   const todoPts = todo.reduce((s, q) => s + maxPoints(q), 0);
 
+  // Grands pronos encore ouverts : bannière d'accès directe en haut de l'accueil
+  const grandOpen = (game.data?.questions ?? []).filter((q) => q.category === 'grand' && !q.locked);
+  const grandDone = grandOpen.filter(answered).length;
+
   const me = lb.data?.find((r) => r.user_id === userId);
   const myTotal = me?.total ?? 0;
   const gainPrime = [...(primes.data ?? [])].reverse().find((p) => game.data?.transactions.some((t) => t.prime_id === p.id));
@@ -69,6 +73,22 @@ export function Dashboard({ season }: { season: Season }) {
         {isDemoSeason(season) && <Badge>Démo</Badge>}
         <IconButton icon="bell" label="Notifications" dot={unread} onClick={() => navigate('/notifications')} />
       </div>
+
+      {grandOpen.length > 0 && (
+        <button type="button" onClick={() => navigate('/pronos?tab=saison')} className="card-edge flex flex-col gap-3.5 p-4 text-left">
+          <div className="flex items-center gap-3.5">
+            <IconCircle icon="crown" tone="gold" />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="t-overline text-gold-200">GRANDS PRONOS DE LA SAISON</span>
+              <span className="t-body font-bold">{grandDone === grandOpen.length ? 'Tous tes grands pronos sont joués' : grandDone === 0 ? 'Fais tes grands pronos !' : `Encore ${grandOpen.length - grandDone} grand${grandOpen.length - grandDone > 1 ? 's' : ''} prono${grandOpen.length - grandDone > 1 ? 's' : ''} à jouer`}</span>
+              <span className="t-caption text-muted">Vainqueur, finalistes, tournée… · ferme {fmtClose(grandOpen[0].closes_at)}</span>
+            </div>
+            <Icon name="chevron-right" size={18} className="text-muted" />
+          </div>
+          <ProgressBar value={grandDone} max={grandOpen.length} tone="gold" label={`${grandDone} / ${grandOpen.length} joués`} />
+          {grandDone < grandOpen.length && <span className="gp-btn gp-btn--primary gp-btn--md gp-btn--block pointer-events-none">Jouer mes grands pronos</span>}
+        </button>
+      )}
 
       {season.phase === 'finished' && (
         <button type="button" onClick={() => navigate('/finale')} className="card-edge flex items-center gap-3.5 p-4 text-left">

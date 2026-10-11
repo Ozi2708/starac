@@ -14,7 +14,6 @@ type Tab = 'semaine' | 'saison' | 'improbables';
 
 export function PronosHub() {
   const [params, setParams] = useSearchParams();
-  const tab = (params.get('tab') as Tab) || 'semaine';
   const season = useSeason();
   const primes = usePrimes(season.data?.id);
   const game = useGame(season.data?.id);
@@ -23,6 +22,9 @@ export function PronosHub() {
   const all = game.data?.questions ?? [];
   const weekly = all.filter((q) => q.category === 'weekly' && q.prime_id === prime?.id);
   const grand = all.filter((q) => q.category === 'grand');
+  const grandTodo = grand.filter((q) => !q.locked && !answered(q)).length;
+  // Tant qu'il reste des grands pronos à jouer, on ouvre directement sur cet onglet.
+  const tab = (params.get('tab') as Tab) || (grandTodo > 0 ? 'saison' : 'semaine');
   const fun = all.filter((q) => q.category === 'fun' && q.prime_id === prime?.id);
 
   return (
@@ -34,7 +36,7 @@ export function PronosHub() {
       <SegmentedControl<Tab>
         value={tab}
         onChange={(v) => setParams({ tab: v }, { replace: true })}
-        options={[{ value: 'semaine', label: 'Semaine' }, { value: 'saison', label: 'Grands pronos' }, { value: 'improbables', label: 'Improbables' }]}
+        options={[{ value: 'semaine', label: 'Semaine' }, { value: 'saison', label: grandTodo > 0 ? <span className="inline-flex items-center gap-1.5">Grands pronos<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1" style={{ background: 'var(--grad-cta)', color: '#fff', font: '700 11px var(--font-body)' }}>{grandTodo}</span></span> : 'Grands pronos' }, { value: 'improbables', label: 'Improbables' }]}
       />
       {game.isLoading || season.isLoading ? (
         <div className="flex flex-col gap-2.5"><Skeleton h={170} /><Skeleton h={112} /><Skeleton h={112} /></div>
