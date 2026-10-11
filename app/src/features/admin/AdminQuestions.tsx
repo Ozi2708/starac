@@ -46,6 +46,7 @@ export function AdminQuestions() {
   const [busy, setBusy] = useState(false);
   const [cancel, setCancel] = useState<AdminQuestion | null>(null);
   const [reason, setReason] = useState('');
+  const [del, setDel] = useState<AdminQuestion | null>(null);
 
   const defaultClose = cur ? toParisInput(new Date(new Date(cur.airs_at).getTime() - 70 * 60_000)) : '';
   useEffect(() => {
@@ -104,6 +105,17 @@ export function AdminQuestions() {
     refresh();
   }
 
+  // Suppression définitive (disparaît de l'interface) : seulement tant que personne n'a répondu.
+  async function doDelete() {
+    if (!del) return;
+    const { data, error } = await supabase.from('questions').delete().eq('id', del.id).select('id');
+    if (error) return toast({ tone: 'error', ...explainError(error) });
+    if (!data?.length) return toast({ tone: 'error', title: 'Suppression impossible', message: 'La question n’a pas été trouvée ou tu n’as pas les droits.' });
+    toast({ tone: 'success', title: 'Question supprimée', message: `« ${del.title} » n’apparaît plus dans l’app.` });
+    setDel(null);
+    refresh();
+  }
+
   const frozen = !!form?.id && form.status !== 'draft';
   const f = form;
 
@@ -146,6 +158,7 @@ export function AdminQuestions() {
                 {q.status !== 'cancelled' && q.status !== 'published' && <Button size="sm" variant="ghost" icon="pencil" onClick={() => setForm(fromQuestion(q))}>{q.status === 'draft' ? 'Modifier' : 'Clôture'}</Button>}
                 {q.category !== 'grand' && <Button size="sm" variant="ghost" icon="copy" onClick={() => setForm(fromQuestion(q, true))}>Dupliquer</Button>}
                 {q.status !== 'cancelled' && <Button size="sm" variant="ghost" icon="ban" onClick={() => { setCancel(q); setReason(''); }}>Annuler</Button>}
+                {q.answers === 0 && <Button size="sm" variant="ghost" icon="trash" onClick={() => setDel(q)}>Supprimer</Button>}
               </div>
             </div>
           );
@@ -247,6 +260,9 @@ export function AdminQuestions() {
           <span>« {cancel?.title} » n’attribuera aucun point, et les points déjà attribués seront retirés.</span>
           <Input label="Motif (obligatoire)" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ex. Mécanique absente ce prime" />
         </div>
+      </ConfirmDialog>
+      <ConfirmDialog open={!!del} danger title="Supprimer la question ?" confirmLabel="Supprimer" cancelLabel="Retour" onCancel={() => setDel(null)} onConfirm={doDelete}>
+        « {del?.title} » sera effacée définitivement et disparaîtra de l’app. Personne n’y a encore répondu.
       </ConfirmDialog>
     </AdminPage>
   );
