@@ -9,6 +9,7 @@ import { Icon } from '@/components/ui/Icon';
 import { CandidateCard, STATUS_LABEL } from '@/components/ui/game';
 import { ConfirmDialog, EmptyState, useToast } from '@/components/ui/feedback';
 import type { QuestionOption } from '@/lib/types';
+import { LeaguePicks } from './LeaguePicks';
 
 /** Écran de sélection / consultation verrouillée d'une question (`/pronos/:id`). */
 export function PickScreen() {
@@ -209,6 +210,14 @@ export function PickScreen() {
               </div>
             )}
           </>
+        )}
+
+        {locked && q.status !== 'cancelled' && <LeaguePicks q={q} candById={candById} />}
+        {!locked && (
+          <span className="t-caption flex items-center gap-2 text-muted">
+            <Icon name="eye" size={13} />
+            Les pronos des autres joueurs seront visibles ici après la clôture.
+          </span>
         )}
       </main>
 

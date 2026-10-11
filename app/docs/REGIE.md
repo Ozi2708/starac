@@ -27,3 +27,9 @@ Toute erreur se corrige dans `/admin/resultats` (« Corriger le résultat ») : 
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-00000000c1a0","role":"authenticated"}', false);
 -- puis, dans la même requête : admin_set_candidate_status(...), admin_save_question(...), publish_result(...), close_prime(...)
 ```
+
+## Grands pronos de la saison 2026 (en base, clôture 17/10 21h00)
+winner · finalists · tour · first_out · most_nominated / least_nominated (nominations comptées jusqu'à l'annonce de la
+tournée) · last_out · couple · last_out_before_tour · battle_king (faits `battle_winner` dans season_facts) ·
+elder_vs_youngest (Cameron / Antoine / Brieuc / Félix) · winner_gender · belgian_duel (Brieuc / Leeloo).
+`first_finalist` est annulé (pas de « premier qualifié » dans le format de la finale).
