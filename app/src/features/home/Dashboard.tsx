@@ -14,6 +14,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Countdown, LeaderboardRow, PronoCard } from '@/components/ui/game';
 import { ErrorState } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
+import { InviteCard } from '@/features/leagues/InviteCard';
 
 /** Tableau de bord (variante 1a) : héros, mon classement, prochains pronos, ma ligue, derniers résultats. */
 export function Dashboard({ season }: { season: Season }) {
@@ -181,6 +182,8 @@ export function Dashboard({ season }: { season: Season }) {
           </div>
         </Section>
       )}
+
+      <InviteCard />
 
       {/* Derniers résultats */}
       {resultPrime && (eliminated || lastQs.length > 0) && (

@@ -11,6 +11,7 @@ import { Avatar, Badge, LegalNote, Overline, SegmentedControl, Skeleton, StatTil
 import { Icon } from '@/components/ui/Icon';
 import { ConfirmDialog, useToast } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
+import { InviteCard } from '@/features/leagues/InviteCard';
 
 type Tab = 'week' | 'season';
 
@@ -97,6 +98,8 @@ export function Profile() {
         <StatTile value={`${good} / ${scored}`} label="Bonnes réponses" />
         <StatTile value={scored ? fmtPct((good / scored) * 100) : '—'} label="Taux de réussite" />
       </div>
+
+      <InviteCard />
 
       <section className="flex flex-col gap-3.5">
         <div className="flex items-baseline justify-between">
