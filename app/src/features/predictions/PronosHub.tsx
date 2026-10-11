@@ -116,14 +116,28 @@ function SeasonTab({ questions, closeAt, onExpire }: { questions: GameQuestion[]
     return <EmptyState icon="crown" title="Les grands pronos arrivent bientôt" message="Ils ouvrent dès la révélation officielle des candidats." />;
   }
   const done = questions.filter(answered).length;
-  const anyOpen = questions.some((q) => !q.locked);
+  const open = questions.filter((q) => !q.locked);
+  const anyOpen = open.length > 0;
+  const t = (q: GameQuestion) => new Date(q.closes_at).getTime();
+  // Certains grands pronos peuvent fermer plus tôt (ex. « Le premier éliminé », avant les premières nominations)
+  const nextClose = anyOpen ? open.reduce((m, q) => (t(q) < t(m) ? q : m)).closes_at : closeAt;
+  const lastClose = anyOpen ? open.reduce((m, q) => (t(q) > t(m) ? q : m)).closes_at : closeAt;
+  const early = open.filter((q) => lastClose && t(q) < new Date(lastClose).getTime());
+  const sorted = [...questions].sort((a, b) => Number(a.locked) - Number(b.locked) || t(a) - t(b) || a.sort_order - b.sort_order);
   return (
     <>
-      {anyOpen && closeAt ? (
+      {anyOpen && nextClose ? (
         <div className="card-edge flex flex-col gap-3 p-[18px]">
-          <span className="t-overline text-gold-200">LES GRANDS PRONOS · CLÔTURE DANS</span>
-          <Countdown to={closeAt} size="sm" onDone={onExpire} />
-          <span className="t-body-s text-secondary">{done} / {questions.length} complétés · modifiables jusqu’au {fmtDayDateTime(closeAt)}.</span>
+          <span className="t-overline text-gold-200">{early.length ? 'PROCHAINE CLÔTURE DANS' : 'LES GRANDS PRONOS · CLÔTURE DANS'}</span>
+          <Countdown to={nextClose} size="sm" onDone={onExpire} />
+          {early.length > 0 ? (
+            <span className="t-body-s text-pretty text-secondary">
+              <b className="text-primary">{early.map((q) => `« ${q.title} »`).join(', ')}</b> ferme{early.length > 1 ? 'nt' : ''} le {fmtDayDateTime(nextClose)}, avant les premières nominations.
+              {' '}Les autres sont modifiables jusqu’au {fmtDayDateTime(lastClose!)}. {done} / {questions.length} complétés.
+            </span>
+          ) : (
+            <span className="t-body-s text-secondary">{done} / {questions.length} complétés · modifiables jusqu’au {fmtDayDateTime(nextClose)}.</span>
+          )}
         </div>
       ) : (
         <div className="card-plain flex items-center gap-3.5 p-4">
@@ -135,7 +149,7 @@ function SeasonTab({ questions, closeAt, onExpire }: { questions: GameQuestion[]
         </div>
       )}
       <div className="flex flex-col gap-2.5">
-        {questions.map((q) => <QuestionCard key={q.id} q={q} onClick={() => navigate(`/pronos/${q.id}`)} />)}
+        {sorted.map((q) => <QuestionCard key={q.id} q={q} onClick={() => navigate(`/pronos/${q.id}`)} />)}
       </div>
     </>
   );
