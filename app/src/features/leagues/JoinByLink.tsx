@@ -23,10 +23,11 @@ export function JoinByLink() {
     if (loading || !userId || !profile || started.current) return;
     started.current = true;
     joinLeague(code)
-      .then(async (id) => {
+      .then(async () => {
         await qc.invalidateQueries();
-        toast({ tone: 'success', title: 'Bienvenue dans la ligue', message: 'Tes pronos comptent déjà ici, rien à refaire.' });
-        navigate(`/ligues/${id}`, { replace: true });
+        toast({ tone: 'success', title: 'Bienvenue dans la ligue !', message: 'Tu la retrouves dans Classement et Mes ligues. À toi de jouer tes pronos.' });
+        // Accueil (barre de navigation, grands pronos) plutôt qu'une page sans menu
+        navigate('/', { replace: true });
       })
       .catch((e) => setError(explainError(e)));
   }, [loading, userId, profile, code, navigate, qc, toast]);

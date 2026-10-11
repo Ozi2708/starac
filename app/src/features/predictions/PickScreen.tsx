@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useBack } from '@/lib/nav';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCandidates, useGame, usePrimes, useSeason, useSubmitPrediction } from '@/lib/queries';
 import { answered, isMultiPerCorrect, optionLabels, pointsSuffix } from '@/lib/game';
@@ -36,7 +37,7 @@ export function PickScreen() {
 
   const candById = useMemo(() => new Map((cands.data ?? []).map((c) => [c.id, c])), [cands.data]);
   const tab = q?.category === 'grand' ? 'saison' : q?.category === 'fun' ? 'improbables' : 'semaine';
-  const back = () => (window.history.length > 1 ? navigate(-1) : navigate(`/pronos?tab=${tab}`));
+  const back = useBack(`/pronos?tab=${tab}`);
 
   if (game.isLoading || cands.isLoading) {
     return <main className="flex flex-col gap-4 px-5 pt-16"><Skeleton h={120} /><Skeleton h={300} /></main>;

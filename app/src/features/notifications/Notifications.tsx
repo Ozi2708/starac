@@ -1,3 +1,4 @@
+import { useBack } from '@/lib/nav';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -14,6 +15,7 @@ const ICON: Record<NotifKind, string> = {
 
 export function Notifications() {
   const navigate = useNavigate();
+  const back = useBack('/');
   const qc = useQueryClient();
   const notifs = useNotifications();
   const list = notifs.data ?? [];
@@ -31,7 +33,7 @@ export function Notifications() {
   return (
     <>
       <div className="flex items-center justify-between px-5 pt-3">
-        <IconButton icon="arrow-left" label="Retour" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))} />
+        <IconButton icon="arrow-left" label="Retour" onClick={back} />
         <Button variant="ghost" size="sm" onClick={markAll} disabled={!list.some((n) => !n.read_at)}>Tout marquer lu</Button>
       </div>
       <main className="flex flex-col gap-[18px] px-5 pb-[60px] pt-2.5">

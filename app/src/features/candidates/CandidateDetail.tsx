@@ -1,3 +1,4 @@
+import { useBack } from '@/lib/nav';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCandidates, useGame, usePickStats, usePrimes, useSeason } from '@/lib/queries';
 import { fmtDayTime, fmtPct } from '@/lib/format';
@@ -10,6 +11,7 @@ import { EmptyState } from '@/components/ui/feedback';
 export function CandidateDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const back = useBack('/candidats');
   const season = useSeason();
   const cands = useCandidates(season.data?.id);
   const primes = usePrimes(season.data?.id);
@@ -58,7 +60,7 @@ export function CandidateDetail() {
         {!c.photo_url && <span className="absolute inset-x-0 top-[70px] text-center text-white/[.18]" style={{ font: 'italic 900 180px/1 var(--font-display)' }} aria-hidden="true">{c.first_name[0]}</span>}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg,rgba(13,3,34,.35) 0%,rgba(13,3,34,0) 25%,rgba(13,3,34,.2) 50%,#0d0322 100%)' }} />
         <div className="relative px-5 pt-3">
-          <IconButton icon="arrow-left" label="Retour" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/candidats'))} />
+          <IconButton icon="arrow-left" label="Retour" onClick={back} />
         </div>
         <div className="absolute inset-x-5 bottom-[18px] flex flex-col gap-2.5">
           <div className="flex gap-2">

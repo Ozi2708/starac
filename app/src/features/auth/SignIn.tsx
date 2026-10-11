@@ -49,7 +49,7 @@ export function SignIn() {
       }
     } catch (err) {
       const msg = (err as Error).message;
-      setError(/Invalid login/i.test(msg) ? 'E-mail ou mot de passe incorrect.' : /rate limit/i.test(msg) ? 'Trop de tentatives. Réessaie dans une minute.' : msg);
+      setError(/Invalid login/i.test(msg) ? 'E-mail ou mot de passe incorrect.' : /rate limit/i.test(msg) ? 'Trop de tentatives. Réessaie dans une minute.' : /already registered/i.test(msg) ? 'Ce compte existe déjà : touche « J’ai déjà un compte » pour te connecter.' : msg);
       toast({ tone: 'error', title: 'Connexion impossible', message: 'Vérifie tes informations.' });
     } finally {
       setBusy(false);

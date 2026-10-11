@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useBack } from '@/lib/nav';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
@@ -18,6 +19,7 @@ import { ShareLeaderboardCard } from './ShareLeaderboardCard';
 export function LeaguePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const back = useBack('/ligues');
   const toast = useToast();
   const qc = useQueryClient();
   const { userId } = useAuth();
@@ -117,7 +119,7 @@ export function LeaguePage() {
   return (
     <>
       <div className="flex items-center justify-between px-5 pt-3">
-        <IconButton icon="arrow-left" label="Retour" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/ligues'))} />
+        <IconButton icon="arrow-left" label="Retour" onClick={back} />
         <IconButton icon="share-2" label="Partager" onClick={shareLink} />
       </div>
       <main className="flex flex-col gap-[22px] px-5 pb-[60px] pt-2.5">
