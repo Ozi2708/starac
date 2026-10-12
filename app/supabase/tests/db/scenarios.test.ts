@@ -288,6 +288,14 @@ describe('Cas limites', () => {
     await db.sql(`update primes set airs_at = now() + interval '2 days' where id = $1`, [prime1]);
   });
 
+  it('un joueur inscrit sans ligue ni prono apparaît au classement général ; la Régie (admin non joueur) non', async () => {
+    const newbie = await db.user('Martequali');
+    const regie = '00000000-0000-4000-8000-00000000c1a0'; // compte technique créé par la migration régie
+    const rows = await db.as(A, `select user_id, total from v_general_leaderboard where season_id = $1`, [season]);
+    expect(rows.find((r) => r.user_id === newbie)?.total).toBe(0);
+    expect(rows.some((r) => r.user_id === regie)).toBe(false);
+  });
+
   it('nombre exact et sélection ordonnée', async () => {
     const n = await weeklyQuestion('Combien d’artistes invités ?', { type: 'exact_number', source: 'custom', points: 20 });
     await db.as(A, `select submit_prediction($1, '{}', 4)`, [n]);
