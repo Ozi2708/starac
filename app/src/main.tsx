@@ -5,6 +5,20 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/lib/auth';
 import { App } from '@/app/App';
 import '@/styles/index.css';
+import { registerSW } from 'virtual:pwa-register';
+
+// Mises à jour de l'app : la nouvelle version est récupérée dès sa publication puis l'app se recharge
+// d'elle-même (mode autoUpdate). On revérifie toutes les 15 min et à chaque retour au premier plan.
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, reg) {
+    if (!reg) return;
+    setInterval(() => reg.update().catch(() => undefined), 15 * 60_000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') reg.update().catch(() => undefined);
+    });
+  },
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {

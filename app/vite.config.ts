@@ -8,6 +8,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Enregistrement fait dans main.tsx (rechargement automatique quand une nouvelle version est publiée)
+      injectRegister: false,
       includeAssets: ['key-art.jpg', 'favicon-v3.png', 'apple-touch-icon-v3.png'],
       manifest: {
         name: 'Le Grand Prono · Star Academy 2026',
@@ -29,6 +31,7 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: '/index.html',
+        cleanupOutdatedCaches: true,
         // Les données Supabase ne sont jamais servies depuis le cache (pas de faux « enregistré »)
         runtimeCaching: [
           { urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/, handler: 'CacheFirst', options: { cacheName: 'fonts', expiration: { maxEntries: 20 } } },
