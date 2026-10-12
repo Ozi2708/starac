@@ -274,6 +274,20 @@ describe('Cas limites', () => {
     expect(c.eliminated_at).not.toBeNull();
   });
 
+  it('une nomination reste dans l’historique quand le nommé sauvé repasse « en lice » après le prime', async () => {
+    const noms = () => db.sql(`select * from candidate_nominations where candidate_id = $1`, [cand['Sacha']]);
+    // Avant la diffusion : une nomination saisie par erreur peut être retirée
+    await db.as(admin, `select admin_set_candidate_status($1, 'nominated', $2)`, [cand['Sacha'], prime1]);
+    await db.as(admin, `select admin_set_candidate_status($1, 'competing', $2)`, [cand['Sacha'], prime1]);
+    expect(await noms()).toHaveLength(0);
+    // Après la diffusion : le sauvé repasse en lice, sa nomination compte pour « Le plus / moins nommé »
+    await db.as(admin, `select admin_set_candidate_status($1, 'nominated', $2)`, [cand['Sacha'], prime1]);
+    await db.sql(`update primes set airs_at = now() - interval '1 hour' where id = $1`, [prime1]);
+    await db.as(admin, `select admin_set_candidate_status($1, 'competing', $2)`, [cand['Sacha'], prime1]);
+    expect(await noms()).toHaveLength(1);
+    await db.sql(`update primes set airs_at = now() + interval '2 days' where id = $1`, [prime1]);
+  });
+
   it('nombre exact et sélection ordonnée', async () => {
     const n = await weeklyQuestion('Combien d’artistes invités ?', { type: 'exact_number', source: 'custom', points: 20 });
     await db.as(A, `select submit_prediction($1, '{}', 4)`, [n]);
