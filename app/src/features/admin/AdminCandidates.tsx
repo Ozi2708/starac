@@ -8,6 +8,7 @@ import { STATUS_LABEL } from '@/components/ui/game';
 import { Dialog, useToast } from '@/components/ui/feedback';
 import { AdminPage, Table, Tr } from './AdminApp';
 import { useAdminRefresh } from './data';
+import { matchCandidate } from '@/lib/photoMatch';
 
 const COLS = 'minmax(0,1fr) 140px 110px 80px 330px';
 const EMPTY = { id: '', first_name: '', last_name: '', age: '', city: '', bio: '', entered_at: '', photo_url: '' };
@@ -26,6 +27,8 @@ export function AdminCandidates() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const bulkRef = useRef<HTMLInputElement>(null);
+  const [bulk, setBulk] = useState<{ ok: string[]; unknown: string[] } | null>(null);
 
   async function setStatus(c: CandidateFull, status: CandidateStatus) {
     const { error } = await supabase.rpc('admin_set_candidate_status', { p_candidate: c.id, p_status: status, p_prime: week?.id ?? null });
@@ -56,6 +59,36 @@ export function AdminCandidates() {
     if (error) return toast({ tone: 'error', ...explainError(error) });
     toast({ tone: 'success', title: `Semaine ${week.number} : éligibilité enregistrée`, message: `${rows.length} candidats éligibles aux nominations.` });
     refresh();
+  }
+
+  /** Import groupé : chaque fichier est rattaché à l'élève dont le prénom (ou prénom nom) est le nom du fichier. */
+  async function importPhotos(files: FileList | null) {
+    if (!files?.length || !sid) return;
+    const list = cands.data ?? [];
+    setBusy(true);
+    const ok: string[] = [], unknown: string[] = [];
+    try {
+      for (const f of Array.from(files)) {
+        const c = matchCandidate(f.name, list);
+        if (!c) { unknown.push(f.name); continue; }
+        const ext = (f.name.match(/\.([a-z0-9]+)$/i)?.[1] ?? 'jpg').toLowerCase();
+        const path = `${sid}/${c.id}-${Date.now()}.${ext}`;
+        const up = await supabase.storage.from('candidates').upload(path, f, { contentType: f.type || `image/${ext}` });
+        if (up.error) throw up.error;
+        const url = supabase.storage.from('candidates').getPublicUrl(path).data.publicUrl;
+        const { error } = await supabase.from('candidates').update({ photo_url: url }).eq('id', c.id);
+        if (error) throw error;
+        ok.push(c.first_name);
+      }
+      setBulk({ ok, unknown });
+      refresh();
+    } catch (e) {
+      toast({ tone: 'error', ...explainError(e) });
+      if (ok.length) setBulk({ ok, unknown });
+    } finally {
+      setBusy(false);
+      if (bulkRef.current) bulkRef.current.value = '';
+    }
   }
 
   async function saveCandidate() {
@@ -94,7 +127,11 @@ export function AdminCandidates() {
     <AdminPage
       title="Candidats"
       sub="Les changements sont visibles immédiatement dans l’app. Le statut tournée est indépendant du statut en compétition."
-      actions={<Button icon="plus" onClick={() => { setEdit({ ...EMPTY }); setFile(null); }}>Ajouter un candidat</Button>}
+      actions={<>
+        <Button variant="secondary" icon="image" loading={busy && !edit} onClick={() => bulkRef.current?.click()}>Importer des photos</Button>
+        <input ref={bulkRef} type="file" accept="image/*" multiple hidden onChange={(e) => importPhotos(e.target.files)} />
+        <Button icon="plus" onClick={() => { setEdit({ ...EMPTY }); setFile(null); }}>Ajouter un candidat</Button>
+      </>}
     >
       <div className="flex flex-wrap items-center gap-3">
         <Overline>SEMAINE DE NOMINATION</Overline>
@@ -170,6 +207,12 @@ export function AdminCandidates() {
             <TextArea label="Présentation" value={edit.bio} onChange={(e) => setEdit({ ...edit, bio: e.target.value })} />
           </div>
         )}
+      </Dialog>
+      <Dialog open={!!bulk} title="Import des photos" onClose={() => setBulk(null)} actions={<Button block onClick={() => setBulk(null)}>OK</Button>}>
+        <div className="flex flex-col gap-2">
+          <span>{bulk?.ok.length ? `${bulk.ok.length} photo${bulk.ok.length > 1 ? 's' : ''} ajoutée${bulk.ok.length > 1 ? 's' : ''} : ${bulk.ok.join(', ')}.` : 'Aucune photo ajoutée.'}</span>
+          {!!bulk?.unknown.length && <span className="text-flare-400">Sans élève correspondant : {bulk.unknown.join(', ')}. Renomme le fichier avec le prénom exact (ex. Noémie.webp).</span>}
+        </div>
       </Dialog>
     </AdminPage>
   );

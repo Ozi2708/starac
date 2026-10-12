@@ -4,7 +4,7 @@ import { useCandidates, useGame, usePickStats, usePrimes, useSeason } from '@/li
 import { fmtDayTime, fmtPct } from '@/lib/format';
 import { Badge, Button, IconButton, Overline, ProgressBar, Skeleton, StatTile } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { PhotoFill, STATUS_LABEL } from '@/components/ui/game';
+import { PhotoFill, PortraitName, STATUS_LABEL } from '@/components/ui/game';
 import { EmptyState } from '@/components/ui/feedback';
 
 /** Fiche candidat : photo, présentation, nominations, résultats officiels, stats communautaires (questions verrouillées uniquement). */
@@ -55,7 +55,7 @@ export function CandidateDetail() {
 
   return (
     <>
-      <div className="relative h-[400px]">
+      <div className="relative h-[400px]" style={{ containerType: 'inline-size' }}>
         <PhotoFill name={c.first_name} src={c.photo_url} out={out} />
         {!c.photo_url && <span className="absolute inset-x-0 top-[70px] text-center text-white/[.18]" style={{ font: 'italic 900 180px/1 var(--font-display)' }} aria-hidden="true">{c.first_name[0]}</span>}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg,rgba(13,3,34,.35) 0%,rgba(13,3,34,0) 25%,rgba(13,3,34,.2) 50%,#0d0322 100%)' }} />
@@ -67,7 +67,7 @@ export function CandidateDetail() {
             <Badge tone={tone}>{statusLbl}</Badge>
             {c.on_tour && <Badge tone="gold" icon="ticket">Tournée</Badge>}
           </div>
-          <h1 className="m-0" style={{ font: 'italic 900 44px/1 var(--font-display)', letterSpacing: '-.015em' }}>{c.first_name}{c.last_name ? ` ${c.last_name}` : ''}</h1>
+          <PortraitName as="h1" name={c.first_name} max={19} inline />
           {meta && <span className="t-body-s text-secondary">{meta}</span>}
         </div>
       </div>

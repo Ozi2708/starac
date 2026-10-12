@@ -179,3 +179,21 @@
 .gp-dialog__actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 @keyframes gp-fade{from{opacity:0}to{opacity:1}}
 @keyframes gp-pop{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Portrait candidat : prénom pailleté en relief (proposition A) ---------- */
+.gp-portrait{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;border-radius:var(--radius-lg);background:var(--violet-800);container-type:inline-size}
+.gp-portrait__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,3,34,0) 48%,rgba(13,3,34,.55) 70%,rgba(13,3,34,.95) 100%)}
+.gp-portrait__name{position:absolute;left:6cqw;right:4cqw;bottom:7cqw;margin:0;font:italic 900 23cqw/.9 var(--font-display);letter-spacing:-.01em;white-space:nowrap;
+  background:var(--grad-glitter);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em;transform:rotate(-4deg);transform-origin:left bottom;
+  filter:drop-shadow(0 .018em 0 #6a3cf0) drop-shadow(0 .018em 0 #4a24c8) drop-shadow(0 .018em 0 #34179a) drop-shadow(0 .018em 0 #24106a) drop-shadow(0 .03em .06em rgba(0,0,0,.6))}
+.gp-portrait__name--inline{position:relative;left:auto;right:auto;bottom:auto;align-self:flex-start}
+.gp-portrait__initial{position:absolute;inset-inline:0;top:18%;text-align:center;color:rgba(255,255,255,.2);font:italic 900 46cqw/1 var(--font-display)}
+.gp-pick{display:flex;flex-direction:column;gap:6px;border:0;padding:0;background:none;color:inherit;text-align:center;cursor:pointer;transition:transform var(--dur-fast) var(--ease-out)}
+.gp-pick:active{transform:scale(.97)}
+.gp-pick .gp-portrait{box-shadow:inset 0 0 0 1px var(--border-subtle);transition:box-shadow var(--dur-base)}
+.gp-pick--on .gp-portrait{box-shadow:0 0 0 3px var(--flare-400),0 0 26px -4px rgba(255,138,31,.8)}
+.gp-pick--out{opacity:.45;cursor:not-allowed}
+.gp-pick__tick{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--grad-cta);color:#fff;display:flex;align-items:center;justify-content:center;transform:scale(0);transition:transform var(--dur-base) var(--ease-spring);box-shadow:0 0 0 2px var(--violet-950)}
+.gp-pick--on .gp-pick__tick{transform:scale(1)}
+.gp-pick__meta{font:var(--text-caption);color:var(--text-muted)}
+.gp-pick--on .gp-pick__meta{color:var(--flare-200)}

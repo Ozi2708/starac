@@ -7,7 +7,7 @@ import { fmtDateAt, fmtDayDateTime } from '@/lib/format';
 import { errorCode, explainError } from '@/lib/errors';
 import { Avatar, Badge, Button, IconButton, Input, Overline, PointsChip, ProgressBar, Skeleton } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { CandidateCard, STATUS_LABEL } from '@/components/ui/game';
+import { CandidatePortrait, STATUS_LABEL } from '@/components/ui/game';
 import { ConfirmDialog, EmptyState, useToast } from '@/components/ui/feedback';
 import type { QuestionOption } from '@/lib/types';
 import { LeaguePicks } from './LeaguePicks';
@@ -191,7 +191,7 @@ export function PickScreen() {
                   const c = o.candidate_id ? candById.get(o.candidate_id) : null;
                   const out = !locked && c?.status === 'eliminated' && q.options_source !== 'candidates_all';
                   return (
-                    <CandidateCard key={o.id} name={o.label} photo={c?.photo_url} meta={metaOf(o)} selected={draft.includes(o.id)} eliminated={out} disabled={locked} onSelect={() => toggle(o)} size={candidateOpts.length > 6 ? 56 : 72} />
+                    <CandidatePortrait key={o.id} name={o.label} photo={c?.photo_url} meta={metaOf(o)} selected={draft.includes(o.id)} eliminated={out} disabled={locked} onSelect={() => toggle(o)} />
                   );
                 })}
               </div>
