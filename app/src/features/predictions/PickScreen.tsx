@@ -5,9 +5,9 @@ import { useCandidates, useGame, usePrimes, useSeason, useSubmitPrediction } fro
 import { answered, isMultiPerCorrect, optionLabels, pointsSuffix } from '@/lib/game';
 import { fmtDateAt, fmtDayDateTime } from '@/lib/format';
 import { errorCode, explainError } from '@/lib/errors';
-import { Avatar, Badge, Button, IconButton, Input, Overline, PointsChip, ProgressBar, Skeleton } from '@/components/ui/core';
+import { Badge, Button, IconButton, Input, Overline, PointsChip, ProgressBar, Skeleton } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { CandidatePortrait, STATUS_LABEL } from '@/components/ui/game';
+import { CandidatePortrait, PhotoFill, PortraitName, STATUS_LABEL } from '@/components/ui/game';
 import { ConfirmDialog, EmptyState, useToast } from '@/components/ui/feedback';
 import type { QuestionOption } from '@/lib/types';
 import { LeaguePicks } from './LeaguePicks';
@@ -162,17 +162,19 @@ export function PickScreen() {
             {noneChosen ? (
               <span className="t-body-s text-secondary">Aucun couple confirmé</span>
             ) : (
-              <div className="grid grid-cols-4 justify-items-center gap-x-2 gap-y-3">
+              <div className="grid grid-cols-4 gap-2">
                 {Array.from({ length: q.max_selections }, (_, i) => {
                   const o = q.options.find((x) => x.id === draft[i]);
                   const c = o?.candidate_id ? candById.get(o.candidate_id) : null;
-                  return (
-                    <div key={i} className="flex w-16 flex-col items-center gap-1">
-                      {o ? <Avatar name={o.label} src={c?.photo_url} size={44} /> : (
-                        <span className="flex h-11 w-11 items-center justify-center rounded-full text-muted" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,.22)', font: 'italic 700 14px var(--font-numeric)' }}>{i + 1}</span>
-                      )}
-                      <span className="t-caption max-w-16 truncate text-secondary">{o?.label ?? '—'}</span>
-                    </div>
+                  return o ? (
+                    <span key={i} className="gp-portrait" style={{ borderRadius: 12, aspectRatio: '4 / 5' }}>
+                      <PhotoFill name={o.label} src={c?.photo_url} />
+                      {!c?.photo_url && <span className="gp-portrait__initial" aria-hidden="true">{o.label[0]}</span>}
+                      <span className="gp-portrait__shade" />
+                      <PortraitName name={o.label} />
+                    </span>
+                  ) : (
+                    <span key={i} className="flex aspect-[4/5] items-center justify-center text-muted" style={{ borderRadius: 12, boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,.18)', font: 'italic 700 16px var(--font-numeric)' }}>{i + 1}</span>
                   );
                 })}
               </div>
