@@ -131,22 +131,48 @@ export function PhotoFill({ name, src, out, style }: { name: string; src?: strin
   );
 }
 
+/** Prénom pailleté en relief (design « affiche du prime ») ; la taille s'adapte à la longueur du prénom. */
+export function PortraitName({ name, max = 23, inline, as: Tag = 'span', className }: { name: string; max?: number; inline?: boolean; as?: 'span' | 'h1'; className?: string }) {
+  const fs = Math.min(max, (140 * max) / 23 / Math.max(name.length, 1));
+  return <Tag className={cx('gp-portrait__name', inline && 'gp-portrait__name--inline', className)} style={{ fontSize: `${fs.toFixed(2)}cqw` }}>{name}</Tag>;
+}
+
 export function CandidateTile({ name, photo, status, onClick }: { name: string; photo?: string | null; status: string; onClick?: () => void }) {
   const [lbl, tone] = STATUS_LABEL[status] ?? STATUS_LABEL.competing;
   const out = status === 'eliminated';
   return (
-    <button type="button" onClick={onClick} className="gp-card--interactive relative aspect-[3/4] overflow-hidden rounded-lg border-0 bg-violet-800 p-0 text-left shadow-subtle" aria-label={`${name}, ${lbl}`}>
+    <button type="button" onClick={onClick} className="gp-card--interactive gp-portrait border-0 p-0 text-left shadow-subtle" aria-label={`${name}, ${lbl}`}>
       <PhotoFill name={name} src={photo} out={out} />
-      {!photo && (
-        <span className="absolute inset-x-0 top-[22%] text-center text-white/20" style={{ font: 'italic 900 72px/1 var(--font-display)' }} aria-hidden="true">
-          {name[0]}
-        </span>
-      )}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg,rgba(13,3,34,0) 45%,rgba(13,3,34,.92) 100%)' }} />
-      <div className="absolute inset-x-3 bottom-3 flex flex-col items-start gap-1.5">
-        <span className="text-white" style={{ font: 'italic 800 21px/1 var(--font-display)' }}>{name}</span>
-        <Badge tone={tone}>{lbl}</Badge>
-      </div>
+      {!photo && <span className="gp-portrait__initial" aria-hidden="true">{name[0]}</span>}
+      <span className="gp-portrait__shade" />
+      <span className="absolute left-2.5 top-2.5"><Badge tone={tone}>{lbl}</Badge></span>
+      <PortraitName name={name} className={out ? 'opacity-60' : undefined} />
+    </button>
+  );
+}
+
+/** Portrait sélectionnable (écrans de pronos) : photo + prénom en relief, anneau et coche quand choisi. */
+export function CandidatePortrait({ name, photo, meta, selected, eliminated, disabled, onSelect }: {
+  name: string; photo?: string | null; meta?: ReactNode; selected?: boolean; eliminated?: boolean; disabled?: boolean; onSelect?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={cx('gp-pick', selected && 'gp-pick--on', eliminated && 'gp-pick--out')}
+      disabled={eliminated || disabled}
+      aria-pressed={!!selected}
+      aria-label={name}
+      onClick={() => !eliminated && !disabled && onSelect?.()}
+      style={disabled && !eliminated ? { cursor: 'default' } : undefined}
+    >
+      <span className="gp-portrait w-full">
+        <PhotoFill name={name} src={photo} out={eliminated} />
+        {!photo && <span className="gp-portrait__initial" aria-hidden="true">{name[0]}</span>}
+        <span className="gp-portrait__shade" />
+        <PortraitName name={name} />
+        <span className="gp-pick__tick"><Icon name="check" size={14} /></span>
+      </span>
+      {meta && <span className="gp-pick__meta">{meta}</span>}
     </button>
   );
 }
