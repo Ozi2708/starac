@@ -8,6 +8,7 @@ import { STATUS_LABEL } from '@/components/ui/game';
 import { Dialog, useToast } from '@/components/ui/feedback';
 import { AdminPage, Table, Tr } from './AdminApp';
 import { useAdminRefresh } from './data';
+import { matchCandidate } from '@/lib/photoMatch';
 
 const COLS = 'minmax(0,1fr) 140px 110px 80px 330px';
 const EMPTY = { id: '', first_name: '', last_name: '', age: '', city: '', bio: '', entered_at: '', photo_url: '' };
@@ -63,21 +64,12 @@ export function AdminCandidates() {
   /** Import groupé : chaque fichier est rattaché à l'élève dont le prénom (ou prénom nom) est le nom du fichier. */
   async function importPhotos(files: FileList | null) {
     if (!files?.length || !sid) return;
-    const norm = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z]+/g, ' ').trim();
-    const byName = new Map<string, CandidateFull>();
-    for (const c of cands.data ?? []) {
-      byName.set(norm(c.first_name), c);
-      if (c.last_name) byName.set(norm(`${c.first_name} ${c.last_name}`), c);
-    }
+    const list = cands.data ?? [];
     setBusy(true);
     const ok: string[] = [], unknown: string[] = [];
     try {
       for (const f of Array.from(files)) {
-        // Nom exact (« Noémie.webp »), sinon un seul prénom reconnu dans le nom (« STARAC-2026_noemie_HD.jpg »)
-        const base = norm(f.name.replace(/\.[^.]+$/, ''));
-        const words = new Set(base.split(' '));
-        const hits = [...new Set((cands.data ?? []).filter((x) => words.has(norm(x.first_name)) || (x.last_name && base.includes(norm(`${x.first_name} ${x.last_name}`)))))];
-        const c = byName.get(base) ?? (hits.length === 1 ? hits[0] : undefined);
+        const c = matchCandidate(f.name, list);
         if (!c) { unknown.push(f.name); continue; }
         const ext = (f.name.match(/\.([a-z0-9]+)$/i)?.[1] ?? 'jpg').toLowerCase();
         const path = `${sid}/${c.id}-${Date.now()}.${ext}`;
