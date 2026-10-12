@@ -131,9 +131,39 @@ export function PhotoFill({ name, src, out, style }: { name: string; src?: strin
   );
 }
 
-/** Prénom pailleté en relief (design « affiche du prime ») ; la taille s'adapte à la longueur du prénom. */
+// Largeur réelle d'un prénom en Kanit 900 italique (en em), mesurée une fois la police chargée.
+const nameWidths = new Map<string, number>();
+let kanitReady = false;
+const onKanitReady = new Set<() => void>();
+if (typeof document !== 'undefined' && document.fonts?.load) {
+  document.fonts.load('italic 900 100px Kanit').then(() => {
+    kanitReady = true;
+    nameWidths.clear();
+    onKanitReady.forEach((f) => f());
+  }).catch(() => undefined);
+}
+function nameEm(name: string) {
+  const hit = nameWidths.get(name);
+  if (hit) return hit;
+  const ctx = typeof document !== 'undefined' ? document.createElement('canvas').getContext('2d') : null;
+  if (!ctx) return name.length * 0.62;
+  ctx.font = "italic 900 100px Kanit, 'Arial Black', sans-serif";
+  // + inclinaison et marge droite du lettrage, - interlettrage serré
+  const em = ctx.measureText(name).width / 100 + 0.1 - 0.01 * name.length;
+  nameWidths.set(name, em);
+  return em;
+}
+
+/** Prénom pailleté en relief (design « affiche du prime ») : la plus grande taille qui tient dans la largeur, plafonnée à `max`. */
 export function PortraitName({ name, max = 23, inline, as: Tag = 'span', className }: { name: string; max?: number; inline?: boolean; as?: 'span' | 'h1'; className?: string }) {
-  const fs = Math.min(max, (140 * max) / 23 / Math.max(name.length, 1));
+  const [, rerender] = useState(0);
+  useEffect(() => {
+    if (kanitReady) return;
+    const f = () => rerender((x) => x + 1);
+    onKanitReady.add(f);
+    return () => { onKanitReady.delete(f); };
+  }, []);
+  const fs = Math.min(max, 86 / Math.max(nameEm(name), 0.5));
   return <Tag className={cx('gp-portrait__name', inline && 'gp-portrait__name--inline', className)} style={{ fontSize: `${fs.toFixed(2)}cqw` }}>{name}</Tag>;
 }
 
