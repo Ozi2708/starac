@@ -122,7 +122,8 @@ export function PhotoFill({ name, src, out, style }: { name: string; src?: strin
     <div
       className="absolute inset-0"
       style={{
-        background: src ? `center / cover no-repeat url("${src}")` : `linear-gradient(160deg,${h[0]},${h[1]})`,
+        // calée en haut : quand le cadre est moins haut que la photo, on coupe le bas, jamais le front
+        background: src ? `center top / cover no-repeat url("${src}")` : `linear-gradient(160deg,${h[0]},${h[1]})`,
         filter: out ? 'grayscale(1)' : undefined,
         opacity: out ? 0.45 : 1,
         ...style,
