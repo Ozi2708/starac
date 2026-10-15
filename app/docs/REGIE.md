@@ -33,3 +33,11 @@ winner · finalists · tour · first_out (clôture anticipée mer. 14/10 17h00, 
 tournée) · couple · last_out_before_tour · belgian_duel (Brieuc / Leeloo).
 Retirés volontairement (à ne pas recréer) : last_out, first_finalist, battle_king, elder_vs_youngest, winner_gender.
 Une question sans réponse se supprime définitivement dans /admin/questions (« Supprimer »).
+
+## Règles particulières (validées par Val)
+- **Abandon** (élève qui quitte le château de lui-même, ex. Khalil le 14/10) : retiré des choix (statut éliminé) avec un
+  fait `abandon`, mais ce n'est **pas** une élimination : il ne compte ni pour « Qui sera éliminé ? » ni pour
+  `first_out` / `last_out_before_tour`.
+- **Premier éliminé sans élimination au prime** : si aucun élève n'est éliminé lors du prime, la régie du dimanche rouvre
+  `first_out` jusqu'au mercredi suivant 17h00 (avant les nominations) et notifie les joueurs ; les réponses déjà
+  données restent valables et modifiables.
