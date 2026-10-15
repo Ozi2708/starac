@@ -87,7 +87,7 @@ function WeekTab({ questions, fun, primeNumber, airsAt, onExpire }: { questions:
           <div className="flex items-end justify-between gap-3">
             <div className="flex flex-col gap-1.5">
               <span className="t-body-s text-secondary">{nextClose ? 'Prochaine clôture dans' : 'Tous les pronos sont clôturés'}</span>
-              {nextClose && <Countdown to={nextClose} size="sm" showDays={false} onDone={onExpire} />}
+              {nextClose && <Countdown to={nextClose} size="sm" onDone={onExpire} />}
             </div>
             <div className="flex flex-col items-end gap-0.5">
               <span className="t-caption text-muted">En jeu</span>
@@ -142,21 +142,28 @@ function SeasonTab({ questions, closeAt, onExpire }: { questions: GameQuestion[]
   const open = questions.filter((q) => !q.locked);
   const anyOpen = open.length > 0;
   const t = (q: GameQuestion) => new Date(q.closes_at).getTime();
-  // Certains grands pronos peuvent fermer plus tôt (ex. « Le premier éliminé », avant les premières nominations)
+  // Les grands pronos n'ont pas tous la même clôture (ex. « Le premier éliminé », fermé plus tôt ou relancé)
   const nextClose = anyOpen ? open.reduce((m, q) => (t(q) < t(m) ? q : m)).closes_at : closeAt;
   const lastClose = anyOpen ? open.reduce((m, q) => (t(q) > t(m) ? q : m)).closes_at : closeAt;
-  const early = open.filter((q) => lastClose && t(q) < new Date(lastClose).getTime());
+  const nextT = nextClose ? new Date(nextClose).getTime() : 0;
+  const soon = open.filter((q) => t(q) === nextT);
+  const late = open.filter((q) => t(q) > nextT);
+  const titles = (qs: GameQuestion[]) => qs.map((q) => `« ${q.title} »`).join(', ');
   const sorted = [...questions].sort((a, b) => Number(a.locked) - Number(b.locked) || t(a) - t(b) || a.sort_order - b.sort_order);
   return (
     <>
       {anyOpen && nextClose ? (
         <div className="card-edge flex flex-col gap-3 p-[18px]">
-          <span className="t-overline text-gold-200">{early.length ? 'PROCHAINE CLÔTURE DANS' : 'LES GRANDS PRONOS · CLÔTURE DANS'}</span>
+          <span className="t-overline text-gold-200">{late.length ? 'PROCHAINE CLÔTURE DANS' : 'LES GRANDS PRONOS · CLÔTURE DANS'}</span>
           <Countdown to={nextClose} size="sm" onDone={onExpire} />
-          {early.length > 0 ? (
+          {late.length > 0 ? (
             <span className="t-body-s text-pretty text-secondary">
-              <b className="text-primary">{early.map((q) => `« ${q.title} »`).join(', ')}</b> ferme{early.length > 1 ? 'nt' : ''} le {fmtDayDateTime(nextClose)}, avant les premières nominations.
-              {' '}Les autres sont modifiables jusqu’au {fmtDayDateTime(lastClose!)}. {done} / {questions.length} complétés.
+              {soon.length <= late.length ? (
+                <><b className="text-primary">{titles(soon)}</b> ferme{soon.length > 1 ? 'nt' : ''} le {fmtDayDateTime(nextClose)}. Les autres restent modifiables jusqu’au {fmtDayDateTime(lastClose!)}.</>
+              ) : (
+                <>{soon.length} grands pronos ferment le {fmtDayDateTime(nextClose)}. <b className="text-primary">{titles(late)}</b> reste{late.length > 1 ? 'nt' : ''} ouvert{late.length > 1 ? 's' : ''} jusqu’au {fmtDayDateTime(lastClose!)}.</>
+              )}
+              {' '}{done} / {questions.length} complétés.
             </span>
           ) : (
             <span className="t-body-s text-secondary">{done} / {questions.length} complétés · modifiables jusqu’au {fmtDayDateTime(nextClose)}.</span>

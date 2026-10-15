@@ -48,3 +48,4 @@ Une question sans réponse se supprime définitivement dans /admin/questions («
 - **Premier éliminé sans élimination au prime** : si aucun élève n'est éliminé lors du prime, la régie du dimanche rouvre
   `first_out` jusqu'au mercredi suivant 17h00 (avant les nominations) et notifie les joueurs ; les réponses déjà
   données restent valables et modifiables.
+  Prime 2 : relancé dès le 15/10 (abandon de Khalil, pas de nominations), ouvert jusqu'au mercredi 21/10 17h00.

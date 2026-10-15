@@ -7,7 +7,7 @@ import {
   useMyLeagueRanks, useMyLeagues, useNotifications, usePrimaryLeague, usePrimes,
 } from '@/lib/queries';
 import { answered, maxPoints, moveOf } from '@/lib/game';
-import { fmtClose, fmtDayTime, fmtGain, fmtNum, plural } from '@/lib/format';
+import { fmtClose, fmtDayTime, fmtGain, fmtLong, fmtNum, plural } from '@/lib/format';
 import type { Season } from '@/lib/types';
 import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton, Thumb } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
@@ -51,7 +51,9 @@ export function Dashboard({ season }: { season: Season }) {
   const grandOpen = (game.data?.questions ?? []).filter((q) => q.category === 'grand' && !q.locked);
   const grandDone = grandOpen.filter(answered).length;
   const grandNext = grandOpen.length ? grandOpen.reduce((m, q) => (new Date(q.closes_at) < new Date(m.closes_at) ? q : m)) : null;
-  const grandEarly = grandNext && grandOpen.some((q) => new Date(q.closes_at) > new Date(grandNext.closes_at)) ? grandNext : null;
+  const grandSoon = grandNext ? grandOpen.filter((q) => q.closes_at === grandNext.closes_at) : [];
+  // Un seul grand prono ferme à la prochaine échéance (ex. « Le premier éliminé ») : on le nomme
+  const grandSingle = grandNext && (grandOpen.length === 1 || grandSoon.length === 1) ? grandNext : null;
 
   const me = lb.data?.find((r) => r.user_id === userId);
   const myTotal = me?.total ?? 0;
@@ -105,12 +107,10 @@ export function Dashboard({ season }: { season: Season }) {
               );
             })}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="t-body-s font-bold">Clôture {fmtDayTime(weekClose)}</span>
-              <span className="t-caption text-pretty text-muted">Tu peux encore jouer au début du prime.</span>
-            </div>
-            <Countdown to={weekClose} size="sm" showDays={false} onDone={() => game.refetch()} />
+          <div className="flex flex-col gap-2">
+            <span className="t-overline text-gold-200">CLÔTURE DANS</span>
+            <Countdown to={weekClose} onDone={() => game.refetch()} />
+            <span className="t-caption text-pretty text-muted">{fmtLong(weekClose)} · tu peux encore jouer au début du prime.</span>
           </div>
           {weekTodo.length > 0 && (
             <Button size="lg" block iconRight="arrow-right" onClick={() => navigate(weekTodo.length === 1 ? `/pronos/${weekTodo[0].id}` : '/pronos?tab=semaine')}>
@@ -127,7 +127,7 @@ export function Dashboard({ season }: { season: Season }) {
             <div className="flex min-w-0 flex-1 flex-col">
               <span className="t-overline text-gold-200">GRANDS PRONOS DE LA SAISON</span>
               <span className="t-body font-bold">{grandDone === grandOpen.length ? 'Tous tes grands pronos sont joués' : grandDone === 0 ? 'Fais tes grands pronos !' : `Encore ${grandOpen.length - grandDone} grand${grandOpen.length - grandDone > 1 ? 's' : ''} prono${grandOpen.length - grandDone > 1 ? 's' : ''} à jouer`}</span>
-              <span className="t-caption text-muted">{grandEarly ? `« ${grandEarly.title} » ferme ${fmtClose(grandEarly.closes_at)}` : `Vainqueur, finalistes, tournée… · ferme ${fmtClose(grandOpen[0].closes_at)}`}</span>
+              <span className="t-caption text-muted">{grandSingle ? `« ${grandSingle.title} » ferme ${fmtClose(grandSingle.closes_at)}` : `Vainqueur, finalistes, tournée… · ferme ${fmtClose(grandNext!.closes_at)}`}</span>
             </div>
             <Icon name="chevron-right" size={18} className="text-muted" />
           </div>
