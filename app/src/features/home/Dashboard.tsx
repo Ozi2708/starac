@@ -6,12 +6,12 @@ import {
   currentPrime, isDemoSeason, lastClosedPrime, useCandidates, useGame, useLeagueLeaderboard, useLeagueMemberCounts,
   useMyLeagueRanks, useMyLeagues, useNotifications, usePrimaryLeague, usePrimes,
 } from '@/lib/queries';
-import { answered, maxPoints, moveOf, pointsSuffix, pronoStatus } from '@/lib/game';
+import { answered, maxPoints, moveOf } from '@/lib/game';
 import { fmtClose, fmtDayTime, fmtGain, fmtNum, plural } from '@/lib/format';
 import type { Season } from '@/lib/types';
 import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton, Thumb } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { Countdown, LeaderboardRow, PronoCard } from '@/components/ui/game';
+import { Countdown, LeaderboardRow } from '@/components/ui/game';
 import { ErrorState } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
 import { InviteCard } from '@/features/leagues/InviteCard';
@@ -37,14 +37,15 @@ export function Dashboard({ season }: { season: Season }) {
   const unread = (notifs.data ?? []).some((n) => !n.read_at);
   const live = prime && Date.now() >= new Date(prime.airs_at).getTime() && Date.now() < new Date(prime.airs_at).getTime() + 3.5 * 3600_000;
 
-  const todo = useMemo(() => {
-    const qs = (game.data?.questions ?? []).filter((q) => !q.locked && !answered(q));
-    // Pendant la phase « open », les grands pronos passent en premier.
-    return qs.sort((a, b) => (season.phase === 'open' ? Number(b.category === 'grand') - Number(a.category === 'grand') : 0) || +new Date(a.closes_at) - +new Date(b.closes_at));
-  }, [game.data, season.phase]);
-  const openCount = (game.data?.questions ?? []).filter((q) => !q.locked).length;
-  const nextClose = todo.length ? todo.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), todo[0].closes_at) : null;
-  const todoPts = todo.reduce((s, q) => s + maxPoints(q), 0);
+  // Pronos de la semaine (hebdo + pari improbable du prime en cours) : en tête d'accueil, impossible à rater
+  const weekOpen = useMemo(
+    () => (game.data?.questions ?? []).filter((q) => q.category !== 'grand' && q.prime_id === prime?.id && !q.locked)
+      .sort((a, b) => Number(a.category === 'fun') - Number(b.category === 'fun') || a.sort_order - b.sort_order),
+    [game.data, prime?.id],
+  );
+  const weekTodo = weekOpen.filter((q) => !answered(q));
+  const weekClose = weekOpen.length ? weekOpen.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), weekOpen[0].closes_at) : null;
+  const weekPts = weekTodo.reduce((s, q) => s + maxPoints(q), 0);
 
   // Grands pronos encore ouverts : bannière d'accès directe en haut de l'accueil
   const grandOpen = (game.data?.questions ?? []).filter((q) => q.category === 'grand' && !q.locked);
@@ -78,6 +79,46 @@ export function Dashboard({ season }: { season: Season }) {
         {isDemoSeason(season) && <Badge>Démo</Badge>}
         <IconButton icon="bell" label="Notifications" dot={unread} onClick={() => navigate('/notifications')} />
       </div>
+
+      {weekOpen.length > 0 && prime && weekClose && (
+        <div className="card-edge flex flex-col gap-3.5 p-4" style={weekTodo.length ? { boxShadow: 'var(--glow-flare)' } : undefined}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="t-overline text-gold-200">CETTE SEMAINE · PRIME {prime.number}</span>
+            {weekTodo.length > 0 ? <Badge tone="live">{weekTodo.length} à jouer</Badge> : <Badge tone="open" icon="check">Joués</Badge>}
+          </div>
+          <span className="t-h3 text-pretty">
+            {weekTodo.length === 0 ? 'Tous tes pronos de la semaine sont joués' : weekTodo.length === weekOpen.length ? 'Les pronos du prime sont ouverts !' : `Encore ${plural(weekTodo.length, 'prono')} à jouer`}
+          </span>
+          <div className="card-plain row-sep flex flex-col">
+            {weekOpen.map((q) => {
+              const ok = answered(q);
+              return (
+                <button key={q.id} type="button" onClick={() => navigate(`/pronos/${q.id}`)} className="flex items-center gap-3 border-0 bg-transparent px-3.5 py-3 text-left">
+                  <Icon name={ok ? 'circle-check' : q.icon || 'star'} size={18} style={{ color: ok ? 'var(--green-500)' : 'var(--flare-400)', flex: 'none' }} />
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="t-body-s font-bold">{q.title}</span>
+                    <span className="t-caption text-muted">{ok ? 'Joué · modifiable' : q.category === 'fun' ? 'Pari improbable' : 'Pas encore joué'}</span>
+                  </div>
+                  <span className="whitespace-nowrap text-gold-400" style={{ font: 'italic 800 15px/1 var(--font-numeric)' }}>{maxPoints(q)} pts</span>
+                  <Icon name="chevron-right" size={16} className="text-muted" />
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="t-body-s font-bold">Clôture {fmtDayTime(weekClose)}</span>
+              <span className="t-caption text-pretty text-muted">Tu peux encore jouer au début du prime.</span>
+            </div>
+            <Countdown to={weekClose} size="sm" showDays={false} onDone={() => game.refetch()} />
+          </div>
+          {weekTodo.length > 0 && (
+            <Button size="lg" block iconRight="arrow-right" onClick={() => navigate(weekTodo.length === 1 ? `/pronos/${weekTodo[0].id}` : '/pronos?tab=semaine')}>
+              {`Jouer mes pronos · ${fmtNum(weekPts)} pts en jeu`}
+            </Button>
+          )}
+        </div>
+      )}
 
       {grandOpen.length > 0 && (
         <button type="button" onClick={() => navigate('/pronos?tab=saison')} className="card-edge flex flex-col gap-3.5 p-4 text-left">
@@ -155,47 +196,20 @@ export function Dashboard({ season }: { season: Season }) {
         )}
       </Section>
 
-      {/* Mes prochains pronostics */}
-      <Section title={season.phase === 'open' ? 'MES GRANDS PRONOS' : 'MES PROCHAINS PRONOSTICS'} aside={todo.length > 0 && <span className="t-caption text-muted">{todo.length} à faire</span>}>
-        {game.isLoading ? (
-          <><Skeleton h={68} /><Skeleton h={112} /><Skeleton h={112} /></>
-        ) : game.isError ? (
-          <ErrorState onRetry={() => game.refetch()} />
-        ) : todo.length > 0 ? (
-          <>
-            <div className="flex items-center gap-3.5 rounded-md bg-card px-4 py-3.5 shadow-subtle">
-              <Icon name="clock" size={18} className="text-flare-400" />
-              <div className="flex flex-1 flex-col">
-                <span className="t-body-s font-bold">Prochaine clôture</span>
-                <span className="t-caption text-muted">Heure de Paris</span>
+      {/* Pas encore de pronos pour le prime en cours */}
+      {prime && weekOpen.length === 0 && !live && !game.isLoading && (
+        game.isError ? <ErrorState onRetry={() => game.refetch()} /> : (
+          <Section title="PRONOS DE LA SEMAINE">
+            <div className="card-plain flex items-center gap-3.5 px-4 py-[18px]">
+              <IconCircle icon="clock" tone="muted" />
+              <div className="flex flex-col">
+                <span className="t-body font-bold">Pas encore de pronos pour le prime {prime.number}</span>
+                <span className="t-caption text-pretty text-muted">Ils arrivent avec les nominations et la battle du top 3. Tu seras prévenu.</span>
               </div>
-              {nextClose && <Countdown to={nextClose} size="sm" showDays={false} onDone={() => game.refetch()} />}
             </div>
-            {todo.slice(0, 2).map((q) => (
-              <PronoCard key={q.id} question={q.title} points={q.points} pointsSuffix={pointsSuffix(q)} status={pronoStatus(q)} icon={q.icon} deadline={'Ferme ' + fmtClose(q.closes_at)} onClick={() => navigate(`/pronos/${q.id}`)} />
-            ))}
-            <Button size="lg" block iconRight="arrow-right" onClick={() => navigate(todo[0].category === 'grand' ? '/pronos?tab=saison' : todo[0].category === 'fun' && todo.every((q) => q.category === 'fun') ? '/pronos?tab=improbables' : '/pronos')}>
-              {`Faire mes pronostics · ${fmtNum(todoPts)} pts en jeu`}
-            </Button>
-          </>
-        ) : openCount > 0 ? (
-          <div className="flex items-center gap-3.5 rounded-lg bg-card px-4 py-[18px]" style={{ boxShadow: 'inset 0 0 0 1px rgba(47,217,154,.35)' }}>
-            <IconCircle icon="circle-check" tone="green" />
-            <div className="flex flex-col">
-              <span className="t-body font-bold">Tous tes pronos sont validés</span>
-              <span className="t-caption text-muted">Modifiables jusqu’à leur clôture.{prime ? ` Rendez-vous ${fmtDayTime(prime.airs_at)}.` : ''}</span>
-            </div>
-          </div>
-        ) : (
-          <div className="card-plain flex items-center gap-3.5 px-4 py-[18px]">
-            <IconCircle icon="clock" tone="muted" />
-            <div className="flex flex-col">
-              <span className="t-body font-bold">Pas de pronos ouverts pour l’instant</span>
-              <span className="t-caption text-pretty text-muted">{prime ? `Les questions du prime ${prime.number} arrivent après les nominations.` : 'Les prochaines questions arrivent bientôt.'}</span>
-            </div>
-          </div>
-        )}
-      </Section>
+          </Section>
+        )
+      )}
 
       {/* Mes ligues : top 3 de la ligue principale, ou mon rang dans chacune si j'en ai plusieurs */}
       {primary && (leagues.data?.length ?? 0) > 1 ? (

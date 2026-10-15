@@ -10,7 +10,7 @@ import { Countdown, PronoCard } from '@/components/ui/game';
 import { EmptyState, ErrorState, useToast } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
 
-type Tab = 'semaine' | 'saison' | 'improbables';
+type Tab = 'semaine' | 'saison';
 
 export function PronosHub() {
   const [params, setParams] = useSearchParams();
@@ -23,9 +23,12 @@ export function PronosHub() {
   const weekly = all.filter((q) => q.category === 'weekly' && q.prime_id === prime?.id);
   const grand = all.filter((q) => q.category === 'grand');
   const grandTodo = grand.filter((q) => !q.locked && !answered(q)).length;
-  // Tant qu'il reste des grands pronos à jouer, on ouvre directement sur cet onglet.
-  const tab = (params.get('tab') as Tab) || (grandTodo > 0 ? 'saison' : 'semaine');
   const fun = all.filter((q) => q.category === 'fun' && q.prime_id === prime?.id);
+  const weekTodo = [...weekly, ...fun].filter((q) => !q.locked && !answered(q)).length;
+  // Les pronos de la semaine d'abord ; sinon les grands pronos qui restent à jouer.
+  // (L'ancien onglet « Improbables » est fusionné dans « Semaine ».)
+  const asked = params.get('tab');
+  const tab: Tab = asked === 'saison' ? 'saison' : asked ? 'semaine' : weekTodo === 0 && grandTodo > 0 ? 'saison' : 'semaine';
 
   return (
     <Screen gap={22}>
@@ -36,31 +39,40 @@ export function PronosHub() {
       <SegmentedControl<Tab>
         value={tab}
         onChange={(v) => setParams({ tab: v }, { replace: true })}
-        options={[{ value: 'semaine', label: 'Semaine' }, { value: 'saison', label: grandTodo > 0 ? <span className="inline-flex items-center gap-1.5">Grands pronos<span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1" style={{ background: 'var(--grad-cta)', color: '#fff', font: '700 11px var(--font-body)' }}>{grandTodo}</span></span> : 'Grands pronos' }, { value: 'improbables', label: 'Improbables' }]}
+        options={[{ value: 'semaine', label: <TabLabel label="Pronos de la semaine" n={weekTodo} /> }, { value: 'saison', label: <TabLabel label="Grands pronos" n={grandTodo} /> }]}
       />
       {game.isLoading || season.isLoading ? (
         <div className="flex flex-col gap-2.5"><Skeleton h={170} /><Skeleton h={112} /><Skeleton h={112} /></div>
       ) : game.isError ? (
         <ErrorState onRetry={() => game.refetch()} />
       ) : tab === 'semaine' ? (
-        <WeekTab questions={weekly} primeNumber={prime?.number} airsAt={prime?.airs_at} onExpire={() => game.refetch()} />
-      ) : tab === 'saison' ? (
-        <SeasonTab questions={grand} closeAt={season.data?.grand_predictions_close_at} onExpire={() => game.refetch()} />
+        <WeekTab questions={weekly} fun={fun} primeNumber={prime?.number} airsAt={prime?.airs_at} onExpire={() => game.refetch()} />
       ) : (
-        <FunTab questions={fun} primeNumber={prime?.number} />
+        <SeasonTab questions={grand} closeAt={season.data?.grand_predictions_close_at} onExpire={() => game.refetch()} />
       )}
     </Screen>
   );
 }
 
-function WeekTab({ questions, primeNumber, airsAt, onExpire }: { questions: GameQuestion[]; primeNumber?: number; airsAt?: string; onExpire: () => void }) {
+function TabLabel({ label, n }: { label: string; n: number }) {
+  if (!n) return <>{label}</>;
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {label}
+      <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1" style={{ background: 'var(--grad-cta)', color: '#fff', font: '700 11px var(--font-body)' }}>{n}</span>
+    </span>
+  );
+}
+
+function WeekTab({ questions, fun, primeNumber, airsAt, onExpire }: { questions: GameQuestion[]; fun: GameQuestion[]; primeNumber?: number; airsAt?: string; onExpire: () => void }) {
   const navigate = useNavigate();
-  if (!questions.length) {
-    return <EmptyState icon="clock" title="Pas de pronos ouverts pour l’instant." message={primeNumber ? `Les questions du prime ${primeNumber} arrivent après les nominations.` : 'Les prochaines questions arrivent bientôt.'} />;
+  if (!questions.length && !fun.length) {
+    return <EmptyState icon="clock" title="Pas de pronos ouverts pour l’instant." message={primeNumber ? `Les questions du prime ${primeNumber} arrivent avec les nominations et la battle du top 3.` : 'Les prochaines questions arrivent bientôt.'} />;
   }
-  const open = questions.filter((q) => !q.locked);
+  const every = [...questions, ...fun];
+  const open = every.filter((q) => !q.locked);
   const todo = open.filter((q) => !answered(q));
-  const done = questions.filter(answered).length;
+  const done = every.filter(answered).length;
   const nextClose = open.length ? open.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), open[0].closes_at) : null;
   return (
     <>
@@ -82,12 +94,23 @@ function WeekTab({ questions, primeNumber, airsAt, onExpire }: { questions: Game
               <span className="text-gold-400" style={{ font: 'italic 800 22px/1 var(--font-numeric)' }}>{fmtNum(todo.reduce((s, q) => s + maxPoints(q), 0))} pts</span>
             </div>
           </div>
-          <ProgressBar value={done} max={questions.length} label="Mes pronos validés" valueLabel={`${done} / ${questions.length}`} />
+          <ProgressBar value={done} max={every.length} label="Mes pronos validés" valueLabel={`${done} / ${every.length}`} />
         </div>
       </div>
-      <div className="flex flex-col gap-2.5">
-        {questions.map((q) => <QuestionCard key={q.id} q={q} onClick={() => navigate(`/pronos/${q.id}`)} />)}
-      </div>
+      {questions.length > 0 && (
+        <div className="flex flex-col gap-2.5">
+          {questions.map((q) => <QuestionCard key={q.id} q={q} onClick={() => navigate(`/pronos/${q.id}`)} />)}
+        </div>
+      )}
+      {fun.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1 px-0.5 pt-2">
+            <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 24px/1.1 var(--font-display)' }}>{fun.length > 1 ? 'Les paris improbables' : 'Le pari improbable'}</span>
+            <span className="t-body-s text-pretty text-secondary">Pour le fun, mais chaque critère est fixé avant l’ouverture. Pas de débat possible.</span>
+          </div>
+          {fun.map((q) => <FunCard key={q.id} q={q} />)}
+        </div>
+      )}
       <p className="t-caption m-0 text-pretty text-muted">Chaque question a sa propre heure de clôture, affichée à l’heure de Paris. Une fois clôturée, plus aucune modification n’est possible.</p>
     </>
   );
@@ -151,22 +174,6 @@ function SeasonTab({ questions, closeAt, onExpire }: { questions: GameQuestion[]
       <div className="flex flex-col gap-2.5">
         {sorted.map((q) => <QuestionCard key={q.id} q={q} onClick={() => navigate(`/pronos/${q.id}`)} />)}
       </div>
-    </>
-  );
-}
-
-function FunTab({ questions, primeNumber }: { questions: GameQuestion[]; primeNumber?: number }) {
-  return (
-    <>
-      <div className="flex flex-col gap-1.5 px-0.5 py-1">
-        <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 26px/1.1 var(--font-display)' }}>Les paris improbables</span>
-        <span className="t-body-s text-pretty text-secondary">Pour le fun, mais chaque critère est fixé avant l’ouverture. Pas de débat possible.</span>
-      </div>
-      {questions.length ? (
-        <div className="flex flex-col gap-3">{questions.map((q) => <FunCard key={q.id} q={q} />)}</div>
-      ) : (
-        <EmptyState icon="sparkles" title="Aucun pari improbable cette semaine" message={primeNumber ? `Reviens avant le prime ${primeNumber}.` : undefined} />
-      )}
     </>
   );
 }

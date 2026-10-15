@@ -235,7 +235,7 @@ export function LeaderboardRow({ rank, name, sub, avatar, points, move = 0, me, 
 }
 
 // ---------- BottomNav ----------
-export function BottomNav({ items, value, onChange }: { items: { value: string; label: string; icon: string; center?: boolean }[]; value: string; onChange: (v: string) => void }) {
+export function BottomNav({ items, value, onChange }: { items: { value: string; label: string; icon: string; center?: boolean; badge?: number }[]; value: string; onChange: (v: string) => void }) {
   return (
     <nav className="gp-bnav" aria-label="Navigation principale">
       {items.map((it) => (
@@ -245,10 +245,12 @@ export function BottomNav({ items, value, onChange }: { items: { value: string; 
           className={'gp-bnav__item' + (it.value === value ? ' gp-bnav__item--on' : '') + (it.center ? ' gp-bnav__item--center' : '')}
           onClick={() => onChange(it.value)}
           aria-current={it.value === value ? 'page' : undefined}
+          aria-label={it.badge ? `${it.label} · ${it.badge} à jouer` : undefined}
         >
           {it.center ? (
             <span className="gp-bnav__bubble">
               <Icon name={it.icon} size={24} />
+              {!!it.badge && <span className="gp-bnav__badge">{it.badge}</span>}
             </span>
           ) : (
             <Icon name={it.icon} size={22} />

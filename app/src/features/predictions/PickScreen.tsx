@@ -36,7 +36,7 @@ export function PickScreen() {
   }, [q?.id, q?.mine?.updated_at]);
 
   const candById = useMemo(() => new Map((cands.data ?? []).map((c) => [c.id, c])), [cands.data]);
-  const tab = q?.category === 'grand' ? 'saison' : q?.category === 'fun' ? 'improbables' : 'semaine';
+  const tab = q?.category === 'grand' ? 'saison' : 'semaine';
   const back = useBack(`/pronos?tab=${tab}`);
 
   if (game.isLoading || cands.isLoading) {
