@@ -2,7 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/ui/game';
 import { useGame, useSeason } from '@/lib/queries';
-import { answered } from '@/lib/game';
+import { needsAction } from '@/lib/game';
 
 const NAV = [
   { value: '/', label: 'Accueil', icon: 'house' },
@@ -17,11 +17,11 @@ function navValue(path: string) {
   return NAV.find((n) => n.value !== '/' && path.startsWith(n.value))?.value ?? (path === '/' ? '/' : '');
 }
 
-/** Pronos ouverts pas encore joués : pastille sur le bouton « Pronos » de la nav. */
+/** Pronos ouverts à jouer (ou à corriger) : pastille sur le bouton « Pronos » de la nav. */
 function useTodoCount() {
   const season = useSeason();
   const game = useGame(season.data?.id);
-  return (game.data?.questions ?? []).filter((q) => !q.locked && !answered(q)).length;
+  return (game.data?.questions ?? []).filter(needsAction).length;
 }
 
 function Nav() {

@@ -6,7 +6,7 @@ import {
   currentPrime, isDemoSeason, lastClosedPrime, useCandidates, useGame, useLeagueLeaderboard, useLeagueMemberCounts,
   useMyLeagueRanks, useMyLeagues, useNotifications, usePrimaryLeague, usePrimes,
 } from '@/lib/queries';
-import { answered, maxPoints, moveOf } from '@/lib/game';
+import { answered, maxPoints, moveOf, needsAction, staleNames } from '@/lib/game';
 import { fmtClose, fmtDayTime, fmtGain, fmtLong, fmtNum, plural } from '@/lib/format';
 import type { Season } from '@/lib/types';
 import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton, Thumb } from '@/components/ui/core';
@@ -43,13 +43,16 @@ export function Dashboard({ season }: { season: Season }) {
       .sort((a, b) => Number(a.category === 'fun') - Number(b.category === 'fun') || a.sort_order - b.sort_order),
     [game.data, prime?.id],
   );
-  const weekTodo = weekOpen.filter((q) => !answered(q));
+  const weekTodo = weekOpen.filter(needsAction);
   const weekClose = weekOpen.length ? weekOpen.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), weekOpen[0].closes_at) : null;
   const weekPts = weekTodo.reduce((s, q) => s + maxPoints(q), 0);
 
   // Grands pronos encore ouverts : bannière d'accès directe en haut de l'accueil
   const grandOpen = (game.data?.questions ?? []).filter((q) => q.category === 'grand' && !q.locked);
-  const grandDone = grandOpen.filter(answered).length;
+  const grandDone = grandOpen.filter((q) => !needsAction(q)).length;
+  // Un candidat choisi a quitté l'aventure : réponses à remplacer avant la clôture
+  const stale = (game.data?.questions ?? []).filter((q) => q.stale);
+  const staleWho = [...new Set(stale.flatMap((q) => staleNames(q).split(', ')))].join(', ');
   const grandNext = grandOpen.length ? grandOpen.reduce((m, q) => (new Date(q.closes_at) < new Date(m.closes_at) ? q : m)) : null;
   const grandSoon = grandNext ? grandOpen.filter((q) => q.closes_at === grandNext.closes_at) : [];
   // Un seul grand prono ferme à la prochaine échéance (ex. « Le premier éliminé ») : on le nomme
@@ -82,6 +85,18 @@ export function Dashboard({ season }: { season: Season }) {
         <IconButton icon="bell" label="Notifications" dot={unread} onClick={() => navigate('/notifications')} />
       </div>
 
+      {stale.length > 0 && (
+        <button type="button" onClick={() => navigate(`/pronos/${stale[0].id}`)} className="flex items-center gap-3.5 rounded-lg p-4 text-left"
+          style={{ background: 'rgba(255,74,120,.1)', boxShadow: 'inset 0 0 0 1px rgba(255,74,120,.45)' }}>
+          <IconCircle icon="user-minus" tone="flare" />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <span className="t-body font-bold">{staleWho} {staleWho.includes(',') ? 'ne sont plus en lice' : 'n’est plus en lice'}</span>
+            <span className="t-caption text-pretty text-secondary">Remplace ton choix dans {stale.map((q) => `« ${q.title} »`).join(', ')} avant la clôture.</span>
+          </div>
+          <Icon name="chevron-right" size={18} className="text-muted" />
+        </button>
+      )}
+
       {weekOpen.length > 0 && prime && weekClose && (
         <div className="card-edge flex flex-col gap-3.5 p-4" style={weekTodo.length ? { boxShadow: 'var(--glow-flare)' } : undefined}>
           <div className="flex items-center justify-between gap-3">
@@ -93,13 +108,13 @@ export function Dashboard({ season }: { season: Season }) {
           </span>
           <div className="card-plain row-sep flex flex-col">
             {weekOpen.map((q) => {
-              const ok = answered(q);
+              const ok = answered(q) && !q.stale;
               return (
                 <button key={q.id} type="button" onClick={() => navigate(`/pronos/${q.id}`)} className="flex items-center gap-3 border-0 bg-transparent px-3.5 py-3 text-left">
                   <Icon name={ok ? 'circle-check' : q.icon || 'star'} size={18} style={{ color: ok ? 'var(--green-500)' : 'var(--flare-400)', flex: 'none' }} />
                   <div className="flex min-w-0 flex-1 flex-col">
                     <span className="t-body-s font-bold">{q.title}</span>
-                    <span className="t-caption text-muted">{ok ? 'Joué · modifiable' : q.category === 'fun' ? 'Pari improbable' : 'Pas encore joué'}</span>
+                    <span className="t-caption text-muted">{ok ? 'Joué · modifiable' : q.stale ? `${staleNames(q)} n’est plus en lice · à modifier` : q.category === 'fun' ? 'Pari improbable' : 'Pas encore joué'}</span>
                   </div>
                   <span className="whitespace-nowrap text-gold-400" style={{ font: 'italic 800 15px/1 var(--font-numeric)' }}>{maxPoints(q)} pts</span>
                   <Icon name="chevron-right" size={16} className="text-muted" />

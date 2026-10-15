@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isDemoSeason, currentPrime, useGame, usePrimes, useSeason, useSubmitPrediction, type GameQuestion } from '@/lib/queries';
-import { answered, maxPoints, optionLabels, pickSummary, pointsSuffix, pronoStatus } from '@/lib/game';
+import { answered, maxPoints, needsAction, optionLabels, pickSummary, pointsSuffix, pronoStatus, staleNames } from '@/lib/game';
 import { fmtClose, fmtDayDateTime, fmtLong, fmtNum, fmtShortDate } from '@/lib/format';
 import { explainError } from '@/lib/errors';
 import { Badge, IconCircle, PointsChip, ProgressBar, SegmentedControl, Skeleton } from '@/components/ui/core';
@@ -22,9 +22,9 @@ export function PronosHub() {
   const all = game.data?.questions ?? [];
   const weekly = all.filter((q) => q.category === 'weekly' && q.prime_id === prime?.id);
   const grand = all.filter((q) => q.category === 'grand');
-  const grandTodo = grand.filter((q) => !q.locked && !answered(q)).length;
+  const grandTodo = grand.filter(needsAction).length;
   const fun = all.filter((q) => q.category === 'fun' && q.prime_id === prime?.id);
-  const weekTodo = [...weekly, ...fun].filter((q) => !q.locked && !answered(q)).length;
+  const weekTodo = [...weekly, ...fun].filter(needsAction).length;
   // Les pronos de la semaine d'abord ; sinon les grands pronos qui restent à jouer.
   // (L'ancien onglet « Improbables » est fusionné dans « Semaine ».)
   const asked = params.get('tab');
@@ -71,8 +71,8 @@ function WeekTab({ questions, fun, primeNumber, airsAt, onExpire }: { questions:
   }
   const every = [...questions, ...fun];
   const open = every.filter((q) => !q.locked);
-  const todo = open.filter((q) => !answered(q));
-  const done = every.filter(answered).length;
+  const todo = open.filter(needsAction);
+  const done = every.filter((q) => answered(q) && !q.stale).length;
   const nextClose = open.length ? open.reduce((m, q) => (q.closes_at < m ? q.closes_at : m), open[0].closes_at) : null;
   return (
     <>
@@ -118,7 +118,7 @@ function WeekTab({ questions, fun, primeNumber, airsAt, onExpire }: { questions:
 
 export function QuestionCard({ q, onClick, max = 3 }: { q: GameQuestion; onClick: () => void; max?: number }) {
   const st = pronoStatus(q);
-  const pick = pickSummary(q, max);
+  const pick = q.stale ? `${staleNames(q)} n’est plus en lice · à modifier` : pickSummary(q, max);
   return (
     <PronoCard
       question={q.title}
@@ -138,7 +138,7 @@ function SeasonTab({ questions, closeAt, onExpire }: { questions: GameQuestion[]
   if (!questions.length) {
     return <EmptyState icon="crown" title="Les grands pronos arrivent bientôt" message="Ils ouvrent dès la révélation officielle des candidats." />;
   }
-  const done = questions.filter(answered).length;
+  const done = questions.filter((q) => answered(q) && !q.stale).length;
   const open = questions.filter((q) => !q.locked);
   const anyOpen = open.length > 0;
   const t = (q: GameQuestion) => new Date(q.closes_at).getTime();

@@ -23,12 +23,18 @@ export function answered(q: GameQuestion) {
   return !!q.mine && (q.mine.option_ids.length > 0 || q.mine.number_value != null);
 }
 
+/** Prono ouvert à jouer, ou à corriger parce qu'un candidat choisi a quitté l'aventure. */
+export const needsAction = (q: GameQuestion) => !q.locked && (!answered(q) || q.stale);
+
 export function pronoStatus(q: GameQuestion): PronoStatus {
   if (q.status === 'cancelled') return 'cancelled';
   if (q.status === 'published') return (q.myPoints ?? 0) > 0 ? 'won' : 'closed';
   if (q.locked) return 'closed';
-  return answered(q) ? 'done' : 'open';
+  return answered(q) && !q.stale ? 'done' : 'open';
 }
+
+/** « Khalil » : candidats de ma réponse qui ont quitté l'aventure. */
+export const staleNames = (q: GameQuestion) => optionLabels(q, (q.mine?.option_ids ?? []).filter((id) => q.outOptionIds.includes(id))).join(', ');
 
 export function optionLabels(q: { options: QuestionOption[] }, ids: string[]) {
   return ids.map((id) => q.options.find((o) => o.id === id)?.label ?? '?');

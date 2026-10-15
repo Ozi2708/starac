@@ -274,6 +274,19 @@ describe('Cas limites', () => {
     expect(c.eliminated_at).not.toBeNull();
   });
 
+  it('un éliminé ne peut plus être choisi, même dans un prono « tous les candidats », et ceux qui l’avaient choisi sont prévenus', async () => {
+    const q = await weeklyQuestion('Qui gagnera la saison ?', { source: 'candidates_all' });
+    await db.as(A, `select submit_prediction($1, $2::uuid[])`, [q, await db.optionIds(q, ['Maëlle'])]);
+    await db.as(admin, `select admin_set_candidate_status($1, 'eliminated')`, [cand['Maëlle']]);
+    expect(await rpcErr(db.as(A, `select submit_prediction($1, $2::uuid[])`, [q, await db.optionIds(q, ['Maëlle'])]))).toContain('CANDIDATE_ELIMINATED');
+    // La réponse existante est conservée, le joueur est prévenu une seule fois
+    expect(await db.sql(`select * from user_predictions where question_id = $1`, [q])).toHaveLength(1);
+    await db.as(admin, `select admin_set_candidate_status($1, 'eliminated')`, [cand['Maëlle']]);
+    const n = await db.as(A, `select title, link from notifications where dedupe_key like 'out:%'`);
+    expect(n).toEqual([{ title: 'Maëlle a quitté l\'aventure', link: `/pronos/${q}` }]);
+    await db.as(A, `select submit_prediction($1, $2::uuid[])`, [q, await db.optionIds(q, ['Malo'])]);
+  });
+
   it('une nomination reste dans l’historique quand le nommé sauvé repasse « en lice » après le prime', async () => {
     const noms = () => db.sql(`select * from candidate_nominations where candidate_id = $1`, [cand['Sacha']]);
     // Avant la diffusion : une nomination saisie par erreur peut être retirée

@@ -1,18 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { answerStatus, competitionRanks, maxPoints, moveOf, pickSummary, pointsSuffix, pronoStatus } from './game';
+import { answerStatus, competitionRanks, maxPoints, moveOf, needsAction, pickSummary, pointsSuffix, pronoStatus, staleNames } from './game';
 import type { GameQuestion } from './queries';
 
 const base = (over: Partial<GameQuestion> = {}): GameQuestion => ({
   id: 'q', season_id: 's', prime_id: 'p', category: 'weekly', key: null, type: 'multiple', title: 'Les 8 de la tournée', description: null,
   icon: 'ticket', validation_criteria: 'x', options_source: 'candidates_all', min_selections: 8, max_selections: 8, points: 20, bonus_points: 50,
   scoring: 'per_correct', closes_at: new Date(Date.now() + 3600_000).toISOString(), status: 'open', sort_order: 0, cancelled_reason: null,
-  created_at: '', answers: 0, locked: false, result: null, myPoints: null, mine: null,
+  created_at: '', answers: 0, locked: false, result: null, myPoints: null, mine: null, outOptionIds: [], stale: false,
   options: 'ABCDEFGHIJ'.split('').map((l, i) => ({ id: 'o' + i, question_id: 'q', label: l, candidate_id: 'c' + i, is_none_option: false, sort_order: i })),
   ...over,
 });
 const mine = (ids: string[]) => ({ id: 'm', question_id: 'q', user_id: 'u', option_ids: ids, number_value: null, submitted_at: '', updated_at: '' });
 
 describe('affichage des pronos', () => {
+  it('un choix parti de l’aventure rend le prono à corriger', () => {
+    const q = base({ mine: mine(['o0', 'o3']), outOptionIds: ['o3'], stale: true });
+    expect(needsAction(q)).toBe(true);
+    expect(pronoStatus(q)).toBe('open');
+    expect(staleNames(q)).toBe('D');
+    expect(needsAction(base({ mine: mine(['o0']) }))).toBe(false);
+  });
+
   it('points en jeu et unité', () => {
     expect(maxPoints(base())).toBe(210);
     expect(pointsSuffix(base())).toBe('pts / candidat');

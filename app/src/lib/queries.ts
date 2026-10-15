@@ -76,6 +76,10 @@ export interface GameQuestion extends Question {
   myPoints: number | null; // null tant que non publié
   answers: number;
   locked: boolean;
+  /** Options dont le candidat a quitté l'aventure (masquées tant que la question est ouverte). */
+  outOptionIds: string[];
+  /** Ma réponse contient un candidat parti alors que la question est encore ouverte : à remplacer. */
+  stale: boolean;
 }
 
 export function useGame(seasonId?: string) {
@@ -86,30 +90,38 @@ export function useGame(seasonId?: string) {
     queryFn: async () => {
       const questions = await rows<Question>(supabase.from('questions').select('*').eq('season_id', seasonId!).neq('status', 'draft').order('sort_order'));
       const ids = questions.map((x) => x.id);
-      if (!ids.length) return { questions: [] as Question[], options: [], mine: [], results: [], tx: [], counts: [] };
-      const [options, mine, results, tx, counts] = await Promise.all([
+      if (!ids.length) return { questions: [] as Question[], options: [], mine: [], results: [], tx: [], counts: [], out: [] };
+      const [options, mine, results, tx, counts, out] = await Promise.all([
         rows<QuestionOption>(supabase.from('question_options').select('*').in('question_id', ids).order('sort_order')),
         rows<UserPrediction>(supabase.from('user_predictions').select('*').eq('user_id', userId!).in('question_id', ids)),
         rows<OfficialResult>(supabase.from('official_results').select('question_id, correct_option_ids, number_value, version, recorded_at').in('question_id', ids)),
         rows<ScoreTransaction>(supabase.from('score_transactions').select('*').eq('user_id', userId!).eq('season_id', seasonId!)),
         rows<{ question_id: string; answers: number }>(supabase.from('v_question_answer_counts').select('*').in('question_id', ids)),
+        rows<{ id: string }>(supabase.from('candidates').select('id').eq('season_id', seasonId!).eq('status', 'eliminated')),
       ]);
-      return { questions, options, mine, results, tx, counts };
+      return { questions, options, mine, results, tx, counts, out };
     },
   });
   const data = useMemo(() => {
     if (!q.data) return undefined;
     const now = Date.now();
+    const gone = new Set(q.data.out.map((c) => c.id));
     const list: GameQuestion[] = q.data.questions.map((x) => {
       const tx = q.data!.tx.filter((t) => t.question_id === x.id);
+      const options = q.data!.options.filter((o) => o.question_id === x.id);
+      const mine = q.data!.mine.find((m) => m.question_id === x.id) ?? null;
+      const locked = x.status !== 'open' || new Date(x.closes_at).getTime() <= now;
+      const outOptionIds = options.filter((o) => o.candidate_id && gone.has(o.candidate_id)).map((o) => o.id);
       return {
         ...x,
-        options: q.data!.options.filter((o) => o.question_id === x.id),
-        mine: q.data!.mine.find((m) => m.question_id === x.id) ?? null,
+        options,
+        mine,
+        outOptionIds,
+        stale: !locked && !!mine?.option_ids.some((id) => outOptionIds.includes(id)),
         result: x.status === 'published' ? q.data!.results.find((r) => r.question_id === x.id) ?? null : null,
         myPoints: x.status === 'published' ? tx.reduce((s, t) => s + t.points, 0) : null,
         answers: q.data!.counts.find((c) => c.question_id === x.id)?.answers ?? 0,
-        locked: x.status !== 'open' || new Date(x.closes_at).getTime() <= now,
+        locked,
       };
     });
     return { questions: list, transactions: q.data.tx };

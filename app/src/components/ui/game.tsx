@@ -190,10 +190,10 @@ export function CandidatePortrait({ name, photo, meta, selected, eliminated, dis
     <button
       type="button"
       className={cx('gp-pick', selected && 'gp-pick--on', eliminated && 'gp-pick--out')}
-      disabled={eliminated || disabled}
+      disabled={(eliminated && !selected) || disabled}
       aria-pressed={!!selected}
       aria-label={name}
-      onClick={() => !eliminated && !disabled && onSelect?.()}
+      onClick={() => (!eliminated || selected) && !disabled && onSelect?.()}
       style={disabled && !eliminated ? { cursor: 'default' } : undefined}
     >
       <span className="gp-portrait w-full">

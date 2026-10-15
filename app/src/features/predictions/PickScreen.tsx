@@ -51,7 +51,10 @@ export function PickScreen() {
   const prime = primes.data?.find((p) => p.id === q.prime_id);
   const isNumber = q.type === 'exact_number';
   const isOrdered = q.type === 'ordered';
-  const candidateOpts = q.options.filter((o) => o.candidate_id);
+  // Un candidat qui a quitté l'aventure n'est plus proposé tant que la question est ouverte
+  // (on le garde visible s'il fait partie de ma sélection, pour pouvoir le retirer).
+  const outIds = new Set(locked ? [] : q.outOptionIds);
+  const candidateOpts = q.options.filter((o) => o.candidate_id && (!outIds.has(o.id) || draft.includes(o.id)));
   const noneOpt = q.options.find((o) => o.is_none_option);
   const textOpts = q.options.filter((o) => !o.candidate_id && !o.is_none_option);
   const multi = q.max_selections > 1;
@@ -77,7 +80,8 @@ export function PickScreen() {
   }
 
   const count = draft.length;
-  const valid = isNumber ? num.trim() !== '' && !Number.isNaN(Number(num)) : noneChosen || (count >= Math.max(1, q.min_selections) && count <= q.max_selections);
+  const goneNames = optionLabels(q, draft.filter((id) => outIds.has(id))).join(', ');
+  const valid = !goneNames && (isNumber ? num.trim() !== '' && !Number.isNaN(Number(num)) : noneChosen || (count >= Math.max(1, q.min_selections) && count <= q.max_selections));
   const unchanged = isNumber
     ? q.mine?.number_value != null && Number(num) === Number(q.mine.number_value)
     : saved.length === draft.length && saved.every((x, i) => (isOrdered ? draft[i] === x : draft.includes(x)));
@@ -107,12 +111,14 @@ export function PickScreen() {
 
   const metaOf = (o: QuestionOption) => {
     if (published && correct.includes(o.id)) return 'Bonne réponse';
+    if (outIds.has(o.id)) return 'Plus en lice';
     if (draft.includes(o.id)) return isOrdered ? `Mon choix · ${draft.indexOf(o.id) + 1}` : 'Mon choix';
     const c = o.candidate_id ? candById.get(o.candidate_id) : null;
     return c ? STATUS_LABEL[c.status]?.[0] : undefined;
   };
   const badge = locked
     ? { label: q.status === 'cancelled' ? 'Annulé' : published ? 'Résultat publié' : 'Verrouillé', tone: published ? 'gold' : 'closed', icon: 'lock' }
+    : q.stale ? { label: 'À modifier', tone: 'open', icon: null }
     : { label: answered(q) ? 'Joué' : 'Ouvert', tone: answered(q) ? 'magenta' : 'open', icon: null };
   const trayLabel = q.key === 'tour' ? 'MA SÉLECTION POUR LA TOURNÉE' : q.key === 'finalists' ? 'MES FINALISTES' : q.key === 'couple' ? 'MON COUPLE' : /nomm/i.test(q.title) ? `MES ${q.max_selections} NOMMÉS` : isOrdered ? 'MON CLASSEMENT' : 'MA SÉLECTION';
   const bottomPad = locked ? 150 : 190;
@@ -168,7 +174,7 @@ export function PickScreen() {
                   const c = o?.candidate_id ? candById.get(o.candidate_id) : null;
                   return o ? (
                     <span key={i} className="gp-portrait" style={{ borderRadius: 12, aspectRatio: '4 / 5' }}>
-                      <PhotoFill name={o.label} src={c?.photo_url} />
+                      <PhotoFill name={o.label} src={c?.photo_url} out={outIds.has(o.id)} />
                       {!c?.photo_url && <span className="gp-portrait__initial" aria-hidden="true">{o.label[0]}</span>}
                       <span className="gp-portrait__shade" />
                       <PortraitName name={o.label} />
@@ -191,7 +197,7 @@ export function PickScreen() {
               <div className="grid grid-cols-3 gap-2.5">
                 {candidateOpts.map((o) => {
                   const c = o.candidate_id ? candById.get(o.candidate_id) : null;
-                  const out = !locked && c?.status === 'eliminated' && q.options_source !== 'candidates_all';
+                  const out = outIds.has(o.id);
                   return (
                     <CandidatePortrait key={o.id} name={o.label} photo={c?.photo_url} meta={metaOf(o)} selected={draft.includes(o.id)} eliminated={out} disabled={locked} onSelect={() => toggle(o)} />
                   );
@@ -229,7 +235,7 @@ export function PickScreen() {
         {!locked ? (
           <>
             <span className="t-body-s text-center text-secondary">
-              {isNumber ? (num ? `Ta réponse : ${num}` : 'Saisis un nombre') : noneChosen ? 'Ton choix : aucun couple confirmé' : isMultiPerCorrect(q) || multi ? `${count} / ${q.max_selections} ${candidateOpts.length ? 'candidats sélectionnés' : 'choix'}` : count ? `Ton choix : ${names}` : 'Touche un candidat pour le choisir'}
+              {goneNames ? `${goneNames} n’est plus en lice : ${multi ? 'touche sa photo pour le retirer, puis choisis' : 'choisis'} un autre candidat.` : isNumber ? (num ? `Ta réponse : ${num}` : 'Saisis un nombre') : noneChosen ? 'Ton choix : aucun couple confirmé' : isMultiPerCorrect(q) || multi ? `${count} / ${q.max_selections} ${candidateOpts.length ? 'candidats sélectionnés' : 'choix'}` : count ? `Ton choix : ${names}` : 'Touche un candidat pour le choisir'}
             </span>
             <Button size="lg" block disabled={!valid || unchanged} onClick={() => setConfirm(true)}>{answered(q) ? 'Enregistrer mes modifications' : 'Valider mon prono'}</Button>
           </>
