@@ -47,7 +47,7 @@
 .gp-and-row.is-pressed{background:#4a4c50}
 
 /* Écran d'accueil */
-.gp-home-label{display:block;margin-top:5px;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap}
+.gp-home-label{display:block;margin:5px -18px 0;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap}
 .gp-home-ours{animation:gp-icon-pop .7s .35s cubic-bezier(.3,1.6,.5,1) both;transition:transform .2s,filter .2s}
 .gp-home-ours.is-pressed{transform:scale(.88);filter:brightness(.75)}
 @keyframes gp-icon-pop{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}

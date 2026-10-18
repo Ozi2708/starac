@@ -69,7 +69,7 @@ export function Profile() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `mes-donnees-grand-prono.json`;
+    a.download = `mes-donnees-star-ac-prono.json`;
     a.click();
     toast({ tone: 'success', title: 'Export prêt', message: 'Tes données ont été téléchargées.' });
   }

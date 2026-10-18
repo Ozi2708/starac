@@ -32,7 +32,7 @@ export function Landing({ season, signedIn }: { season: Season | null; signedIn?
             {isDemoSeason(season) && <Badge>Démo</Badge>}
           </div>
           <Overline className="text-gold-200">SAISON {season?.year ?? 2026} · LE JEU DE PRONOS</Overline>
-          <h1 className="gp-glitter-text m-0 pr-1.5" style={{ font: 'italic 900 46px/1 var(--font-display)', letterSpacing: '-.015em' }}>Le Grand Prono</h1>
+          <h1 className="gp-glitter-text m-0 pr-1.5" style={{ font: 'italic 900 46px/1 var(--font-display)', letterSpacing: '-.015em' }}>Star Ac Prono</h1>
           <span className="t-body-l text-secondary">Une saison. Des pronos. Un seul gagnant.</span>
         </div>
 

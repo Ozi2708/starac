@@ -33,7 +33,7 @@ export const SCENES: Record<OS, Scene[]> = {
       finger: [[0, 251, 525], [650, 195, 770], [1350, 195, 560], [2000, 195, 576], [3400, 195, 576]], taps: [800, 2300] },
     { id: 'add', dur: 2700, caption: 'Touche « Ajouter » en haut à droite', tip: 'Laisse « Ouvrir en tant qu’app web » activé.',
       finger: [[0, 195, 576], [1200, 340, 84], [2700, 340, 84]], taps: [1500] },
-    { id: 'home', dur: 2900, caption: 'L’icône Grand Prono est sur ton écran d’accueil',
+    { id: 'home', dur: 2900, caption: 'L’icône Star Ac Prono est sur ton écran d’accueil',
       finger: [[0, 430, 900], [1500, ICON_IOS[0], ICON_IOS[1] + 6], [2900, ICON_IOS[0], ICON_IOS[1] + 6]], taps: [1900] },
     { id: 'open', dur: 3000, caption: 'Touche-la : l’app s’ouvre en plein écran 🎉', tip: 'Première ouverture : reconnecte-toi avec ton e-mail et ton mot de passe.' },
   ],
@@ -45,7 +45,7 @@ export const SCENES: Record<OS, Scene[]> = {
       finger: [[0, 366, 70], [1100, 250, 404], [2500, 250, 404]], taps: [1400] },
     { id: 'confirm', dur: 2700, caption: 'Confirme avec « Installer »',
       finger: [[0, 250, 404], [1300, 302, 448], [2700, 302, 448]], taps: [1600] },
-    { id: 'home', dur: 2900, caption: 'L’icône Grand Prono est sur ton écran d’accueil',
+    { id: 'home', dur: 2900, caption: 'L’icône Star Ac Prono est sur ton écran d’accueil',
       finger: [[0, 430, 900], [1500, ICON_ANDROID[0], ICON_ANDROID[1] + 4], [2900, ICON_ANDROID[0], ICON_ANDROID[1] + 4]], taps: [1900] },
     { id: 'open', dur: 3000, caption: 'Touche-la : l’app s’ouvre en plein écran 🎉', tip: 'Tu restes connecté : rien à ressaisir.' },
   ],
@@ -191,7 +191,7 @@ function HomeIcons({ ourAt, round, pressed }: { ourAt: number; round?: boolean; 
       cells.push(
         <div key="ours" className={'gp-home-ours' + (pressed ? ' is-pressed' : '')} style={abs({ left: x, top: y, width: 64, textAlign: 'center' })}>
           <img src={round ? '/icon-maskable-192-v3.png' : '/apple-touch-icon-v3.png'} alt="" width={64} height={64} style={{ display: 'block', borderRadius: round ? 32 : 15, boxShadow: '0 6px 18px rgba(0,0,0,.45)' }} />
-          <span className="gp-home-label">Grand Prono</span>
+          <span className="gp-home-label">Star Ac Prono</span>
         </div>,
       );
     } else if (k < apps.length && slot < 12 + (ourAt >= 12 ? 1 : 0)) {
@@ -268,7 +268,7 @@ function IosScreen({ scene, phase }: { scene: string; phase: number }) {
         <div style={abs({ left: 18, right: 18, top: 16, display: 'flex', alignItems: 'center', gap: 12 })}>
           <img src="/apple-touch-icon-v3.png" alt="" width={46} height={46} style={{ borderRadius: 11 }} />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <b style={{ fontSize: 16 }}>Le Grand Prono</b><span style={{ fontSize: 13, color: '#98989f' }}>{APP_URL}</span>
+            <b style={{ fontSize: 16 }}>Star Ac Prono</b><span style={{ fontSize: 13, color: '#98989f' }}>{APP_URL}</span>
           </div>
           <span style={{ width: 30, height: 30, borderRadius: 15, background: '#3a3a3c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c7c7cc' }}>{L(X, 16)}</span>
         </div>
@@ -298,7 +298,7 @@ function IosScreen({ scene, phase }: { scene: string; phase: number }) {
         <div style={abs({ left: 16, right: 16, top: 78, borderRadius: 12, background: '#2c2c2e', padding: 14, display: 'flex', gap: 14, alignItems: 'center' })}>
           <img src="/apple-touch-icon-v3.png" alt="" width={62} height={62} style={{ borderRadius: 14 }} />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <span style={{ fontSize: 17, paddingBottom: 8, borderBottom: '1px solid #48484a' }}>Grand Prono</span>
+            <span style={{ fontSize: 17, paddingBottom: 8, borderBottom: '1px solid #48484a' }}>Star Ac Prono</span>
             <span style={{ fontSize: 14, color: '#98989f' }}>{APP_URL}</span>
           </div>
         </div>
@@ -371,7 +371,7 @@ function AndroidScreen({ scene, phase }: { scene: string; phase: number }) {
         <div style={{ font: '400 22px/1.2 Roboto,system-ui,sans-serif', marginBottom: 18 }}>Installer l’application ?</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
           <img src="/icon-maskable-192-v3.png" alt="" width={48} height={48} style={{ borderRadius: 24 }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}><span style={{ fontSize: 16 }}>Grand Prono</span><span style={{ fontSize: 13, color: '#9aa0a6' }}>{APP_URL}</span></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}><span style={{ fontSize: 16 }}>Star Ac Prono</span><span style={{ fontSize: 13, color: '#9aa0a6' }}>{APP_URL}</span></div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 26, fontSize: 15, fontWeight: 600, color: '#8ab4f8', paddingRight: 6 }}>
           <span>Annuler</span><span className={phase >= 1 ? 'gp-flash' : ''}>Installer</span>

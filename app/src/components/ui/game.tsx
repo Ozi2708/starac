@@ -266,8 +266,8 @@ export function BottomNav({ items, value, onChange }: { items: { value: string; 
 export function Wordmark({ size = 20, overline = true }: { size?: number; overline?: boolean }) {
   return (
     <span className="inline-flex flex-col gap-0.5">
-      {overline && <span className="t-overline text-gold-200">STAR ACADEMY</span>}
-      <span className="gp-glitter-text pr-1" style={{ font: `italic 900 ${size}px/1 var(--font-display)` }}>Le Grand Prono</span>
+      {overline && <span className="t-overline text-gold-200">LE JEU DE PRONOS ENTRE AMIS</span>}
+      <span className="gp-glitter-text pr-1" style={{ font: `italic 900 ${size}px/1 var(--font-display)` }}>Star Ac Prono</span>
     </span>
   );
 }

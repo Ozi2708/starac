@@ -30,7 +30,7 @@ export function InstallGuideDialog({ open, onClose, initialOS }: { open: boolean
   async function installNow() {
     const r = await install.prompt();
     if (r === 'accepted') {
-      toast({ tone: 'success', title: 'App installée', message: 'Retrouve Grand Prono sur ton écran d’accueil.' });
+      toast({ tone: 'success', title: 'App installée', message: 'Retrouve Star Ac Prono sur ton écran d’accueil.' });
       onClose();
     }
   }
@@ -49,7 +49,7 @@ export function InstallGuideDialog({ open, onClose, initialOS }: { open: boolean
         {!os ? (
           <>
             <div className="flex flex-col gap-2">
-              <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 28px/1.05 var(--font-display)' }}>Le Grand Prono sur ton écran d’accueil</span>
+              <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 28px/1.05 var(--font-display)' }}>Star Ac Prono sur ton écran d’accueil</span>
               <span className="t-body-s text-pretty text-secondary">Une icône comme une vraie app, en plein écran, sans passer par un store. Ça prend 20 secondes.</span>
             </div>
             {iab && (

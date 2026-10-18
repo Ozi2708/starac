@@ -31,7 +31,7 @@ export default function AdminApp() {
     <div className="flex h-[100dvh] min-w-[1100px] flex-col bg-page">
       <header className="flex h-[60px] flex-none items-center gap-4 border-b border-subtle px-6">
         <div className="flex items-baseline gap-2.5">
-          <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 20px/1 var(--font-display)' }}>Le Grand Prono</span>
+          <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 20px/1 var(--font-display)' }}>Star Ac Prono</span>
           <span className="t-overline text-secondary">ADMINISTRATION</span>
         </div>
         {season.data && <Badge tone="magenta">{season.data.name.replace(/Star Academy /, 'Saison ').replace(/ · DÉMO/, '')}</Badge>}

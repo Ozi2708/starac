@@ -75,7 +75,7 @@ export function Finale() {
     if (!storyRef.current) return;
     setSharing(true);
     try {
-      const r = await shareNode(storyRef.current, `mon-recap-grand-prono-${recap.year}.png`, 'Mon récap Le Grand Prono');
+      const r = await shareNode(storyRef.current, `mon-recap-star-ac-prono-${recap.year}.png`, 'Mon récap Star Ac Prono');
       toast({ tone: 'success', title: 'Ton récap est prêt', message: r === 'shared' ? 'Partagé.' : 'Image au format story téléchargée.' });
     } catch {
       toast({ tone: 'error', title: 'Image non générée', message: 'On réessaie dans un instant.' });
@@ -131,7 +131,7 @@ function RecapCard({ recap }: { recap: Recap }) {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
           <Overline className="text-gold-200">STAR ACADEMY {recap.year}</Overline>
-          <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 18px/1 var(--font-display)' }}>Le Grand Prono</span>
+          <span className="gp-glitter-text pr-1" style={{ font: 'italic 900 18px/1 var(--font-display)' }}>Star Ac Prono</span>
         </div>
         <Avatar name={recap.pseudo} src={recap.avatar} size={40} ring="magenta" />
       </div>

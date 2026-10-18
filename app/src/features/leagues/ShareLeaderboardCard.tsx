@@ -10,7 +10,7 @@ export const ShareLeaderboardCard = forwardRef<HTMLDivElement, { league: League;
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <span style={{ font: '700 26px/1.2 var(--font-body)', letterSpacing: '.14em', color: 'var(--gold-200)' }}>STAR ACADEMY {season?.year ?? ''}</span>
-          <span className="gp-glitter-text" style={{ font: 'italic 900 64px/1 var(--font-display)', paddingRight: 8 }}>Le Grand Prono</span>
+          <span className="gp-glitter-text" style={{ font: 'italic 900 64px/1 var(--font-display)', paddingRight: 8 }}>Star Ac Prono</span>
         </div>
         <Thumb name={league.name} src={league.image_url} size={120} radius={32} />
       </div>

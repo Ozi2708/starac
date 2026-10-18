@@ -12,8 +12,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['key-art.jpg', 'favicon-v3.png', 'apple-touch-icon-v3.png'],
       manifest: {
-        name: 'Le Grand Prono · Star Academy 2026',
-        short_name: 'Grand Prono',
+        name: 'Star Ac Prono · Star Academy 2026',
+        short_name: 'Star Ac Prono',
         description: 'Une saison. Des pronos. Un seul gagnant. Jeu entre amis, sans argent.',
         lang: 'fr',
         theme_color: '#0d0322',
