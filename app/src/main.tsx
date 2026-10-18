@@ -6,6 +6,8 @@ import { AuthProvider } from '@/lib/auth';
 import { App } from '@/app/App';
 import '@/styles/index.css';
 import { registerSW } from 'virtual:pwa-register';
+// Capte au plus tôt la proposition d'installation de Chrome (guide « Installer l'app »)
+import '@/features/install/install';
 
 // Mises à jour de l'app : la nouvelle version est récupérée dès sa publication puis l'app se recharge
 // d'elle-même (mode autoUpdate). On revérifie toutes les 15 min et à chaque retour au premier plan.

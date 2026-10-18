@@ -12,6 +12,8 @@ import { Icon } from '@/components/ui/Icon';
 import { ConfirmDialog, useToast } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
 import { InviteCard } from '@/features/leagues/InviteCard';
+import { InstallGuideDialog } from '@/features/install/InstallGuide';
+import { detectOS, isStandalone } from '@/features/install/install';
 
 type Tab = 'week' | 'season';
 
@@ -31,6 +33,7 @@ export function Profile() {
   const mine = useUserBadges(sid, userId ? [userId] : []);
   const [tab, setTab] = useState<Tab>('week');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [installOpen, setInstallOpen] = useState(false);
   const stats = useQuery({
     queryKey: ['my-score', sid, userId],
     enabled: !!sid && !!userId,
@@ -176,6 +179,7 @@ export function Profile() {
             <div className="flex flex-1 flex-col"><span className="t-body font-bold">Notifications</span><span className="t-caption text-muted">Ouvertures, clôtures, résultats, badges</span></div>
             <Switch checked={!!profile?.notif_enabled} onChange={toggleNotif} ariaLabel="Notifications" />
           </div>
+          {!isStandalone() && <Row icon="download" label="Installer l’app" sub="Une icône sur ton écran d’accueil, en plein écran" onClick={() => setInstallOpen(true)} />}
           <Row icon="users" label="Mes ligues" onClick={() => navigate('/classement')} />
           <Row icon="download" label="Exporter mes données" sub="Pronos, points, ligues, badges (JSON)" onClick={exportData} />
           <Row icon="trash" label="Supprimer mon compte" sub="Définitif : pronos et points effacés" onClick={() => setConfirmDelete(true)} />
@@ -184,6 +188,7 @@ export function Profile() {
         </div>
       </section>
       <LegalNote />
+      <InstallGuideDialog open={installOpen} onClose={() => setInstallOpen(false)} initialOS={detectOS()} />
       <ConfirmDialog open={confirmDelete} danger title="Supprimer ton compte ?" confirmLabel="Supprimer définitivement" onConfirm={deleteAccount} onCancel={() => setConfirmDelete(false)}>
         Ton profil, tes pronos, tes points et tes badges seront effacés. Cette action est irréversible.
       </ConfirmDialog>

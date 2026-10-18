@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/ui/game';
 import { useGame, useSeason } from '@/lib/queries';
 import { needsAction } from '@/lib/game';
+import { InstallGuideAuto } from '@/features/install/InstallGuide';
 
 const NAV = [
   { value: '/', label: 'Accueil', icon: 'house' },
@@ -45,6 +46,7 @@ export function MobileShell({ children, nav = true }: { children: ReactNode; nav
       {nav && (
         <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-app" style={{ paddingBottom: 'env(safe-area-inset-bottom)', background: 'rgba(13,3,34,.82)' }}>
           <Nav />
+          <InstallGuideAuto />
         </div>
       )}
     </div>
