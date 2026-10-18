@@ -61,6 +61,7 @@ export function AdminDashboard() {
           <Button block icon="flag" onClick={() => navigate('/admin/resultats')}>{prime ? `Saisir les résultats du prime ${prime.number}` : 'Saisir les résultats'}</Button>
           <Button block variant="secondary" icon="users" onClick={() => navigate('/admin/candidats')}>Enregistrer une nomination</Button>
           <Button block variant="secondary" icon="plus" onClick={() => navigate('/admin/questions?nouvelle=1')}>Créer une question</Button>
+          <Button block variant="ghost" icon="download" onClick={() => navigate('/?installer=1')}>Voir le guide d’installation</Button>
           {pending.length > 0 && <span className="t-caption text-muted">{pending.length} question{pending.length > 1 ? 's' : ''} attend{pending.length > 1 ? 'ent' : ''} son résultat.</span>}
 
           <div className="mt-3 flex items-baseline justify-between">

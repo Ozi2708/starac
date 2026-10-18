@@ -179,7 +179,9 @@ export function Profile() {
             <div className="flex flex-1 flex-col"><span className="t-body font-bold">Notifications</span><span className="t-caption text-muted">Ouvertures, clôtures, résultats, badges</span></div>
             <Switch checked={!!profile?.notif_enabled} onChange={toggleNotif} ariaLabel="Notifications" />
           </div>
-          {!isStandalone() && <Row icon="download" label="Installer l’app" sub="Une icône sur ton écran d’accueil, en plein écran" onClick={() => setInstallOpen(true)} />}
+          {isStandalone()
+            ? <Row icon="download" label="Guide d’installation" sub="Pour aider un ami à installer l’app" onClick={() => setInstallOpen(true)} />
+            : <Row icon="download" label="Installer l’app" sub="Une icône sur ton écran d’accueil, en plein écran" onClick={() => setInstallOpen(true)} />}
           <Row icon="users" label="Mes ligues" onClick={() => navigate('/classement')} />
           <Row icon="download" label="Exporter mes données" sub="Pronos, points, ligues, badges (JSON)" onClick={exportData} />
           <Row icon="trash" label="Supprimer mon compte" sub="Définitif : pronos et points effacés" onClick={() => setConfirmDelete(true)} />
