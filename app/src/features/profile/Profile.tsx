@@ -49,7 +49,8 @@ export function Profile() {
   const myScores = (primes.data ?? []).map((p) => ({ p, pts: scores.data?.find((s) => s.prime_id === p.id && s.user_id === userId)?.points })).filter((x) => x.pts != null) as { p: { number: number; id: string }; pts: number }[];
   const maxBar = Math.max(1, ...myScores.map((x) => x.pts));
 
-  const qs = game.data?.questions ?? [];
+  // Historique : les pronos annulés n'apparaissent pas
+  const qs = (game.data?.questions ?? []).filter((q) => q.status !== 'cancelled');
   const groups: { title: string; rows: GameQuestion[] }[] = tab === 'week'
     ? [...(primes.data ?? [])].reverse().map((p) => ({
         title: `PRIME ${p.number}${!p.closed_at && qs.some((q) => q.prime_id === p.id && !q.locked) ? ' · EN COURS' : ''}`,

@@ -124,7 +124,8 @@ export function useGame(seasonId?: string) {
         locked,
       };
     });
-    return { questions: list, transactions: q.data.tx };
+    // Une question annulée que personne n'a jouée (pari jamais ouvert…) n'est montrée nulle part
+    return { questions: list.filter((x) => !(x.status === 'cancelled' && x.answers === 0)), transactions: q.data.tx };
   }, [q.data]);
   return { ...q, data };
 }
