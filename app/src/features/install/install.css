@@ -69,3 +69,8 @@
   .gp-x-open,.gp-home-ours,.is-hint,.is-target{animation:none}
 }
 .gp-ios-row svg,.gp-ios-li svg,.gp-and-row svg{flex:none}
+.gp-nudge{position:absolute;top:0;bottom:0;width:42%;display:flex;align-items:center;pointer-events:none;animation:gp-nudge .55s ease-out forwards;z-index:5}
+.gp-nudge--r{right:0;justify-content:flex-end;padding-right:6px;background:linear-gradient(270deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
+.gp-nudge--l{left:0;justify-content:flex-start;padding-left:6px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
+.gp-nudge span{width:30px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:rgba(13,3,34,.55);color:#fff;font:700 22px/1 var(--font-body)}
+@keyframes gp-nudge{from{opacity:1}to{opacity:0}}

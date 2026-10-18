@@ -62,33 +62,58 @@ function usePhoneWidth() {
   return w;
 }
 
+/** Rythme de lecture automatique (1 = vitesse de conception, plus grand = plus lent). */
+const PACE = 1.5;
+
 export function InstallDemo({ os }: { os: OS }) {
   const scenes = SCENES[os];
   const [i, setI] = useState(0);
+  const [run, setRun] = useState(0); // relance l'étape courante (tap à gauche sur la première)
   const [phase, setPhase] = useState(0);
   const [tap, setTap] = useState(0);
+  const [nudge, setNudge] = useState<{ side: 'l' | 'r'; k: number } | null>(null);
   const finger = useRef<HTMLDivElement>(null);
   const w = usePhoneWidth();
   const inner = w - 14;
   const scale = inner / SW;
   const sc = scenes[i];
+  const dur = sc.dur * PACE;
+
+  const go = (d: 1 | -1) => {
+    setI((x) => (d > 0 ? (x + 1) % scenes.length : Math.max(0, x - 1)));
+    setRun((r) => r + 1);
+    setNudge((n) => ({ side: d > 0 ? 'r' : 'l', k: (n?.k ?? 0) + 1 }));
+  };
+
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') go(1);
+      else if (e.key === 'ArrowLeft') go(-1);
+    };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scenes.length]);
 
   useEffect(() => {
     setPhase(0);
-    const timers = (sc.taps ?? []).map((t, k) => window.setTimeout(() => { setPhase(k + 1); setTap((x) => x + 1); }, t));
-    timers.push(window.setTimeout(() => setI((x) => (x + 1) % scenes.length), sc.dur));
+    const timers = (sc.taps ?? []).map((t, k) => window.setTimeout(() => { setPhase(k + 1); setTap((x) => x + 1); }, t * PACE));
+    timers.push(window.setTimeout(() => setI((x) => (x + 1) % scenes.length), dur));
     const el = finger.current;
     let anim: Animation | undefined;
     if (el && sc.finger && el.animate) {
       const frames: Keyframe[] = sc.finger.map(([t, x, y]) => ({ transform: `translate(${x - 23}px, ${y - 23}px)`, offset: Math.min(1, t / sc.dur), easing: 'cubic-bezier(.45,0,.2,1)' }));
-      anim = el.animate(frames, { duration: sc.dur, fill: 'forwards' });
+      anim = el.animate(frames, { duration: dur, fill: 'forwards' });
     }
     return () => { timers.forEach(clearTimeout); anim?.cancel(); };
-  }, [i, sc, scenes.length]);
+  }, [i, run, sc, dur, scenes.length]);
 
   return (
     <div className="flex flex-col items-center gap-3.5">
-      <div className="gp-phone" style={{ width: w, ['--pw' as string]: `${w}px` } as CSSProperties}>
+      {/* Tap à droite : étape suivante · tap à gauche : étape précédente */}
+      <div className="gp-phone" role="button" tabIndex={0} aria-label="Touche à droite pour avancer, à gauche pour revenir"
+        style={{ width: w, ['--pw' as string]: `${w}px`, cursor: 'pointer', WebkitTapHighlightColor: 'transparent' } as CSSProperties}
+        onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); go(e.clientX - r.left < r.width / 2 ? -1 : 1); }}>
         <div className="gp-phone__screen" style={{ height: Math.round(inner * (SH / SW)) }}>
           <div className="gp-phone__canvas" style={{ transform: `scale(${scale})` }} data-os={os}>
             {os === 'ios' ? <IosScreen scene={sc.id} phase={phase} /> : <AndroidScreen scene={sc.id} phase={phase} />}
@@ -97,6 +122,11 @@ export function InstallDemo({ os }: { os: OS }) {
               {tap > 0 && <span key={'r' + tap} className="gp-finger__ripple" />}
             </div>
           </div>
+          {nudge && (
+            <span key={nudge.k} className={'gp-nudge gp-nudge--' + nudge.side} aria-hidden="true">
+              <span>{nudge.side === 'r' ? '›' : '‹'}</span>
+            </span>
+          )}
         </div>
       </div>
 
@@ -104,15 +134,18 @@ export function InstallDemo({ os }: { os: OS }) {
       <div className="flex w-full flex-col gap-2" aria-live="polite">
         <div className="flex gap-1" role="tablist" aria-label="Étapes">
           {scenes.map((s, k) => (
-            <button key={s.id} type="button" role="tab" aria-selected={k === i} aria-label={`Étape ${k + 1}`} onClick={() => setI(k)}
+            <button key={s.id} type="button" role="tab" aria-selected={k === i} aria-label={`Étape ${k + 1}`} onClick={() => { setI(k); setRun((r) => r + 1); }}
               className="h-1.5 flex-1 overflow-hidden rounded-full border-0 p-0" style={{ background: 'rgba(255,255,255,.14)' }}>
-              <span key={k === i ? `on-${i}` : k} className={'block h-full rounded-full' + (k === i ? ' gp-step-fill' : '')}
-                style={{ background: 'var(--grad-cta)', width: k < i ? '100%' : k === i ? undefined : '0%', animationDuration: `${sc.dur}ms` }} />
+              <span key={k === i ? `on-${i}-${run}` : k} className={'block h-full rounded-full' + (k === i ? ' gp-step-fill' : '')}
+                style={{ background: 'var(--grad-cta)', width: k < i ? '100%' : k === i ? undefined : '0%', animationDuration: `${dur}ms` }} />
             </button>
           ))}
         </div>
         <div key={`${os}-${i}`} className="gp-caption flex min-h-[64px] flex-col gap-1">
-          <span className="t-overline text-gold-200">ÉTAPE {i + 1} / {scenes.length}</span>
+          <div className="flex items-center justify-between gap-2">
+            <span className="t-overline text-gold-200">ÉTAPE {i + 1} / {scenes.length}</span>
+            <span className="t-caption text-muted">‹ touche le téléphone ›</span>
+          </div>
           <span className="t-body text-pretty font-bold">{sc.caption}</span>
           {sc.tip && <span className="t-caption text-pretty text-muted">{sc.tip}</span>}
         </div>
