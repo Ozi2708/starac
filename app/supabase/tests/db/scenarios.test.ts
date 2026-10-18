@@ -287,6 +287,17 @@ describe('Cas limites', () => {
     await db.as(A, `select submit_prediction($1, $2::uuid[])`, [q, await db.optionIds(q, ['Malo'])]);
   });
 
+  it('l’installation de l’app est suivie par joueur, visible par lui-même et par l’admin seulement', async () => {
+    await db.as(A, `select track_app('install', 'android')`);
+    await db.as(A, `select track_app('open', null)`);
+    await db.as(A, `select track_app('open', 'android')`);
+    const [mine] = await db.as(A, `select platform, opens, first_open_at is not null as opened from app_installs`);
+    expect(mine).toEqual({ platform: 'android', opens: 2, opened: true });
+    expect(await db.as(B, `select * from app_installs`)).toHaveLength(0);
+    expect(await db.as(admin, `select * from app_installs where user_id = $1`, [A])).toHaveLength(1);
+    expect(await rpcErr(db.as(A, `insert into app_installs(user_id) values ($1)`, [A]))).toBeTruthy();
+  });
+
   it('une nomination reste dans l’historique quand le nommé sauvé repasse « en lice » après le prime', async () => {
     const noms = () => db.sql(`select * from candidate_nominations where candidate_id = $1`, [cand['Sacha']]);
     // Avant la diffusion : une nomination saisie par erreur peut être retirée

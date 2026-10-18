@@ -12,6 +12,15 @@ export type LeagueRole = 'owner' | 'admin' | 'member';
 export type NotifKind = 'predictions_open' | 'deadline_soon' | 'results_published' | 'points_awarded' | 'badge_earned' | 'rank_jump';
 export type SeasonPhase = 'pre' | 'open' | 'running' | 'finished';
 
+export interface AppInstall {
+  user_id: string;
+  platform: 'ios' | 'android' | null;
+  installed_at: string;
+  first_open_at: string | null;
+  last_open_at: string | null;
+  opens: number;
+}
+
 export interface Profile {
   id: string;
   pseudo: string;

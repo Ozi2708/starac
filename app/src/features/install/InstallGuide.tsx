@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
 import { useToast } from '@/components/ui/feedback';
 import { InstallDemo } from './InstallDemo';
-import { detectOS, inAppBrowser, installSeen, isStandalone, markInstallSeen, useInstallPrompt, type OS } from './install';
+import { useAuth } from '@/lib/auth';
+import { detectOS, inAppBrowser, installSeen, isStandalone, markInstallSeen, useInstallPrompt, useTrackAppOpen, type OS } from './install';
 
 /**
  * Fenêtre « Installe l'app » : choix iPhone / Android puis démo animée qui guide pas à pas.
@@ -115,6 +116,8 @@ function PhoneGlyph({ os }: { os: OS }) {
  * (jamais quand l'app est déjà installée). `?installer=1` dans l'URL force l'ouverture.
  */
 export function InstallGuideAuto() {
+  const { userId } = useAuth();
+  useTrackAppOpen(userId);
   const [params, setParams] = useSearchParams();
   const forced = params.get('installer') === '1';
   const [open, setOpen] = useState(false);

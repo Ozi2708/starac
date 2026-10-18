@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from 'react';
+import { supabase } from '@/lib/supabase';
 
 /** Guide d'installation déjà montré une fois (on ne le réaffiche plus automatiquement). */
 export const INSTALL_SEEN_KEY = 'gp:install-guide-v1';
@@ -26,7 +27,23 @@ if (typeof window !== 'undefined') {
     deferred = null;
     markInstallSeen();
     notify();
+    trackApp('install');
   });
+}
+
+/** Signale une installation ou une ouverture depuis l'écran d'accueil (suivi visible dans l'admin). */
+export function trackApp(event: 'open' | 'install') {
+  supabase.rpc('track_app', { p_event: event, p_platform: detectOS() }).then(() => undefined, () => undefined);
+}
+
+let openTracked = false;
+/** Une fois par lancement : l'app est ouverte en mode installé. */
+export function useTrackAppOpen(userId: string | null | undefined) {
+  useEffect(() => {
+    if (!userId || openTracked || !isStandalone()) return;
+    openTracked = true;
+    trackApp('open');
+  }, [userId]);
 }
 
 export function useInstallPrompt() {

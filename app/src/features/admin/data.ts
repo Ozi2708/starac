@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import type { AdminLog, League, Profile, Question, QuestionOption } from '@/lib/types';
+import type { AdminLog, AppInstall, League, Profile, Question, QuestionOption } from '@/lib/types';
 
 async function rows<T>(p: PromiseLike<{ data: unknown; error: unknown }>): Promise<T[]> {
   const { data, error } = await p;
@@ -33,6 +33,11 @@ export function useAdminQuestions(seasonId?: string) {
 
 export function useProfiles() {
   return useQuery({ queryKey: ['admin-profiles'], queryFn: () => rows<Profile>(supabase.from('profiles').select('*').order('pseudo')) });
+}
+
+/** Joueurs qui ont installé l'app (installation signalée ou ouverture depuis l'écran d'accueil). */
+export function useAppInstalls() {
+  return useQuery({ queryKey: ['admin-app-installs'], queryFn: () => rows<AppInstall>(supabase.from('app_installs').select('*')) });
 }
 
 export interface AdminLeague extends League { members: { user_id: string; role: string }[] }
