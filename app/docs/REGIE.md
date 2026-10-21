@@ -1,7 +1,7 @@
 # Régie automatique · Le Grand Prono
 
 Trois tâches planifiées Claude Code (Routines, sessions neuves à chaque passage, heure de Paris) :
-- **Mercredi 20h00 · nommés** : nominations, éligibilité de la semaine, « Qui sera éliminé ? », « Qui sera nommé la semaine prochaine ? ».
+- **Mercredi 21h00 · nommés** : nominations, éligibilité de la semaine, « Qui sera éliminé ? ». (« Qui sera nommé la semaine prochaine ? » est en pause : l'équilibre des points est calculé sur 2 paris par semaine.)
 - **Jeudi 20h00 · battle du top 3 + pari de la semaine** : ouvre « Qui gagnera la battle du top 3 ? » et prépare **en brouillon** un pari improbable original, que Val valide dans `/admin/questions` (« Ouvrir »).
 - **Dimanche 1h00 · résultats du prime** : élèves (après le prime 1), résultats, éliminations, points, clôture de la semaine, prime suivant.
 
