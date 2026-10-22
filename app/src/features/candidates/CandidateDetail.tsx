@@ -4,7 +4,7 @@ import { useCandidates, useGame, usePickStats, usePrimes, useSeason } from '@/li
 import { fmtDayTime, fmtPct } from '@/lib/format';
 import { Badge, Button, IconButton, Overline, ProgressBar, Skeleton, StatTile } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { PhotoFill, PortraitName, STATUS_LABEL } from '@/components/ui/game';
+import { PhotoFill, PortraitName, gx, statusLabel } from '@/components/ui/game';
 import { EmptyState } from '@/components/ui/feedback';
 
 /** Fiche candidat : photo, présentation, nominations, résultats officiels, stats communautaires (questions verrouillées uniquement). */
@@ -22,13 +22,14 @@ export function CandidateDetail() {
   if (cands.isLoading) return <main className="flex flex-col gap-4"><Skeleton h={400} style={{ borderRadius: 0 }} /><div className="px-5"><Skeleton h={120} /></div></main>;
   if (!c) return <main className="px-5 pt-16"><EmptyState icon="users" title="Candidat introuvable" action={<Button size="sm" variant="secondary" onClick={() => navigate('/candidats')}>Tous les candidats</Button>} /></main>;
 
-  const [statusLbl, tone] = STATUS_LABEL[c.status] ?? STATUS_LABEL.competing;
+  const [statusLbl, tone] = statusLabel(c.status, c.gender);
+  const g = c.gender;
   const out = c.status === 'eliminated';
   const outPrime = primes.data?.find((p) => p.id === c.eliminated_prime_id);
   // Semaines : primes auxquels le candidat a participé (jusqu'à son élimination)
   const weeks = (primes.data ?? []).filter((p) => new Date(p.airs_at).getTime() <= Date.now() + 7 * 86400_000 && (!outPrime || p.number <= outPrime.number));
   const weeksPlayed = c.eligible.length || weeks.filter((p) => new Date(p.airs_at).getTime() <= Date.now()).length;
-  const meta = [c.age ? `${c.age} ans` : null, c.city, out && outPrime ? `éliminé·e au prime ${outPrime.number}` : null].filter(Boolean).join(' · ');
+  const meta = [c.age ? `${c.age} ans` : null, c.city, out && outPrime ? `${gx(g, 'éliminé')} au prime ${outPrime.number}` : null].filter(Boolean).join(' · ');
 
   const hist = (primes.data ?? []).filter((p) => p.number <= Math.max(weeks.length, 1)).map((p) => ({
     p,
@@ -37,10 +38,10 @@ export function CandidateDetail() {
   }));
   const results = hist.filter((h) => h.nominated).reverse().map((h) => ({
     t: `Semaine ${h.p.number}`,
-    d: outPrime?.id === h.p.id ? 'Nommé·e, éliminé·e' : h.p.closed_at || new Date(h.p.airs_at).getTime() < Date.now() ? 'Nommé·e, sauvé·e' : `Nommé·e · verdict ${fmtDayTime(h.p.airs_at)}`,
+    d: outPrime?.id === h.p.id ? `${gx(g, 'Nommé')}, ${gx(g, 'éliminé')}` : h.p.closed_at || new Date(h.p.airs_at).getTime() < Date.now() ? `${gx(g, 'Nommé')}, ${gx(g, 'sauvé')}` : `${gx(g, 'Nommé')} · verdict ${fmtDayTime(h.p.airs_at)}`,
   }));
-  if (c.on_tour) results.unshift({ t: 'Tournée', d: 'Qualifié·e' });
-  if (c.status === 'finalist' || c.status === 'winner') results.unshift({ t: 'Finale', d: c.status === 'winner' ? 'Vainqueur de la saison' : 'Finaliste' });
+  if (c.on_tour) results.unshift({ t: 'Tournée', d: gx(g, 'Qualifié') });
+  if (c.status === 'finalist' || c.status === 'winner') results.unshift({ t: 'Finale', d: c.status === 'winner' ? (g === 'f' ? 'Gagnante de la saison' : 'Vainqueur de la saison') : 'Finaliste' });
 
   const comm = (stats.data ?? []).filter((s) => s.candidate_id === c.id && s.answers > 0 && s.pct > 0).sort((a, b) => Number(b.category === 'grand') - Number(a.category === 'grand') || b.pct - a.pct);
   const labelOf = (s: { key: string | null; title: string; category: string; prime_id: string | null }) => {
@@ -76,7 +77,7 @@ export function CandidateDetail() {
         <div className="grid grid-cols-3 gap-2.5">
           <StatTile value={c.nominations.length} label="Nominations" />
           <StatTile value={weeksPlayed} label="Semaines" />
-          <StatTile value={c.on_tour ? 'Qualifié·e' : c.on_tour === false ? 'Non' : 'À venir'} label="Tournée" valueStyle={{ fontSize: 17, lineHeight: '28px' }} />
+          <StatTile value={c.on_tour ? gx(g, 'Qualifié') : c.on_tour === false ? 'Non' : 'À venir'} label="Tournée" valueStyle={{ fontSize: 17, lineHeight: '28px' }} />
         </div>
 
         {hist.length > 0 && (
@@ -89,14 +90,14 @@ export function CandidateDetail() {
                     background: h.nominated ? 'rgba(210,67,230,.3)' : 'rgba(255,255,255,.06)',
                     boxShadow: h.nominated ? 'inset 0 0 0 1.5px #e679f2' : 'inset 0 0 0 1px rgba(255,255,255,.1)',
                     opacity: h.gone ? 0.25 : 1,
-                  }} aria-label={`Semaine ${h.p.number} : ${h.nominated ? 'nommé·e' : 'pas nommé·e'}`} />
+                  }} aria-label={`Semaine ${h.p.number} : ${h.nominated ? gx(g, 'nommé') : 'pas ' + gx(g, 'nommé')}`} />
                   <span className="t-caption text-muted">S{h.p.number}</span>
                 </div>
               ))}
             </div>
             <span className="t-caption flex items-center gap-2 text-muted">
               <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'rgba(210,67,230,.3)', boxShadow: 'inset 0 0 0 1.5px var(--magenta-400)' }} />
-              Semaine nommé·e · une semaine = une nomination
+              Semaine de nomination · une semaine = une nomination
             </span>
           </section>
         )}

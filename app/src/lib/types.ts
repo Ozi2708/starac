@@ -71,6 +71,8 @@ export interface Candidate {
   eliminated_prime_id: string | null;
   on_tour: boolean | null;
   final_rank: number | null;
+  /** 'f' ou 'm' : accord des libellés (Nommée / Nommé…). */
+  gender?: 'f' | 'm' | null;
 }
 
 export interface Question {

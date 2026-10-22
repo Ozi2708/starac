@@ -50,3 +50,14 @@ describe('affichage des pronos', () => {
     expect(moveOf({ rank: 2, prev_rank: null })).toBe(0);
   });
 });
+
+describe('accord des libellés selon le genre de l’élève', async () => {
+  const { gx, statusLabel } = await import('@/components/ui/game');
+  it('accorde au féminin, au masculin, et garde « ·e » sans genre', () => {
+    expect(statusLabel('nominated', 'f')[0]).toBe('Nommée');
+    expect(statusLabel('eliminated', 'm')[0]).toBe('Éliminé');
+    expect(statusLabel('immune', null)[0]).toBe('Immunisé·e');
+    expect(statusLabel('winner', 'f')[0]).toBe('Gagnante');
+    expect(gx('f', 'Qualifié')).toBe('Qualifiée');
+  });
+});

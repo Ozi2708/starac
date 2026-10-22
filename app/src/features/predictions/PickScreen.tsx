@@ -7,7 +7,7 @@ import { fmtDateAt, fmtDayDateTime } from '@/lib/format';
 import { errorCode, explainError } from '@/lib/errors';
 import { Badge, Button, IconButton, Input, Overline, PointsChip, ProgressBar, Skeleton } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { CandidatePortrait, PhotoFill, PortraitName, STATUS_LABEL } from '@/components/ui/game';
+import { CandidatePortrait, PhotoFill, PortraitName, statusLabel } from '@/components/ui/game';
 import { ConfirmDialog, EmptyState, useToast } from '@/components/ui/feedback';
 import type { QuestionOption } from '@/lib/types';
 import { LeaguePicks } from './LeaguePicks';
@@ -114,7 +114,7 @@ export function PickScreen() {
     if (outIds.has(o.id)) return 'Plus en lice';
     if (draft.includes(o.id)) return isOrdered ? `Mon choix · ${draft.indexOf(o.id) + 1}` : 'Mon choix';
     const c = o.candidate_id ? candById.get(o.candidate_id) : null;
-    return c ? STATUS_LABEL[c.status]?.[0] : undefined;
+    return c ? statusLabel(c.status, c.gender)[0] : undefined;
   };
   const badge = locked
     ? { label: q.status === 'cancelled' ? 'Annulé' : published ? 'Résultat publié' : 'Verrouillé', tone: published ? 'gold' : 'closed', icon: 'lock' }

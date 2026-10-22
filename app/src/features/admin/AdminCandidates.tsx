@@ -4,7 +4,7 @@ import { currentPrime, useCandidates, usePrimes, useSeason, type CandidateFull }
 import { explainError } from '@/lib/errors';
 import type { CandidateStatus } from '@/lib/types';
 import { Avatar, Badge, Button, Input, Overline, Switch, TextArea } from '@/components/ui/core';
-import { STATUS_LABEL } from '@/components/ui/game';
+import { gx, statusLabel } from '@/components/ui/game';
 import { Dialog, useToast } from '@/components/ui/feedback';
 import { AdminPage, Table, Tr } from './AdminApp';
 import { useAdminRefresh } from './data';
@@ -33,13 +33,13 @@ export function AdminCandidates() {
   async function setStatus(c: CandidateFull, status: CandidateStatus) {
     const { error } = await supabase.rpc('admin_set_candidate_status', { p_candidate: c.id, p_status: status, p_prime: week?.id ?? null });
     if (error) return toast({ tone: 'error', ...explainError(error) });
-    toast({ tone: 'success', title: `${c.first_name} : ${STATUS_LABEL[status][0]}`, message: 'Enregistré dans le journal.' });
+    toast({ tone: 'success', title: `${c.first_name} : ${statusLabel(status, c.gender)[0]}`, message: 'Enregistré dans le journal.' });
     refresh();
   }
   async function setTour(c: CandidateFull, on: boolean) {
     const { error } = await supabase.rpc('admin_set_tour', { p_candidate: c.id, p_on: on });
     if (error) return toast({ tone: 'error', ...explainError(error) });
-    toast({ tone: 'success', title: on ? `${c.first_name} qualifié·e pour la tournée` : `${c.first_name} retiré·e de la tournée`, message: 'Enregistré dans le journal.' });
+    toast({ tone: 'success', title: on ? `${c.first_name} ${gx(c.gender, 'qualifié')} pour la tournée` : `${c.first_name} ${gx(c.gender, 'retiré')} de la tournée`, message: 'Enregistré dans le journal.' });
     refresh();
   }
   async function toggleEligible(c: CandidateFull) {
@@ -147,7 +147,7 @@ export function AdminCandidates() {
       <Table cols={COLS} head={['CANDIDAT', 'STATUT', 'NOMINATIONS', 'TOURNÉE', 'ACTIONS']}>
         {list.length === 0 && <Tr cols="1fr"><span className="text-muted">Aucun candidat. Ajoute-les dès leur révélation officielle.</span></Tr>}
         {list.map((c) => {
-          const [lbl, tone] = STATUS_LABEL[c.status];
+          const [lbl, tone] = statusLabel(c.status, c.gender);
           const nominated = !!week && c.nominations.includes(week.id);
           const out = c.status === 'eliminated';
           return (
@@ -169,7 +169,7 @@ export function AdminCandidates() {
                 <select aria-label={`Autre statut pour ${c.first_name}`} value="" onChange={(e) => e.target.value && setStatus(c, e.target.value as CandidateStatus)}
                   className="h-9 rounded-full border-0 bg-transparent px-2 text-secondary" style={{ font: 'var(--text-body-s)', fontWeight: 700 }}>
                   <option value="">Autre…</option>
-                  <option value="immune">Immunisé·e</option>
+                  <option value="immune">Immunité</option>
                   <option value="competing">En compétition</option>
                   <option value="finalist">Finaliste</option>
                   <option value="winner">Vainqueur</option>

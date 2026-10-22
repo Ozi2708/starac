@@ -8,7 +8,7 @@ import { fmtDateAt, fmtDayDateTime, fmtNum } from '@/lib/format';
 import type { AdminLog, ScoreTransaction } from '@/lib/types';
 import { Avatar, Badge, Button, Input, Overline, StatTile } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { CandidateCard } from '@/components/ui/game';
+import { CandidateCard, statusLabel } from '@/components/ui/game';
 import { ConfirmDialog, useToast } from '@/components/ui/feedback';
 import { useAdminQuestions, useAdminRefresh, useProfiles } from './data';
 import { effectiveStatus } from './AdminDashboard';
@@ -258,7 +258,7 @@ export function AdminResults() {
                       const idx = pick.indexOf(o.id);
                       return (
                         <CandidateCard key={o.id} name={o.label} photo={c?.photo_url} size={o.candidate_id ? 56 : 40} selected={idx >= 0} onSelect={() => toggle(o.id)}
-                          meta={idx >= 0 && q.type === 'ordered' ? `Position ${idx + 1}` : c ? { nominated: 'Nommé·e', eliminated: 'Éliminé·e', immune: 'Immunisé·e', finalist: 'Finaliste', winner: 'Vainqueur', competing: 'En compétition' }[c.status] : undefined} />
+                          meta={idx >= 0 && q.type === 'ordered' ? `Position ${idx + 1}` : c ? statusLabel(c.status, c.gender)[0] : undefined} />
                       );
                     })}
                   </div>

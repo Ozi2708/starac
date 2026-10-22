@@ -11,7 +11,7 @@ import { fmtClose, fmtDayTime, fmtGain, fmtLong, fmtNum, plural } from '@/lib/fo
 import type { Season } from '@/lib/types';
 import { Avatar, Badge, Button, IconCircle, IconButton, LegalNote, PointsChip, ProgressBar, Section, Skeleton, Thumb } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { Countdown, LeaderboardRow } from '@/components/ui/game';
+import { Countdown, LeaderboardRow, gx } from '@/components/ui/game';
 import { ErrorState } from '@/components/ui/feedback';
 import { Screen } from '@/app/MobileLayout';
 import { InviteCard } from '@/features/leagues/InviteCard';
@@ -268,10 +268,10 @@ export function Dashboard({ season }: { season: Season }) {
               <div className="flex items-center gap-3 px-4 py-3.5">
                 <Avatar name={eliminated.first_name} src={eliminated.photo_url} size={40} style={{ filter: 'grayscale(1)', opacity: 0.5 }} />
                 <div className="flex flex-1 flex-col">
-                  <span className="t-caption text-muted">Dernier éliminé</span>
+                  <span className="t-caption text-muted">{eliminated.gender === 'f' ? 'Dernière éliminée' : 'Dernier éliminé'}</span>
                   <span className="t-body font-bold">{eliminated.first_name}</span>
                 </div>
-                <Badge tone="closed">Éliminé·e</Badge>
+                <Badge tone="closed">{gx(eliminated.gender, 'Éliminé')}</Badge>
               </div>
             )}
             {nominated.length > 0 && (

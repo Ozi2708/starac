@@ -107,6 +107,10 @@ export function CandidateCard({ name, photo, meta, selected, eliminated, disable
 }
 
 // ---------- CandidateTile (grille Candidats) ----------
+export type Gender = 'f' | 'm' | null | undefined;
+/** Accord selon le genre de l'élève : « Nommée », « Nommé » (« Nommé·e » s'il n'est pas renseigné). */
+export const gx = (g: Gender, base: string) => (g === 'f' ? base + 'e' : g === 'm' ? base : base + '·e');
+
 export const STATUS_LABEL: Record<string, [string, BadgeTone]> = {
   competing: ['En compétition', 'neutral'],
   nominated: ['Nommé·e', 'magenta'],
@@ -115,6 +119,16 @@ export const STATUS_LABEL: Record<string, [string, BadgeTone]> = {
   finalist: ['Finaliste', 'gold'],
   winner: ['Vainqueur', 'gold'],
 };
+
+/** Statut d'un élève accordé à son genre. */
+export function statusLabel(status: string, g?: Gender): [string, BadgeTone] {
+  const [, tone] = STATUS_LABEL[status] ?? STATUS_LABEL.competing;
+  const lbl: Record<string, string> = {
+    competing: 'En compétition', nominated: gx(g, 'Nommé'), immune: gx(g, 'Immunisé'), eliminated: gx(g, 'Éliminé'),
+    finalist: 'Finaliste', winner: g === 'f' ? 'Gagnante' : 'Vainqueur',
+  };
+  return [lbl[status] ?? lbl.competing, tone];
+}
 
 export function PhotoFill({ name, src, out, style }: { name: string; src?: string | null; out?: boolean; style?: CSSProperties }) {
   const h = hueOf(name);
@@ -168,8 +182,8 @@ export function PortraitName({ name, max = 23, inline, as: Tag = 'span', classNa
   return <Tag className={cx('gp-portrait__name', inline && 'gp-portrait__name--inline', className)} style={{ fontSize: `${fs.toFixed(2)}cqw` }}>{name}</Tag>;
 }
 
-export function CandidateTile({ name, photo, status, onClick }: { name: string; photo?: string | null; status: string; onClick?: () => void }) {
-  const [lbl, tone] = STATUS_LABEL[status] ?? STATUS_LABEL.competing;
+export function CandidateTile({ name, photo, status, gender, onClick }: { name: string; photo?: string | null; status: string; gender?: Gender; onClick?: () => void }) {
+  const [lbl, tone] = statusLabel(status, gender);
   const out = status === 'eliminated';
   return (
     <button type="button" onClick={onClick} className="gp-card--interactive gp-portrait border-0 p-0 text-left shadow-subtle" aria-label={`${name}, ${lbl}`}>

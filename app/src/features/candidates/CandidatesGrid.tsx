@@ -35,7 +35,7 @@ export function CandidatesGrid() {
         <EmptyState icon="users" title={filter === 'out' ? 'Personne n’a encore quitté le château' : 'Aucun candidat'} />
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          {list.map((c) => <CandidateTile key={c.id} name={c.first_name} photo={c.photo_url} status={c.status} onClick={() => navigate(`/candidats/${c.id}`)} />)}
+          {list.map((c) => <CandidateTile key={c.id} name={c.first_name} photo={c.photo_url} status={c.status} gender={c.gender} onClick={() => navigate(`/candidats/${c.id}`)} />)}
         </div>
       )}
       <p className="t-caption m-0 text-center text-muted">Photos officielles ajoutées depuis l’admin. Aucun candidat réel n’est inventé.</p>
