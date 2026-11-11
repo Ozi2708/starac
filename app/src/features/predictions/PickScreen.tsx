@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { useBack } from '@/lib/nav';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCandidates, useGame, usePrimes, useSeason, useSubmitPrediction } from '@/lib/queries';
@@ -7,7 +7,7 @@ import { fmtDateAt, fmtDayDateTime } from '@/lib/format';
 import { errorCode, explainError } from '@/lib/errors';
 import { Badge, Button, IconButton, Input, Overline, PointsChip, ProgressBar, Skeleton } from '@/components/ui/core';
 import { Icon } from '@/components/ui/Icon';
-import { CandidatePortrait, PhotoFill, PortraitName, statusLabel } from '@/components/ui/game';
+import { CandidatePortrait, PhotoFill, PortraitName, TeamPick, statusLabel, stripEmoji } from '@/components/ui/game';
 import { ConfirmDialog, EmptyState, useToast } from '@/components/ui/feedback';
 import type { QuestionOption } from '@/lib/types';
 import { LeaguePicks } from './LeaguePicks';
@@ -56,7 +56,19 @@ export function PickScreen() {
   const outIds = new Set(locked ? [] : q.outOptionIds);
   const candidateOpts = q.options.filter((o) => o.candidate_id && (!outIds.has(o.id) || draft.includes(o.id)));
   const noneOpt = q.options.find((o) => o.is_none_option);
-  const textOpts = q.options.filter((o) => !o.candidate_id && !o.is_none_option);
+  const optsNoCand = q.options.filter((o) => !o.candidate_id && !o.is_none_option);
+  // Prime « spécial équipes » : options équipe (couleur + membres) en cartes, candidats regroupés par team
+  const teamOpts = optsNoCand.filter((o) => o.color && o.member_ids?.length);
+  const textOpts = optsNoCand.filter((o) => !teamOpts.includes(o));
+  const teamGroups = candidateOpts.some((o) => o.team)
+    ? candidateOpts.reduce<{ team: string; color: string; opts: QuestionOption[] }[]>((acc, o) => {
+        const team = o.team ?? 'Autres';
+        const g = acc.find((x) => x.team === team);
+        if (g) g.opts.push(o);
+        else acc.push({ team, color: o.color ?? '#9486bf', opts: [o] });
+        return acc;
+      }, [])
+    : null;
   const multi = q.max_selections > 1;
   const tray = multi && candidateOpts.length > 0;
   const noneChosen = !!noneOpt && draft.includes(noneOpt.id);
@@ -193,13 +205,52 @@ export function PickScreen() {
           <Input label="Ta réponse" type="number" inputMode="numeric" value={num} disabled={locked} onChange={(e) => setNum(e.target.value)} placeholder="Ex. 4" />
         ) : (
           <>
-            {candidateOpts.length > 0 && (
+            {teamGroups ? (
+              teamGroups.map((g) => (
+                <section key={g.team} className="flex flex-col gap-2.5" style={{ '--team': g.color } as CSSProperties}>
+                  <span className="gp-team-head">Les {g.team.toLowerCase()}</span>
+                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${g.opts.length <= 4 ? 4 : 3}, minmax(0, 1fr))` }}>
+                    {g.opts.map((o) => {
+                      const c = o.candidate_id ? candById.get(o.candidate_id) : null;
+                      return (
+                        <CandidatePortrait key={o.id} name={o.label} photo={c?.photo_url} meta={metaOf(o)} selected={draft.includes(o.id)} eliminated={outIds.has(o.id)} disabled={locked} accent={g.color} onSelect={() => toggle(o)} />
+                      );
+                    })}
+                  </div>
+                </section>
+              ))
+            ) : candidateOpts.length > 0 && (
               <div className="grid grid-cols-3 gap-2.5">
                 {candidateOpts.map((o) => {
                   const c = o.candidate_id ? candById.get(o.candidate_id) : null;
                   const out = outIds.has(o.id);
                   return (
                     <CandidatePortrait key={o.id} name={o.label} photo={c?.photo_url} meta={metaOf(o)} selected={draft.includes(o.id)} eliminated={out} disabled={locked} onSelect={() => toggle(o)} />
+                  );
+                })}
+              </div>
+            )}
+            {teamOpts.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {teamOpts.map((o, i) => {
+                  const right = published && correct.includes(o.id);
+                  return (
+                    <div key={o.id} className="flex flex-col gap-2">
+                      {i > 0 && <span className="text-center text-muted" style={{ font: 'italic 900 18px/1 var(--font-display)' }}>VS</span>}
+                      <TeamPick
+                        name={stripEmoji(o.label)}
+                        color={o.color!}
+                        members={(o.member_ids ?? []).map((id) => {
+                          const c = candById.get(id);
+                          return { id, name: c?.first_name ?? '?', photo: c?.photo_url };
+                        })}
+                        selected={draft.includes(o.id)}
+                        disabled={locked}
+                        dimmed={published && !right}
+                        badge={right ? <Badge tone="open">Bonne réponse</Badge> : undefined}
+                        onSelect={() => toggle(o)}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -235,7 +286,7 @@ export function PickScreen() {
         {!locked ? (
           <>
             <span className="t-body-s text-center text-secondary">
-              {goneNames ? `${goneNames} n’est plus en lice : ${multi ? 'touche sa photo pour le retirer, puis choisis' : 'choisis'} un autre candidat.` : isNumber ? (num ? `Ta réponse : ${num}` : 'Saisis un nombre') : noneChosen ? 'Ton choix : aucun couple confirmé' : isMultiPerCorrect(q) || multi ? `${count} / ${q.max_selections} ${candidateOpts.length ? 'candidats sélectionnés' : 'choix'}` : count ? `Ton choix : ${names}` : 'Touche un candidat pour le choisir'}
+              {goneNames ? `${goneNames} n’est plus en lice : ${multi ? 'touche sa photo pour le retirer, puis choisis' : 'choisis'} un autre candidat.` : isNumber ? (num ? `Ta réponse : ${num}` : 'Saisis un nombre') : noneChosen ? 'Ton choix : aucun couple confirmé' : isMultiPerCorrect(q) || multi ? `${count} / ${q.max_selections} ${candidateOpts.length ? 'candidats sélectionnés' : 'choix'}` : count ? `Ton choix : ${names}` : teamOpts.length ? 'Touche une équipe pour la choisir' : 'Touche un candidat pour le choisir'}
             </span>
             <Button size="lg" block disabled={!valid || unchanged} onClick={() => setConfirm(true)}>{answered(q) ? 'Enregistrer mes modifications' : 'Valider mon prono'}</Button>
           </>

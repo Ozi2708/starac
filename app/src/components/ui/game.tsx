@@ -197,18 +197,20 @@ export function CandidateTile({ name, photo, status, gender, onClick }: { name: 
 }
 
 /** Portrait sélectionnable (écrans de pronos) : photo + prénom en relief, anneau et coche quand choisi. */
-export function CandidatePortrait({ name, photo, meta, selected, eliminated, disabled, onSelect }: {
+export function CandidatePortrait({ name, photo, meta, selected, eliminated, disabled, onSelect, accent }: {
   name: string; photo?: string | null; meta?: ReactNode; selected?: boolean; eliminated?: boolean; disabled?: boolean; onSelect?: () => void;
+  /** Couleur d'équipe (#rrggbb) : liseré et bandeau aux couleurs de la team. */
+  accent?: string | null;
 }) {
   return (
     <button
       type="button"
-      className={cx('gp-pick', selected && 'gp-pick--on', eliminated && 'gp-pick--out')}
+      className={cx('gp-pick', selected && 'gp-pick--on', eliminated && 'gp-pick--out', accent && 'gp-pick--team')}
       disabled={(eliminated && !selected) || disabled}
       aria-pressed={!!selected}
       aria-label={name}
       onClick={() => (!eliminated || selected) && !disabled && onSelect?.()}
-      style={disabled && !eliminated ? { cursor: 'default' } : undefined}
+      style={{ ...(disabled && !eliminated ? { cursor: 'default' } : {}), ...(accent ? { '--team': accent } as CSSProperties : {}) }}
     >
       <span className="gp-portrait w-full">
         <PhotoFill name={name} src={photo} out={eliminated} />
@@ -218,6 +220,47 @@ export function CandidatePortrait({ name, photo, meta, selected, eliminated, dis
         <span className="gp-pick__tick"><Icon name="check" size={14} /></span>
       </span>
       {meta && <span className="gp-pick__meta">{meta}</span>}
+    </button>
+  );
+}
+
+/** Retire l'emoji de tête d'un libellé (« 🔴 Les rouges » → « Les rouges »). */
+export const stripEmoji = (s: string) => s.replace(/^[\p{Extended_Pictographic}\uFE0F\s]+/u, '').trim() || s;
+
+/** Carte d'équipe sélectionnable (pari « Quelle équipe… ? ») : couleurs de la team + photos des membres. */
+export function TeamPick({ name, color, members, selected, disabled, dimmed, badge, onSelect }: {
+  name: string; color: string; members: { id: string; name: string; photo?: string | null }[];
+  selected?: boolean; disabled?: boolean; dimmed?: boolean; badge?: ReactNode; onSelect?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={cx('gp-team', selected && 'gp-team--on', dimmed && 'gp-team--dim')}
+      style={{ '--team': color, ...(disabled ? { cursor: 'default' } : {}) } as CSSProperties}
+      disabled={disabled}
+      aria-pressed={!!selected}
+      aria-label={`${name} : ${members.map((m) => m.name).join(', ')}`}
+      onClick={() => !disabled && onSelect?.()}
+    >
+      <span className="gp-team__head">
+        <span className="gp-team__dot" />
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="gp-team__name">{name}</span>
+          <span className="gp-team__members">{members.map((m) => m.name).join(' · ')}</span>
+          {badge && <span className="mt-1.5 flex">{badge}</span>}
+        </span>
+        <span className="gp-team__tick"><Icon name="check" size={15} /></span>
+      </span>
+      <span className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.max(members.length, 3)}, minmax(0, 1fr))` }}>
+        {members.map((m) => (
+          <span key={m.id} className="gp-portrait gp-team__photo">
+            <PhotoFill name={m.name} src={m.photo} />
+            {!m.photo && <span className="gp-portrait__initial" aria-hidden="true">{m.name[0]}</span>}
+            <span className="gp-portrait__shade" />
+            <PortraitName name={m.name} max={21} />
+          </span>
+        ))}
+      </span>
     </button>
   );
 }

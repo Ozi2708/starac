@@ -103,7 +103,23 @@ export function LeaguePicks({ q, candById }: { q: GameQuestion; candById: Map<st
             return (
               <div key={g.key} className="flex flex-col gap-2.5 px-4 py-3.5" style={right ? { background: 'rgba(47,217,154,.08)' } : undefined}>
                 <div className="flex items-center gap-3">
-                  {opt?.candidate_id && <Avatar name={g.label} src={cand?.photo_url} size={32} />}
+                  {opt?.candidate_id && (
+                    <span className="flex-none rounded-full" style={opt.color ? { boxShadow: `0 0 0 2px ${opt.color}` } : undefined}>
+                      <Avatar name={g.label} src={cand?.photo_url} size={32} />
+                    </span>
+                  )}
+                  {!opt?.candidate_id && !!opt?.member_ids?.length && (
+                    <span className="flex flex-none items-center">
+                      {opt.member_ids.map((id, i) => {
+                        const m = candById.get(id);
+                        return (
+                          <span key={id} className="rounded-full" style={{ marginLeft: i ? -8 : 0, boxShadow: `0 0 0 2px ${opt.color ?? 'var(--violet-950)'}` }}>
+                            <Avatar name={m?.first_name ?? '?'} src={m?.photo_url} size={26} />
+                          </span>
+                        );
+                      })}
+                    </span>
+                  )}
                   <span className="t-body flex-1 truncate font-bold">{g.label}</span>
                   {right && <Icon name="circle-check" size={18} style={{ color: 'var(--green-500)' }} />}
                   <span className="t-caption text-secondary">{g.users.length} · {Math.round((g.users.length / Math.max(groups.total, 1)) * 100)} %</span>

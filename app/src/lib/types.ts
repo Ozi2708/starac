@@ -106,6 +106,11 @@ export interface QuestionOption {
   candidate_id: string | null;
   is_none_option: boolean;
   sort_order: number;
+  /** Prime « spécial équipes » : nom et couleur (#rrggbb) de l'équipe de ce candidat / de cette option. */
+  team?: string | null;
+  color?: string | null;
+  /** Option « équipe » : candidats membres (photos affichées sur la carte). */
+  member_ids?: string[] | null;
 }
 
 export interface UserPrediction {

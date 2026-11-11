@@ -25,6 +25,19 @@ l'émission). Exception : « Qui sera nommé la semaine prochaine ? » ferme le 
 | Après le prime | Enregistre l'élimination, publie les résultats (éliminé, battle, immunité…), annule les questions sans objet, clôture la semaine, ajoute le prime suivant |
 | Fin de saison | Tournée, finalistes, vainqueur → publie les grands pronos |
 
+### Primes « spécial équipes » (ex. prime 6, 14/11)
+Quand les évaluations se font par équipes, on affiche les équipes en couleur avec les photos des élèves :
+- chaque option candidat des questions du prime reçoit `team` (« Rouges ») et `color` (`#ff4a78`) → regroupement par équipe, liseré coloré ;
+- le pari « Quelle équipe sera sauvée par le public ? » (20 pts, **clôture au début du prime**, l'annonce tombe tôt) a des options `custom`
+  dont chacune porte `color` et `member_ids` (les candidats) → carte d'équipe avec photos.
+Couleurs utilisées : rouges `#ff4a78`, jaunes `#ffcb5c`, bleus `#3d9bff`.
+```sql
+update question_options set team = 'Rouges', color = '#ff4a78' where question_id = '<q>' and candidate_id = any('{...}');
+update question_options set color = '#ff4a78', member_ids = '{...}' where id = '<option équipe>';
+```
+
+Les clôtures suivent la date réelle du prime (`primes.airs_at` + 35 min, garde-fou en base) : un prime avancé au vendredi décale tout.
+
 Chaque fait collecté est stocké dans `season_facts` (source, date, niveau de confiance) : c'est la mémoire de la saison.
 En cas de doute (sources contradictoires, confiance faible), la régie **n'applique rien** et notifie pour validation.
 Toute erreur se corrige dans `/admin/resultats` (« Corriger le résultat ») : les points sont recalculés sans doublon.
