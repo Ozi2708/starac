@@ -107,7 +107,7 @@ export interface QuestionOption {
   is_none_option: boolean;
   sort_order: number;
   /** Prime « spécial équipes » : nom et couleur (#rrggbb) de l'équipe de ce candidat / de cette option. */
-  team?: string | null;
+  team?: string | null; // libellé affiché tel quel (« Les rouges », « Duel 1 · Maud vs Leeloo »)
   color?: string | null;
   /** Option « équipe » : candidats membres (photos affichées sur la carte). */
   member_ids?: string[] | null;

@@ -27,7 +27,7 @@ l'émission). Exception : « Qui sera nommé la semaine prochaine ? » ferme le 
 
 ### Primes « spécial équipes » (ex. prime 6, 14/11)
 Quand les évaluations se font par équipes, on affiche les équipes en couleur avec les photos des élèves :
-- chaque option candidat des questions du prime reçoit `team` (« Rouges ») et `color` (`#ff4a78`) → regroupement par équipe, liseré coloré ;
+- chaque option candidat des questions du prime reçoit `team` (libellé affiché tel quel : « Les rouges », « Duel 1 ») et `color` (`#ff4a78`) → regroupement par équipe, liseré coloré ;
 - le pari « Quelle équipe sera sauvée par le public ? » (20 pts, **clôture au début du prime**, l'annonce tombe tôt) a des options `custom`
   dont chacune porte `color` et `member_ids` (les candidats) → carte d'équipe avec photos.
 Couleurs utilisées : rouges `#ff4a78`, jaunes `#ffcb5c`, bleus `#3d9bff`.

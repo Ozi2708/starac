@@ -208,8 +208,8 @@ export function PickScreen() {
             {teamGroups ? (
               teamGroups.map((g) => (
                 <section key={g.team} className="flex flex-col gap-2.5" style={{ '--team': g.color } as CSSProperties}>
-                  <span className="gp-team-head">Les {g.team.toLowerCase()}</span>
-                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${g.opts.length <= 4 ? 4 : 3}, minmax(0, 1fr))` }}>
+                  <span className="gp-team-head">{g.team}</span>
+                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${g.opts.length <= 2 ? 2 : g.opts.length <= 4 ? 4 : 3}, minmax(0, 1fr))` }}>
                     {g.opts.map((o) => {
                       const c = o.candidate_id ? candById.get(o.candidate_id) : null;
                       return (
